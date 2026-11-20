@@ -10,6 +10,7 @@ Business competitions and programs for Ontario high school students, with every 
 - `lib/core.js`: shared logic for dates, statuses, team-size wording, message tokens and calendar files.
 - `lib/pixel.js`: the pixel-art skyline and bell.
 - `vercel.json`: sends listing links like `/l/shad` to the page.
+- `api/calendar.js`: the calendar feed (`/api/calendar?l=shad,diamond`). Calendar apps subscribe to it, so date changes reach everyone's calendar. The link holds only listing ids.
 - `scripts/`: the checks and a local preview server (`node scripts/dev-server.js`, then open http://localhost:4173).
 
 ## Privacy

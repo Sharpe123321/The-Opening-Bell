@@ -7,7 +7,7 @@
   var D = window.OB_DATA, C = window.OB_CORE;
 
   /* Stages ship in order. A feature stays hidden until its stage is built and tested. */
-  var FEATURES = { ask: true, season: true, subscribe: false, trail: false };
+  var FEATURES = { ask: true, season: true, subscribe: true, trail: false };
   var REPORT_EMAIL = null; /* set an address to show "Report a mistake" on every listing */
 
   var NOW = C.today();
@@ -89,16 +89,17 @@
       var o = BY[r.id], a = o.asks[r.ask], step = o.steps.filter(function (s) { return s.ask === r.ask; })[0];
       if (!a || !step) { history.replaceState({ d: depth }, "", "/l/" + r.id); r = { name: "listing", id: r.id }; }
     }
-    var base = isOverlay(r) ? (page || "home") : r.name;
+    var base = isOverlay(r) ? (page || "home") : (r.name === "parent" ? "parent" + location.search : r.name);
     if (!isOverlay(r)) { basePath = location.pathname + location.search; baseDepth = depth; }
     if (base !== page) { page = base; renderPage(); window.scrollTo(0, 0); }
     if (r.name === "listing") { openPanel(sheetHtml(BY[r.id]), BY[r.id]); document.title = BY[r.id].name + " · Opening Bell"; }
     else if (r.name === "ask") { var ob = BY[r.id]; openPanel(askHtml(ob, ob.asks[r.ask]), ob); document.title = ob.asks[r.ask].title + " · " + ob.short + " · Opening Bell"; }
-    else { closePanelNow(); document.title = page === "season" ? "Your season · Opening Bell" : "Opening Bell · Business competitions for Ontario high school students"; }
+    else { closePanelNow(); document.title = page === "season" ? "Your season · Opening Bell" : /^parent/.test(page) ? "Your teen's season · Opening Bell" : "Opening Bell · Business competitions for Ontario high school students"; }
   }
   function renderPage() {
     var app = $("#app");
     if (page === "season") { app.innerHTML = seasonPageHtml(); drawArt(); renderSeason(); return; }
+    if (/^parent/.test(page)) { app.innerHTML = parentPageHtml(); drawArt(); return; }
     app.innerHTML = homeHtml();
     drawArt();
     bindHome();
@@ -420,8 +421,61 @@
         (weekList.length ? weekList.map(function (x) { return todoHtml(x.o, x.s); }).join("") : '<li class="todo"><span></span><div><b>Every step is done. Nice work.</b></div><span></span></li>') + "</ul></section>" +
       (trail ? '<section aria-labelledby="upH"><div class="sec"><h2 id="upH">Coming up</h2><span class="lab">Tap any stop for details</span></div><div class="trail-mini">' + trail + "</div></section>" : "") +
       (doneList.length ? '<details class="more donelist"><summary>Done (' + doneList.length + ')</summary><ul class="todos">' + doneList.map(function (x) { return todoHtml(x.o, x.s); }).join("") + "</ul></details>" : "") +
-      '<section class="sea-acts"><button type="button" class="btn gold" data-calseason>+ Add my season to my calendar</button>' +
-        '<p class="small">Downloads a calendar file with every step and deadline. Open it on your phone to add them.</p></section>';
+      '<section class="sea-acts"><button type="button" class="btn gold" data-subscribe>+ Add to my phone\'s calendar</button>' +
+        '<p class="small">Every step and deadline, in the calendar you already use. It updates itself if a date changes. No account needed.</p>' +
+        '<button type="button" class="btn" data-sendparent>Send to a parent</button>' +
+        '<p class="small">They get a page with what\'s coming up, what it costs and where they can help. <a href="' + esc(parentPath()) + '" data-nav>Preview it</a></p></section>';
+  }
+
+  /* ---------- Calendar subscription ---------- */
+  function feedUrl(ids, forParent) { return location.origin + "/api/calendar?l=" + ids.join(",") + (forParent ? "&for=parent" : ""); }
+  function subscribeHtml(ids, forParent) {
+    var https = feedUrl(ids, forParent), webcal = https.replace(/^https?:/, "webcal:");
+    var tks = ids.map(function (id) { return BY[id].tk; }).join(", ");
+    return '<div class="grab" aria-hidden="true"></div>' +
+      '<div class="sh-head"><div class="sh-top"><p class="kicker" style="margin:0">' + (forParent ? "Your calendar" : "Your phone's calendar") + '</p><button type="button" class="x" data-close aria-label="Close">✕</button></div>' +
+      '<h2 id="shTitle" tabindex="-1">' + (forParent ? "Add these dates to your calendar" : "Add your season to your calendar") + "</h2>" +
+      '<p class="org">Every step and deadline for ' + esc(tks) + ". When a date changes, it changes in your calendar too.</p></div>" +
+      '<div class="sh-body"><div class="sec-h"><span>Pick your calendar</span></div><div class="opts">' +
+        '<a class="opt" href="' + esc(webcal) + '"><b>iPhone, iPad or Mac</b><small>Apple Calendar asks you to subscribe.</small></a>' +
+        '<a class="opt" href="https://calendar.google.com/calendar/render?cid=' + encodeURIComponent(webcal) + '" target="_blank" rel="noopener"><b>Google Calendar</b><small>Opens Google Calendar. On a phone, you may need to finish on a computer.</small></a>' +
+        '<a class="opt" href="https://outlook.live.com/calendar/0/addfromweb?url=' + encodeURIComponent(https) + '&amp;name=' + encodeURIComponent("Opening Bell") + '" target="_blank" rel="noopener"><b>Outlook</b><small>Opens Outlook on the web.</small></a>' +
+        '<button type="button" class="opt" data-copyfeed="' + esc(https) + '"><b>Copy the calendar link</b><small>For any other app: add a calendar "from URL" and paste it.</small></button></div>' +
+        '<div class="hint"><span class="ck warn" aria-hidden="true">!</span><span>Calendar apps check for changes on their own schedule, usually within a day. Each step has a reminder the day before, but some apps ignore reminders in subscribed calendars. If you don\'t get alerts, check this calendar\'s notification settings in your app.</span></div>' +
+        (forParent ? "" : '<p class="small" style="margin-top:12px">Ticks you make on Opening Bell stay on this device, so the calendar shows every step. <button type="button" class="linkbtn" data-calseason>Download a one-time file instead</button> (it won\'t update).</p>') +
+      '</div><div class="sh-bar"><button type="button" class="btn grow" data-close>Done</button></div>';
+  }
+
+  /* ---------- Parent view: /parent?l=shad,diamond&g=11 ---------- */
+  function parentPicks() {
+    var q = new URLSearchParams(location.search);
+    return { ids: (q.get("l") || "").split(",").filter(function (id) { return BY[id]; }).slice(0, 20), grade: Number(q.get("g")) || null };
+  }
+  function parentPath() { return "/parent?l=" + state.picks.join(",") + (state.grade ? "&g=" + state.grade : ""); }
+  function parentPageHtml() {
+    var p = parentPicks(), picks = p.ids.map(function (id) { return BY[id]; });
+    var head = '<header class="hero sm"><canvas class="sky" aria-hidden="true"></canvas><div class="hero-in wrap">' +
+      '<nav class="nav" aria-label="Main"><a class="logo" href="/" data-nav><canvas class="bell" width="14" height="12" aria-hidden="true"></canvas>Opening Bell</a><div class="nav-r"><a class="navchip" href="/" data-nav>See the Board</a></div></nav>' +
+      '<h1>Your teen\'s season</h1><p class="sea-sub">' + (p.grade ? "Grade " + p.grade + " · " : "") + picks.length + (picks.length === 1 ? " pick" : " picks") + " · shared from Opening Bell</p></div></header>";
+    if (!picks.length) return head + '<main id="main" class="wrap season"><section class="sea-empty"><h2>Nothing to show yet</h2><p>This link doesn\'t include any listings. Ask your teen to send it again from My Season.</p></section></main>';
+    var items = [];
+    picks.forEach(function (o) { o.steps.forEach(function (s) { if ((mine(s) || s.official) && C.endOf(s.by) >= NOW) items.push({ o: o, s: s, d: C.parse(s.by) }); }); });
+    items.sort(function (a, b) { return a.d - b.d; });
+    var coming = items.slice(0, 7).map(function (x) {
+      return '<li><time>' + esc(C.fmtShort(x.s.by, x.s.est)) + '</time><span><a class="lab tklink" href="/l/' + x.o.id + '" data-nav>' + esc(x.o.tk) + "</a> " + esc(x.s.t) +
+        (x.s.official ? ' <span class="lab offl">Official deadline</span>' : "") + "</span></li>";
+    }).join("");
+    var help = [];
+    picks.forEach(function (o) { o.parent.forEach(function (h) { help.push('<div class="help"><b>' + esc(h.t) + '</b><span>' + esc(h.s) + '</span><a class="src" href="/l/' + o.id + '" data-nav>✓ ' + esc(o.short) + " · quoted from " + esc(o.src.name) + "</a></div>"); }); });
+    var costs = picks.map(function (o) { return "<dt>" + esc(o.tk) + "</dt><dd>" + esc(o.costShort) + (o.aid ? '<span class="aid">' + esc(o.aid) + "</span>" : "") + "</dd>"; }).join("");
+    var what = picks.map(function (o) { return '<li><a href="/l/' + o.id + '" data-nav><b>' + esc(o.name) + "</b></a><span>" + esc(o.why) + "</span></li>"; }).join("");
+    return head + '<main id="main" class="wrap season parent">' +
+      '<section aria-labelledby="pcH"><div class="sec"><h2 id="pcH">Coming up</h2><span class="lab">As of ' + esc(C.fmtShort(C.iso(NOW))) + '</span></div><ol class="plist">' + (coming || "<li><span>Nothing coming up right now.</span></li>") + "</ol></section>" +
+      '<section aria-labelledby="phH"><div class="sec"><h2 id="phH">Where you can help</h2></div>' + help.join("") + "</section>" +
+      '<section aria-labelledby="pcoH"><div class="sec"><h2 id="pcoH">Costs at a glance</h2></div><dl class="costs">' + costs + "</dl></section>" +
+      '<section class="sea-acts"><button type="button" class="btn gold" data-subscribe-parent>+ Add these dates to my calendar</button><p class="small">It updates itself if a date changes. No account needed.</p></section>' +
+      '<section aria-labelledby="pwH"><div class="sec"><h2 id="pwH">What each one is</h2></div><ul class="whatlist">' + what + "</ul></section>" +
+      '<p class="small" style="margin-top:22px">No account. Nothing is tracked. Your teen chose what to share. Every fact on Opening Bell is quoted from the organizer, and each listing shows its sources.</p></main>';
   }
 
   /* ---------- Receipts ---------- */
@@ -475,6 +529,10 @@
     if ((t = e.target.closest("[data-done]"))) { toggleDone(t.dataset.done); return; }
     if ((t = e.target.closest("[data-share]"))) { share(BY[t.dataset.share]); return; }
     if ((t = e.target.closest("[data-cal]"))) { downloadIcs([BY[t.dataset.cal]], BY[t.dataset.cal].short, "opening-bell-" + t.dataset.cal); return; }
+    if (e.target.closest("[data-subscribe]")) { if (state.picks.length) openPanel(subscribeHtml(state.picks, false), null); return; }
+    if (e.target.closest("[data-subscribe-parent]")) { var pp = parentPicks(); if (pp.ids.length) openPanel(subscribeHtml(pp.ids, true), null); return; }
+    if ((t = e.target.closest("[data-copyfeed]"))) { copy(t.dataset.copyfeed, "Calendar link copied. In your calendar app, add a calendar from URL and paste it."); return; }
+    if (e.target.closest("[data-sendparent]")) { sendToParent(); return; }
     if (e.target.closest("[data-calseason]")) { downloadIcs(state.picks.map(function (id) { return BY[id]; }), "your season", "opening-bell-season"); return; }
     if (e.target.closest("[data-askcopy]") && (ctx = askContext())) { copy(ctx.text, "Message copied. Paste it into an email or text."); return; }
     if (e.target.closest("[data-askshare]") && (ctx = askContext())) {
@@ -491,6 +549,12 @@
   }, true);
   document.addEventListener("keydown", function (e) { if (e.key === "Escape" && !$("#panel").hidden) closePanel(); });
 
+  function sendToParent() {
+    var url = location.origin + parentPath();
+    var data = { title: "My Opening Bell season", text: "Here's my season on Opening Bell: what's coming up, what it costs and where you can help.", url: url };
+    if (navigator.share) { navigator.share(data).catch(function () {}); return; }
+    copy(url, "Link copied. Send it to a parent by text or email.");
+  }
   function share(o) {
     var data = { title: o.name + " · Opening Bell", text: o.name + ": " + o._s.text, url: o.link };
     if (navigator.share) { navigator.share(data).catch(function () {}); return; }
