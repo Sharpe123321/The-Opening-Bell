@@ -1,0 +1,956 @@
+<!doctype html>
+<html lang="en-CA">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Opening Bell · Business competitions for Ontario high school students</title>
+<meta name="description" content="Business competitions and programs for Ontario high school students. Every date checked against the organizer, with when to start and what to do first.">
+<meta property="og:title" content="Opening Bell">
+<meta property="og:description" content="Know what to do this week, not just what exists. Business competitions and programs for Ontario high school students.">
+<meta property="og:type" content="website">
+<meta name="theme-color" content="#0F1729">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%231B3FD0' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 16V11a6 6 0 0 1 12 0v5l1.5 2h-15z'/%3E%3Cpath d='M10 20.5a2 2 0 0 0 4 0'/%3E%3Cpath d='M12 3v2'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..900&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+<style>
+:root{
+  --paper:#F3F5F9; --card:#FFFFFF; --ink:#0F1729; --muted:#4A5468; --faint:#6F7990;
+  --line:#DDE2EA; --line-strong:#C2C9D6;
+  --accent:#1B3FD0; --accent-ink:#FFFFFF; --accent-soft:#E7ECFF;
+  --open:#0B7A4B; --open-soft:#DFF2E8;
+  --soon:#995600; --soon-soft:#FBEED6;
+  --est:#5A6478;
+  --closed:#7B8495; --closed-soft:#ECEFF3;
+  --urgent:#C2372B; --urgent-soft:#FBE7E5;
+  --board:#0F1729; --board-line:#26314A; --board-ink:#E9EEF7; --board-dim:#8E99AF; --board-hi:#FFC857;
+  --tip-bg:#0F1729; --tip-ink:#F3F5F9;
+  --display:"Archivo","Helvetica Neue",Arial,sans-serif;
+  --mono:"IBM Plex Mono",ui-monospace,"SFMono-Regular",Menlo,Consolas,monospace;
+  color-scheme:light;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --paper:#0C111C; --card:#141A28; --ink:#E7ECF5; --muted:#A6AFC0; --faint:#8790A3;
+    --line:#252E40; --line-strong:#35405A;
+    --accent:#8FA7FF; --accent-ink:#0C111C; --accent-soft:#1C2750;
+    --open:#4CC38A; --open-soft:#123022;
+    --soon:#F0B45A; --soon-soft:#36270F;
+    --est:#A6AFC0;
+    --closed:#8790A3; --closed-soft:#1D2433;
+    --urgent:#FF7A6E; --urgent-soft:#3A1A18;
+    --board:#060A13; --board-line:#1E2738; --board-ink:#E9EEF7; --board-dim:#8790A3; --board-hi:#FFC857;
+    --tip-bg:#E7ECF5; --tip-ink:#0C111C;
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#0C111C; --card:#141A28; --ink:#E7ECF5; --muted:#A6AFC0; --faint:#8790A3;
+  --line:#252E40; --line-strong:#35405A;
+  --accent:#8FA7FF; --accent-ink:#0C111C; --accent-soft:#1C2750;
+  --open:#4CC38A; --open-soft:#123022;
+  --soon:#F0B45A; --soon-soft:#36270F;
+  --est:#A6AFC0;
+  --closed:#8790A3; --closed-soft:#1D2433;
+  --urgent:#FF7A6E; --urgent-soft:#3A1A18;
+  --board:#060A13; --board-line:#1E2738; --board-ink:#E9EEF7; --board-dim:#8790A3; --board-hi:#FFC857;
+  --tip-bg:#E7ECF5; --tip-ink:#0C111C;
+  color-scheme:dark;
+}
+
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--display);font-size:15px;line-height:1.5;-webkit-font-smoothing:antialiased}
+a{color:var(--accent)}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:4px}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.wrap{max-width:1120px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+[hidden]{display:none!important}
+.mono{font-family:var(--mono)}
+
+/* Masthead */
+.mast{border-bottom:1px solid var(--line);padding-top:env(safe-area-inset-top,0px)}
+.mast-inner{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:8px 20px;padding-block:14px}
+.brand{display:flex;align-items:center;gap:10px;text-decoration:none;color:inherit}
+.brand svg{width:22px;height:22px;color:var(--accent)}
+.wordmark{font-stretch:118%;font-weight:850;font-size:1.15rem;letter-spacing:-.01em}
+.edition{font-family:var(--mono);font-size:12px;color:var(--muted);letter-spacing:.04em;text-transform:uppercase}
+
+/* Hero */
+.hero{padding-block:40px 22px;display:grid;gap:14px}
+.eyebrow{margin:0;font-family:var(--mono);font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--accent)}
+h1{margin:0;font-stretch:108%;font-weight:820;font-size:clamp(1.9rem,4.4vw,3.1rem);line-height:1.04;letter-spacing:-.02em;max-width:20ch;text-wrap:balance}
+.lede{margin:0;max-width:62ch;color:var(--muted);font-size:1.05rem}
+
+/* Grade picker */
+.picker{display:flex;flex-wrap:wrap;align-items:center;gap:10px 14px;margin-top:6px}
+.picker .lbl{font-weight:700;font-size:1rem}
+.gseg{display:inline-flex;border:1px solid var(--line-strong);border-radius:10px;overflow:hidden;background:var(--card)}
+.gseg button{font:inherit;font-family:var(--mono);font-weight:600;font-size:15px;border:0;background:transparent;color:var(--ink);padding:10px 16px;cursor:pointer;min-width:52px}
+.gseg button+button{border-left:1px solid var(--line-strong)}
+.gseg button[aria-pressed="true"]{background:var(--ink);color:var(--paper)}
+
+/* This week */
+.week{margin-top:8px;background:var(--card);border:1px solid var(--line);border-radius:14px;overflow:hidden}
+.week-head{display:flex;flex-wrap:wrap;align-items:baseline;justify-content:space-between;gap:6px 16px;padding:18px 20px 6px}
+.week-head h2{margin:0;font-stretch:106%;font-weight:800;font-size:1.35rem;letter-spacing:-.01em}
+.week-head p{margin:0;font-family:var(--mono);font-size:12px;color:var(--muted);letter-spacing:.04em;text-transform:uppercase}
+.moves{list-style:none;margin:0;padding:0 8px 8px}
+.move{display:grid;grid-template-columns:92px minmax(0,1fr);gap:14px;padding:14px 12px;border-top:1px solid var(--line)}
+.move:first-child{border-top:0}
+.when{font-family:var(--mono);font-size:12.5px;line-height:1.35;font-variant-numeric:tabular-nums}
+.when b{display:block;font-size:1.25rem;font-weight:600;color:var(--ink)}
+.when.urgent b{color:var(--urgent)}
+.when span{color:var(--muted)}
+.move h3{margin:0 0 2px;font-size:1.02rem;font-weight:700;line-height:1.35}
+.move p{margin:0;font-size:14px;color:var(--muted)}
+.move .for{display:inline-flex;flex-wrap:wrap;gap:6px 10px;align-items:center;margin-top:6px;font-size:13px}
+.jump{font:inherit;font-size:13px;font-weight:600;background:none;border:0;padding:0;color:var(--accent);cursor:pointer;text-decoration:underline;text-underline-offset:2px}
+.last{font-family:var(--mono);font-size:10.5px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--urgent);background:var(--urgent-soft);border:1px solid var(--urgent);border-radius:4px;padding:1px 6px}
+.week-foot{padding:10px 20px 14px;border-top:1px solid var(--line);font-size:13px;color:var(--muted)}
+
+/* Deadline board */
+.board{background:var(--board);color:var(--board-ink);margin-top:34px}
+.board-inner{display:flex;align-items:stretch}
+.board-label{flex:none;display:flex;align-items:center;padding-right:16px;margin-right:2px;border-right:1px solid var(--board-line);font-family:var(--mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--board-dim)}
+.board ul{list-style:none;margin:0;padding:0;display:flex;overflow-x:auto;scrollbar-width:thin;min-width:0;flex:1}
+.board li{flex:none;display:grid;grid-template-columns:auto auto;grid-template-rows:auto auto;column-gap:14px;align-items:center;padding:12px 18px;border-right:1px solid var(--board-line)}
+.b-name{font-family:var(--mono);font-weight:600;font-size:13px;letter-spacing:.04em;text-transform:uppercase}
+.b-what{grid-column:1;font-size:12px;color:var(--board-dim)}
+.b-days{grid-column:2;grid-row:1 / span 2;font-family:var(--mono);font-weight:600;font-size:1.45rem;color:var(--board-hi);font-variant-numeric:tabular-nums;line-height:1}
+.b-days small{font-size:11px;color:var(--board-dim);margin-left:2px;font-weight:500}
+
+/* Controls */
+.section-title{margin:40px 0 0;font-stretch:106%;font-weight:800;font-size:1.35rem;letter-spacing:-.01em}
+.controls{display:grid;gap:14px;padding-block:16px 6px}
+.row1{display:flex;flex-wrap:wrap;gap:12px;align-items:center;justify-content:space-between}
+.search{flex:1 1 260px;max-width:420px;position:relative}
+.search input{width:100%;font:inherit;font-size:16px;color:var(--ink);background:var(--card);border:1px solid var(--line-strong);border-radius:8px;padding:10px 12px 10px 36px}
+.search svg{position:absolute;left:11px;top:50%;transform:translateY(-50%);width:16px;height:16px;color:var(--faint);pointer-events:none}
+.seg{display:inline-flex;border:1px solid var(--line-strong);border-radius:8px;overflow:hidden;background:var(--card)}
+.seg button{font:inherit;font-size:14px;font-weight:600;border:0;background:transparent;color:var(--muted);padding:9px 14px;cursor:pointer}
+.seg button+button{border-left:1px solid var(--line-strong)}
+.seg button[aria-pressed="true"]{background:var(--ink);color:var(--paper)}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{font:inherit;font-size:13.5px;font-weight:550;color:var(--ink);background:var(--card);border:1px solid var(--line-strong);border-radius:999px;padding:6px 12px;cursor:pointer;display:inline-flex;gap:6px;align-items:center}
+.chip .n{font-family:var(--mono);font-size:11.5px;color:var(--faint)}
+.chip[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+.chip[aria-pressed="true"] .n{color:var(--accent-ink);opacity:.8}
+.row3{display:flex;flex-wrap:wrap;gap:10px 22px;align-items:center}
+.toggle{display:inline-flex;align-items:center;gap:7px;font-size:14px;font-weight:550;cursor:pointer;user-select:none}
+.toggle input{width:16px;height:16px;accent-color:var(--accent);margin:0}
+.resultline{margin:14px 0 10px;font-size:13.5px;color:var(--muted);display:flex;gap:12px;align-items:center;flex-wrap:wrap}
+.linkbtn{font:inherit;font-size:13.5px;background:none;border:0;padding:0;color:var(--accent);cursor:pointer;text-decoration:underline;text-underline-offset:2px}
+
+/* Listings */
+.docket{display:grid;gap:14px}
+.item{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:18px 20px 14px;scroll-margin-top:20px}
+.item.flash{animation:flash 1.6s ease-out}
+@keyframes flash{0%{box-shadow:0 0 0 3px var(--accent)}100%{box-shadow:0 0 0 0 transparent}}
+.item-top{display:flex;flex-wrap:wrap;align-items:center;gap:8px 12px}
+.pill{font-family:var(--mono);font-size:11px;font-weight:600;letter-spacing:.07em;text-transform:uppercase;padding:3px 8px;border-radius:4px;border:1px solid transparent}
+.pill.open{background:var(--open-soft);color:var(--open);border-color:var(--open)}
+.pill.soon{background:var(--soon-soft);color:var(--soon);border-color:var(--soon)}
+.pill.expected{background:transparent;color:var(--est);border:1px dashed var(--est)}
+.pill.closed{background:var(--closed-soft);color:var(--closed);border-color:var(--line-strong)}
+.count{font-family:var(--mono);font-size:13px;font-weight:500;font-variant-numeric:tabular-nums}
+.count.urgent{color:var(--urgent)}
+.type{font-size:13px;color:var(--muted)}
+.type::before{content:"";display:inline-block;width:4px;height:4px;border-radius:50%;background:var(--line-strong);vertical-align:middle;margin-right:10px}
+.cal{margin-left:auto;font:inherit;font-size:13px;font-weight:600;padding:6px 12px;border-radius:7px;border:1px solid var(--line-strong);background:var(--card);color:var(--ink);cursor:pointer;display:inline-flex;align-items:center;gap:6px}
+.cal svg{width:14px;height:14px}
+.cal:hover{border-color:var(--accent);color:var(--accent)}
+.item h3{margin:8px 0 1px;font-stretch:106%;font-weight:780;font-size:1.32rem;line-height:1.2;letter-spacing:-.01em;text-wrap:balance}
+.org{margin:0;color:var(--muted);font-size:14px}
+
+.start{margin:14px 0 0;border:1px solid var(--accent);background:var(--accent-soft);border-radius:10px;padding:12px 14px}
+.start h4{margin:0 0 6px;font-family:var(--mono);font-size:11px;letter-spacing:.07em;text-transform:uppercase;color:var(--accent);font-weight:600}
+.start ol{margin:0;padding:0;list-style:none;display:grid;gap:6px}
+.start li{display:grid;grid-template-columns:96px minmax(0,1fr);gap:10px;font-size:14px}
+.start li time{font-family:var(--mono);font-size:12.5px;font-weight:600;padding-top:1px;font-variant-numeric:tabular-nums}
+.start li.past{color:var(--faint)}
+.start li.past time{text-decoration:line-through}
+.start .note-s{margin:8px 0 0;font-size:12.5px;color:var(--muted)}
+
+.req{margin:12px 0 0;padding:0;list-style:none;display:grid;gap:6px}
+.req li{display:grid;grid-template-columns:18px minmax(0,1fr);gap:8px;font-size:14px}
+.req svg{width:16px;height:16px;color:var(--soon);margin-top:2px}
+.req-h{margin:14px 0 0;font-family:var(--mono);font-size:11px;letter-spacing:.07em;text-transform:uppercase;color:var(--faint);font-weight:600}
+
+.item-body{display:grid;gap:18px;margin-top:16px}
+@media (min-width:800px){.item-body{grid-template-columns:minmax(0,1.5fr) minmax(0,1fr);gap:30px}}
+.main{min-width:0}
+.facts{display:grid;grid-template-columns:max-content minmax(0,1fr);gap:6px 16px;margin:0 0 14px;font-size:14px}
+.facts dt{font-family:var(--mono);font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--faint);padding-top:3px}
+.facts dd{margin:0;min-width:0}
+.facts .aid{display:block;color:var(--open);font-size:13px}
+.note{margin:0 0 10px;font-size:14.5px;max-width:62ch}
+.note b{display:block;font-family:var(--mono);font-size:11px;letter-spacing:.07em;text-transform:uppercase;color:var(--faint);font-weight:600;margin-bottom:2px}
+.dates{min-width:0;border-top:1px solid var(--line);padding-top:14px}
+@media (min-width:800px){.dates{border-top:0;padding-top:0;border-left:1px solid var(--line);padding-left:22px}}
+.dates h4{margin:0 0 6px;font-family:var(--mono);font-size:11px;letter-spacing:.07em;text-transform:uppercase;color:var(--faint);font-weight:600}
+.dates ol{list-style:none;margin:0;padding:0}
+.dates li{display:grid;grid-template-columns:112px minmax(0,1fr);gap:10px;padding:7px 0;border-bottom:1px dashed var(--line);font-size:13.5px}
+.dates li:last-child{border-bottom:0}
+.dates time{font-family:var(--mono);font-size:12.5px;font-variant-numeric:tabular-nums;font-weight:500;padding-top:1px}
+.dates li.k-deadline time{font-weight:600}
+.dates li.past{color:var(--faint)}
+.dates li.past time{color:var(--faint);text-decoration:line-through}
+.dates li.est time{color:var(--est)}
+.tag{font-style:normal;font-family:var(--mono);font-size:10.5px;border-radius:3px;padding:0 4px;margin-left:5px;white-space:nowrap}
+.tag.est{color:var(--est);border:1px dashed var(--est)}
+.tag.ok{color:var(--open);border:1px solid var(--open)}
+.src{margin-top:12px;padding-top:10px;border-top:1px solid var(--line);font-size:12.5px;color:var(--muted);display:flex;flex-wrap:wrap;gap:4px 14px;align-items:center}
+.src svg{width:13px;height:13px;vertical-align:-2px;margin-right:3px;color:var(--open)}
+.src .warn{color:var(--soon)}
+.empty{background:var(--card);border:1px dashed var(--line-strong);border-radius:12px;padding:28px;text-align:center;color:var(--muted)}
+
+/* Season calendar */
+.season-card{background:var(--card);border:1px solid var(--line);border-radius:12px;overflow:hidden}
+.season-intro{padding:16px 18px 6px;font-size:14px;color:var(--muted);max-width:70ch;margin:0}
+.season-scroll{overflow-x:auto}
+.season{min-width:840px;padding-bottom:8px}
+.srow{display:grid;grid-template-columns:200px minmax(0,1fr);border-top:1px solid var(--line);min-height:50px}
+.srow.head{border-top:0;min-height:34px}
+.slabel{position:sticky;left:0;z-index:3;background:var(--card);border:0;border-right:1px solid var(--line);text-align:left;font:inherit;color:var(--ink);padding:7px 14px;cursor:pointer;display:flex;flex-direction:column;justify-content:center;gap:1px}
+.srow.head .slabel{cursor:default}
+.slabel .nm{font-size:14px;font-weight:650;display:flex;align-items:center;gap:7px}
+.slabel .tp{font-size:11.5px;color:var(--faint)}
+.slabel:hover .nm{color:var(--accent)}
+.dot{width:8px;height:8px;border-radius:50%;flex:none}
+.dot.open{background:var(--open)} .dot.soon{background:var(--soon)} .dot.expected{border:1.5px dashed var(--est)} .dot.closed{background:var(--closed)}
+.track{position:relative;min-width:0}
+.mline{position:absolute;top:0;bottom:0;width:1px;background:var(--line)}
+.mlabel{position:absolute;bottom:8px;font-family:var(--mono);font-size:11px;color:var(--faint);padding-left:6px;white-space:nowrap}
+.today{position:absolute;top:0;bottom:0;width:2px;background:var(--accent);opacity:.55}
+.todaylabel{position:absolute;top:4px;font-family:var(--mono);font-size:10.5px;font-weight:600;color:var(--accent);transform:translateX(-50%);letter-spacing:.05em;text-transform:uppercase;background:var(--card);padding:0 3px}
+.bar{position:absolute;top:50%;height:10px;transform:translateY(-50%);border-radius:5px}
+.bar.open{background:var(--open-soft);box-shadow:inset 0 0 0 1px var(--open)}
+.bar.soon{background:var(--soon-soft);box-shadow:inset 0 0 0 1px var(--soon)}
+.mkw{position:absolute;top:50%;width:18px;height:18px;transform:translate(-50%,-50%);display:grid;place-items:center;z-index:2}
+.shape{width:12px;height:12px;border-radius:50%;background:var(--ink);border:2px solid var(--card)}
+.mkw.k-event .shape,.mkw.k-result .shape{background:var(--card);border:2px solid var(--ink)}
+.mkw.k-opens .shape{width:11px;height:11px;border-radius:2px;transform:rotate(45deg);background:var(--accent);border:2px solid var(--card)}
+.mkw.est .shape{background:transparent;border:2px dashed var(--est)}
+.mkw.past{opacity:.4}
+.mkw::after{content:attr(data-tip);position:absolute;top:calc(100% + 6px);left:50%;transform:translateX(-50%);background:var(--tip-bg);color:var(--tip-ink);font-size:12px;line-height:1.35;padding:6px 8px;border-radius:6px;white-space:nowrap;pointer-events:none;opacity:0;visibility:hidden;z-index:6}
+.mkw.r::after{left:auto;right:-4px;transform:none}
+.mkw.l::after{left:-4px;transform:none}
+.mkw:hover::after,.mkw:focus-visible::after{opacity:1;visibility:visible}
+.mkw:hover,.mkw:focus-visible{z-index:7}
+.legend{display:flex;flex-wrap:wrap;gap:10px 22px;padding:14px 18px 16px;border-top:1px solid var(--line);font-size:12.5px;color:var(--muted)}
+.legend span{display:inline-flex;align-items:center;gap:7px}
+.legend .mkw{position:static;transform:none;width:auto;height:auto}
+.legend .lbar{width:22px;height:9px;border-radius:5px;background:var(--open-soft);box-shadow:inset 0 0 0 1px var(--open)}
+.legend .ltoday{width:2px;height:14px;background:var(--accent);opacity:.55}
+
+/* About */
+.about{margin-top:48px;display:grid;gap:14px}
+@media (min-width:800px){.about{grid-template-columns:repeat(3,minmax(0,1fr))}}
+.about section{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:18px 20px}
+.about h2{margin:0 0 8px;font-family:var(--mono);font-size:11.5px;letter-spacing:.07em;text-transform:uppercase;color:var(--accent);font-weight:600}
+.about p{margin:0 0 8px;font-size:14.5px}
+.about p:last-child{margin-bottom:0}
+.foot{margin-top:28px;border-top:1px solid var(--line);padding-block:20px calc(36px + env(safe-area-inset-bottom,0px));font-size:13px;color:var(--muted)}
+.foot p{margin:0 0 6px;max-width:80ch}
+
+.toast{position:fixed;left:50%;bottom:calc(18px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);width:max-content;max-width:min(520px,calc(100% - 32px));background:var(--tip-bg);color:var(--tip-ink);padding:12px 16px;border-radius:10px;font-size:14px;line-height:1.4;box-shadow:0 10px 30px rgba(0,0,0,.25);z-index:20}
+
+@media (max-width:560px){
+  .cal{margin-left:0}
+  .move{grid-template-columns:72px minmax(0,1fr);gap:10px;padding:14px 8px}
+  .when b{font-size:1.05rem}
+  .dates li{grid-template-columns:100px minmax(0,1fr)}
+  .start li{grid-template-columns:84px minmax(0,1fr)}
+  .facts{grid-template-columns:minmax(0,1fr);gap:2px}
+  .facts dd{margin-bottom:8px}
+  .board-label{display:none}
+  .gseg button{padding:10px 12px;min-width:44px}
+}
+@media (prefers-reduced-motion:reduce){.item.flash{animation:none;box-shadow:0 0 0 3px var(--accent)}}
+</style>
+</head>
+<body>
+
+<header class="mast">
+  <div class="wrap mast-inner">
+    <a class="brand" href="#top" aria-label="Opening Bell, home">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 16V11a6 6 0 0 1 12 0v5l1.5 2h-15z"/><path d="M10 20.5a2 2 0 0 0 4 0"/><path d="M12 3v2"/></svg>
+      <span class="wordmark">Opening Bell</span>
+    </a>
+    <span class="edition">Ontario · Business · 2026–27</span>
+  </div>
+</header>
+
+<main id="top">
+  <section class="hero wrap">
+    <p class="eyebrow" id="eyebrow">Business competitions and programs for Ontario high school students</p>
+    <h1>Know what to do this week, not just what exists.</h1>
+    <p class="lede">Students often miss a competition not because they never heard of it, but because they found out after the date they needed to start. Every listing here shows the deadline, when to start, and the step people usually miss.</p>
+    <div class="picker" role="group" aria-label="Your grade this school year">
+      <span class="lbl" id="gradeLbl">I'm in Grade</span>
+      <div class="gseg" id="gradeSeg">
+        <button type="button" data-g="9" aria-pressed="false">9</button>
+        <button type="button" data-g="10" aria-pressed="false">10</button>
+        <button type="button" data-g="11" aria-pressed="false">11</button>
+        <button type="button" data-g="12" aria-pressed="false">12</button>
+      </div>
+    </div>
+    <section class="week" aria-labelledby="weekTitle">
+      <div class="week-head">
+        <h2 id="weekTitle">Your next moves</h2>
+        <p id="weekSub"></p>
+      </div>
+      <ol class="moves" id="moves"></ol>
+      <p class="week-foot">"Do by" dates are our advice, set early enough to do the step well. Official deadlines are in each listing.</p>
+    </section>
+  </section>
+
+  <section class="board" aria-label="Next official deadlines">
+    <div class="wrap board-inner">
+      <span class="board-label">Next up</span>
+      <ul id="board"></ul>
+    </div>
+  </section>
+
+  <div class="wrap">
+    <h2 class="section-title" id="all">All listings</h2>
+    <section class="controls" aria-label="Filters">
+      <div class="row1">
+        <label class="search" for="q">
+          <span class="sr">Search listings</span>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+          <input id="q" type="search" placeholder="Search by name, organizer or keyword" autocomplete="off">
+        </label>
+        <div class="seg" role="group" aria-label="View">
+          <button type="button" id="vList" aria-pressed="true">List</button>
+          <button type="button" id="vSeason" aria-pressed="false">Season calendar</button>
+        </div>
+      </div>
+      <div class="chips" id="typeChips" role="group" aria-label="Type"></div>
+      <div class="row3">
+        <label class="toggle" for="fGrade"><input type="checkbox" id="fGrade" checked> <span id="fGradeLbl">Only my grade</span></label>
+        <label class="toggle" for="fOpen"><input type="checkbox" id="fOpen"> Open now</label>
+        <label class="toggle" for="fFree"><input type="checkbox" id="fFree"> Free to enter</label>
+      </div>
+    </section>
+
+    <p class="resultline" id="resultline" aria-live="polite"></p>
+    <div id="listView" class="docket"></div>
+    <div id="seasonView" hidden></div>
+
+    <div class="about">
+      <section aria-labelledby="whyTitle">
+        <h2 id="whyTitle">Why this exists</h2>
+        <p>When I applied to business school, grades were nearly all that mattered. That has changed. Programs like Ivey, Rotman, Queen's and Waterloo now look closely at what you've done outside class.</p>
+        <p>The opportunities exist, but the dates are scattered and the important steps are buried. This site puts them in one place, for the students who are where I was.</p>
+      </section>
+      <section aria-labelledby="checkTitle">
+        <h2 id="checkTitle">How we check dates</h2>
+        <p>Every listing is checked against the organizer's own website, and shows the date we checked it and a link to the source.</p>
+        <p>A date marked <i class="tag ok">confirmed</i> was published by the organizer for this season. A date marked <i class="tag est">est.</i> is our estimate from past years, so a closed listing still tells you when to come back.</p>
+      </section>
+      <section aria-labelledby="privTitle">
+        <h2 id="privTitle">Your privacy</h2>
+        <p>We don't collect anything. No accounts, no email, no tracking cookies.</p>
+        <p>Your grade choice is saved only in your own browser. "Add to calendar" downloads a file straight to your device; nothing is sent to us.</p>
+      </section>
+    </div>
+
+    <footer class="foot">
+      <p>Grades mean your grade in the 2026–27 school year. For next year's rounds (like Wharton), we list the grades that will still be eligible when they open.</p>
+      <p>Always confirm details on the organizer's site before you apply. Opening Bell is independent and isn't affiliated with any organizer listed.</p>
+    </footer>
+  </div>
+</main>
+
+<div class="toast" id="toast" role="status" hidden></div>
+
+<script>
+(function(){
+  "use strict";
+
+  /* ---------- Data: every listing checked against the organizer's site ---------- */
+  var CHECKED = "2026-11-20";
+  var TYPES = [
+    ["pitch","Pitch & startup"],["deca","DECA"],["case","Case competitions"],
+    ["invest","Investing"],["math","Math contest"],["summer","Programs"],["venture","Company program"]
+  ];
+  var TYPE_LABEL = {case:"Case competition",pitch:"Pitch & startup competition",invest:"Investing competition",math:"Math contest",summer:"Summer program",deca:"Business competition circuit",venture:"Company program"};
+
+  /* Fields:
+     grades: grades (2026–27 school year) that can do the next available round
+     lastGrade: the final grade you can do it in (shows "Last year" badge)
+     window: current application window {from?, to}; next: expected next window when none is set
+     dates: official or estimated dates (est:true = our estimate)
+     steps: our advice on when to start each step (by: date, est: true if it depends on an estimate)
+     requires: the things students usually miss */
+  var DATA = [
+    {
+      id:"shad", short:"Shad", board:"Final deadline", name:"Shad 2027", org:"Shad Canada", type:"summer",
+      grades:[10,11], lastGrade:11, gradeNote:"Currently in Grade 10 or 11", free:false,
+      cost:"Free to apply. 2027 program fee: $7,875 live-in or $3,975 virtual.", aid:"Need-based fee assistance; about 1 in 3 students receive support",
+      format:"Month-long live-in program on a university campus, or virtual", where:"Campuses across Canada, or online",
+      entry:"Individual application",
+      window:{from:"2026-09-15", to:"2027-01-06"},
+      requires:[
+        "This is the last year Grade 11 students can apply. Shad is only open to students currently in Grade 10 or 11.",
+        "Don't let the fee stop you. The application is free, and fee assistance is based on need."
+      ],
+      steps:[
+        {by:"2026-11-27", t:"Open the free application and read every question"},
+        {by:"2026-12-18", t:"Finish a full draft before winter break"},
+        {by:"2027-01-06", t:"Submit by 11:59 pm ET (official deadline)"}
+      ],
+      dates:[
+        {d:"2026-11-08",k:"deadline",t:"Early application deadline"},
+        {d:"2027-01-06",k:"deadline",t:"Final application deadline, 11:59 pm ET"},
+        {d:"2027-02",k:"result",t:"Admission results, first week of February"},
+        {d:"2027-07-04",k:"event",t:"Program runs July 4–30 (live-in) or July 5–30 (virtual)"}
+      ],
+      why:"One of the best-known pre-university programs in Canada. Shad mixes STEM with entrepreneurship, and the team project gives you a concrete story for supplementary applications.",
+      tip:"Write about something you actually built, organized or fixed. Specific beats impressive.",
+      src:{url:"https://www.shad.ca/apply",name:"shad.ca",kind:"organizer"}
+    },
+    {
+      id:"diamond", short:"Diamond", board:"Submission due", name:"Diamond Challenge 2027", org:"Horn Entrepreneurship, University of Delaware", type:"pitch",
+      grades:[9,10,11,12], gradeNote:"Ages 14–18 on the submission deadline", free:true,
+      cost:"No entry fee listed in the official rules",
+      format:"Online submission, then live or virtual pitch rounds. Finals in Delaware.", where:"Open worldwide",
+      entry:"Team of 2–4 students plus one adult advisor",
+      window:{from:"2026-09-16", to:"2027-01-14"},
+      requires:[
+        "You need a team of 2–4 high school students. You can't enter alone.",
+        "Every team needs an adult advisor aged 21 or older, with their contact details on the submission.",
+        "The first round is a 3–5 page written concept (PDF) plus a short team video, not just a pitch."
+      ],
+      steps:[
+        {by:"2026-11-30", t:"Lock in 1–3 teammates and an adult advisor (21+)"},
+        {by:"2026-12-11", t:"Pick your problem and talk to at least five people who have it"},
+        {by:"2027-01-08", t:"Write the 3–5 page concept and record the intro video"},
+        {by:"2027-01-14", t:"Submit by 5:00 pm ET (official deadline)"}
+      ],
+      dates:[
+        {d:"2027-01-14",k:"deadline",t:"Submission deadline, 5:00 pm ET"},
+        {d:"2027-02-10",k:"result",t:"Advancing teams notified"},
+        {d:"2027-03-09",k:"result",t:"Next-round results"},
+        {d:"2027-04-29",k:"event",t:"Limitless World Summit in Delaware, Apr 29–30"}
+      ],
+      why:"A global pitch competition with a $100,000 prize pool. Building a real venture concept with a team is clear evidence of business interest.",
+      tip:"Lead with the customer problem and proof that it's real. Judges reward evidence that people want it more than a polished deck.",
+      src:{url:"https://diamondchallenge.org/competition/",name:"diamondchallenge.org",kind:"organizer"}
+    },
+    {
+      id:"deca", short:"DECA ON", board:"Papers due", name:"DECA Ontario Provincials 2027", org:"Ontario DECA", type:"deca",
+      grades:[9,10,11,12], free:false,
+      cost:"Set by your school chapter. Includes registration and a required hotel stay.",
+      format:"In-person conference with written, role-play and team events", where:"Sheraton Centre, Toronto",
+      entry:"Through your school's DECA chapter",
+      window:{to:"2027-01-07"},
+      requires:[
+        "You can only compete through a DECA chapter at your school. If there isn't one, a teacher has to start it.",
+        "Your chapter advisor registers you. DECA's page lists December 7 for Provincials registration, so talk to your advisor before then.",
+        "Some events need a written paper or slide deck submitted online by January 7."
+      ],
+      steps:[
+        {by:"2026-11-27", t:"Ask a business teacher whether your school has a DECA chapter"},
+        {by:"2026-12-04", t:"Confirm with your chapter advisor that you're registered for Provincials"},
+        {by:"2026-12-11", t:"If your event needs a paper, have an outline done"},
+        {by:"2027-01-07", t:"Written papers due online (official deadline)"}
+      ],
+      dates:[
+        {d:"2026-12-07",k:"deadline",t:"Provincials registration through your chapter (portal opens; registration and payment listed for this date)"},
+        {d:"2027-01-07",k:"deadline",t:"Written papers and decks due online"},
+        {d:"2027-01-13",k:"event",t:"Multiple-choice exams, Jan 13 or 14, at school or on site"},
+        {d:"2027-02-04",k:"event",t:"Provincials in Toronto, Feb 4–6"},
+        {d:"2027-04",k:"event",t:"International conference (ICDC) for qualifiers",est:true}
+      ],
+      why:"Ontario's biggest business competition circuit, with about 5,500 students at Provincials. Placing or qualifying for internationals is easy for admissions readers to recognize.",
+      tip:"Pick an event that matches what you'd want to talk about in an application, not just the one your friends pick.",
+      src:{url:"https://deca.ca/v2/about-provincials/",name:"deca.ca",kind:"organizer"}
+    },
+    {
+      id:"blueocean", short:"Blue Ocean", board:"Pitch video due", name:"Blue Ocean Student Entrepreneur Competition 2027", org:"Blue Ocean Student Entrepreneurs", type:"pitch",
+      grades:[9,10,11,12], gradeNote:"Any high school student", free:true,
+      cost:"Free, including the mini-course",
+      format:"Online. A 5-minute video pitch.", where:"Open worldwide",
+      entry:"Solo, or a team of up to five",
+      window:{to:"2027-02-21"},
+      requires:[
+        "Register first. That's how you get the Blue Ocean mini-course the competition is built around.",
+        "Your pitch is a 5-minute video uploaded to YouTube. You submit both the link and the video file.",
+        "No late entries. The deadline is midnight in your own time zone."
+      ],
+      steps:[
+        {by:"2026-12-04", t:"Register to unlock the free mini-course"},
+        {by:"2027-01-08", t:"Finish the mini-course over winter break"},
+        {by:"2027-02-12", t:"Script and record your 5-minute pitch"},
+        {by:"2027-02-21", t:"Submit by midnight your time (official deadline)"}
+      ],
+      dates:[
+        {d:"2027-02-21",k:"deadline",t:"Pitch submission deadline, midnight your time"},
+        {d:"2027-04-05",k:"result",t:"Top 500 and Top 100 announced"},
+        {d:"2027-04-22",k:"result",t:"Top 30 announced"},
+        {d:"2027-05-04",k:"result",t:"Top 10 announced"},
+        {d:"2027-05-13",k:"result",t:"Winners announced. First place wins $1,000 USD."}
+      ],
+      why:"Free, fully online and open to any high school student. A good first pitch competition, because all you need is an idea and a video.",
+      tip:"Use their pitch template. Judges score your idea against the blue ocean method, so show what you'd drop, reduce, raise and create.",
+      src:{url:"https://blueoceancompetition.org/compete/",name:"blueoceancompetition.org",kind:"organizer"}
+    },
+    {
+      id:"euclid", short:"Euclid", board:"School sign-up", name:"Euclid Mathematics Contest", org:"CEMC, University of Waterloo", type:"math",
+      grades:[10,11,12], gradeNote:"Written for Grade 12; younger students are welcome", free:false,
+      cost:"$18 per student",
+      format:"Written contest at your school", where:"Your school",
+      entry:"Your school orders the contest for you",
+      window:{to:"2027-03-11"},
+      requires:[
+        "You can't sign up yourself. Your school has to order the contest by March 11, usually through a math teacher.",
+        "Waterloo's Faculty of Math uses Euclid for most of its entrance scholarships, including the Waterloo–Laurier BBA/BMath double degree."
+      ],
+      steps:[
+        {by:"2027-02-12", t:"Ask your math teacher to register you"},
+        {by:"2027-03-11", t:"Last day for your school to order (official deadline)"},
+        {by:"2027-03-26", t:"Practise with past Euclid papers on the CEMC site"}
+      ],
+      dates:[
+        {d:"2027-03-11",k:"deadline",t:"Ordering deadline for schools"},
+        {d:"2027-04-06",k:"event",t:"Contest day in North America"}
+      ],
+      why:"Over 25,000 students write it each year. It isn't required for admission, but a strong score shows the quantitative skill that finance and business programs want.",
+      tip:"Many students write it in Grade 11 for practice, then again in Grade 12 when it counts most.",
+      src:{url:"https://cemc.uwaterloo.ca/contests/euclid",name:"cemc.uwaterloo.ca",kind:"organizer"}
+    },
+    {
+      id:"ihscc", short:"Ivey Case", name:"Ivey High School Case Competition", org:"Ivey Business School, Western University", type:"case",
+      grades:[10,11,12], free:false,
+      cost:"2027 fee not posted yet ($50 per selected student in 2025)",
+      format:"One-day, in-person case competition", where:"London, ON (May 1). Also Montreal, Calgary and Vancouver.",
+      entry:"Apply individually. You're placed on a team with students from other schools.",
+      next:{d:"2026-12",label:"Applications open soon"},
+      requires:[
+        "You apply on your own, so you don't need a team. You'll work with students from other schools.",
+        "Applications haven't opened yet. Ivey's page has a sign-up to hear first."
+      ],
+      steps:[
+        {by:"2026-11-30", t:"Sign up on Ivey's page to hear when applications open"},
+        {by:"2027-03-31", t:"Practise one full case in three hours", est:true}
+      ],
+      dates:[
+        {d:"2026-12",k:"opens",t:"Applications expected to open",est:true},
+        {d:"2027-04-10",k:"event",t:"Montreal, Selwyn House School"},
+        {d:"2027-04-24",k:"event",t:"Calgary and Vancouver"},
+        {d:"2027-05-01",k:"event",t:"London, Ontario, at Ivey Business School"}
+      ],
+      why:"Run by Ivey, so it's a direct preview of the case method Ivey teaches, and real material for an Ivey AEO application.",
+      tip:"A good case answer is one recommendation, three supporting reasons, an implementation plan and the main risks.",
+      src:{url:"https://www.ivey.uwo.ca/high-school-case-competitions/",name:"ivey.uwo.ca",kind:"organizer"}
+    },
+    {
+      id:"boardroom", short:"Boardroom", name:"The Boardroom", org:"Rotman Commerce, University of Toronto", type:"case",
+      grades:[9,10,11], lastGrade:11, gradeNote:"Canadian citizens only", free:false,
+      cost:"Not listed",
+      format:"Online first round in spring, then in-person rounds in the fall", where:"Online, then University of Toronto (virtual for teams outside the GTA)",
+      entry:"Team of 3–4, or register alone as a free agent",
+      next:{d:"2027-04",label:"Registration opens in April 2027"},
+      requires:[
+        "Only current Grade 9–11 students who are Canadian citizens can enter.",
+        "No team? Register as a free agent and you'll be matched with 2–3 others in your region.",
+        "Round 1 gives you about 30 days to write a case proposal, so plan around exams."
+      ],
+      steps:[
+        {by:"2026-12-04", t:"Fill in Rotman's Junior Outreach form to hear when registration opens"},
+        {by:"2027-03-31", t:"Find 2–3 teammates, or plan to go as a free agent", est:true},
+        {by:"2027-04-15", t:"Register when it opens", est:true}
+      ],
+      dates:[
+        {d:"2027-04",k:"opens",t:"Registration opens"},
+        {d:"2027-06",k:"result",t:"Top 12 teams notified",est:true},
+        {d:"2027-10",k:"event",t:"Rounds 2 and 3 at U of T, in the fall",est:true}
+      ],
+      why:"Each member of the winning team gets a $2,500 Rotman Commerce scholarship if admitted. Finalists get to present to Rotman judges.",
+      tip:"Grade 11 students: this is your last year to enter, and the scholarship only pays out if you go to Rotman.",
+      src:{url:"https://rotmancommerce.utoronto.ca/future-students/?p=2006",name:"rotmancommerce.utoronto.ca",kind:"organizer"}
+    },
+    {
+      id:"wharton", short:"Wharton", name:"Wharton Global High School Investment Competition", org:"Wharton Global Youth Program, University of Pennsylvania", type:"invest",
+      grades:[9,10,11], gradeNote:"Next season (2027–28) is open to grades 9–12", free:true,
+      cost:"Free. Finalists pay their own travel.",
+      format:"Online portfolio simulation, with a finale in Philadelphia", where:"Open worldwide",
+      entry:"Team of 4–6, registered by a teacher advisor at your school",
+      next:{d:"2027-08",label:"Next round expected ~Aug 2027",closed:true},
+      requires:[
+        "A teacher from your school must be your advisor and register the team. Students can't register alone.",
+        "Registration is open for only about a month in late summer, while school is out. Most teams that miss it never found an advisor in time."
+      ],
+      steps:[
+        {by:"2027-05-28", t:"Ask a teacher to be your advisor before school ends", est:true},
+        {by:"2027-06-18", t:"Lock in a team of 4–6", est:true},
+        {by:"2027-08-10", t:"Registration expected to open", est:true}
+      ],
+      dates:[
+        {d:"2026-09-11",k:"deadline",t:"2026–27 registration closed"},
+        {d:"2027-04-29",k:"event",t:"This season's Global Finale, Apr 29–30"},
+        {d:"2027-08",k:"opens",t:"2027–28 registration, based on 2026 (Aug 10 to Sep 11)",est:true}
+      ],
+      why:"A free global competition from Wharton. Your team manages a virtual portfolio for a real client case and defends its strategy.",
+      tip:"Treat it as a school-year project: deliverables run from October to December, so pick teammates who'll stay committed.",
+      src:{url:"https://globalyouth.wharton.upenn.edu/competitions/investment-competition/",name:"globalyouth.wharton.upenn.edu",kind:"organizer"}
+    },
+    {
+      id:"slp", short:"Ivey SLP", name:"Ivey Summer Leadership Program", org:"Ivey Business School, Western University", type:"summer",
+      grades:[9,10,11], lastGrade:11, gradeNote:"Currently in Grade 9, 10 or 11", free:false,
+      cost:"2027 fee not posted yet",
+      format:"Residential program with case-based learning", where:"Western University, London, ON",
+      entry:"Individual application",
+      next:{d:"2027-03",label:"2027 applications open soon"},
+      requires:[
+        "Only students currently in Grades 9–11 can apply, so Grade 11 is your last chance.",
+        "2027 dates and fees aren't posted yet. In 2026, applications closed in late May and the program ran in August."
+      ],
+      steps:[
+        {by:"2027-03-31", t:"Check Ivey's page for the 2027 application", est:true},
+        {by:"2027-05-14", t:"Submit your application", est:true}
+      ],
+      dates:[
+        {d:"2027-03",k:"opens",t:"2027 applications open",est:true},
+        {d:"2027-05",k:"deadline",t:"Application deadline, based on 2026 (late May)",est:true},
+        {d:"2027-08",k:"event",t:"Program week, based on 2026 (August)",est:true}
+      ],
+      why:"A week inside Ivey with faculty-led cases and team challenges. You get a feel for the HBA program before you apply.",
+      tip:"Use the week to collect stories: a case you argued, a team decision you shaped. Those become application material.",
+      src:{url:"https://www.ivey.uwo.ca/summerleadership/",name:"ivey.uwo.ca",kind:"organizer"}
+    },
+    {
+      id:"ja", short:"JA Company", name:"JA Company Program", org:"Junior Achievement (regional offices in Ontario)", type:"venture",
+      grades:[9,10,11], free:true,
+      cost:"Usually free. Confirm with your regional office.",
+      format:"After school, about 18–20 weeks", where:"Regional JA offices across Ontario",
+      entry:"Sign up through your regional JA office",
+      next:{d:"2027-09",label:"Next intake expected ~Sep 2027",closed:true},
+      requires:[
+        "Each region runs its own program and dates. Find your office through JA Canada's locator."
+      ],
+      steps:[
+        {by:"2026-12-11", t:"Ask your regional JA office whether a winter group has spots"},
+        {by:"2027-09-15", t:"Sign up for the fall intake", est:true}
+      ],
+      dates:[
+        {d:"2027-09",k:"opens",t:"Fall groups usually start between September and November",est:true}
+      ],
+      why:"You and classmates run a real company for a school year: raise money, make a product, sell it and report results. Real numbers make strong application material.",
+      tip:"The role you take matters. Running finance or sales gives you specific results to talk about.",
+      src:{url:"https://jacan.org",name:"jacan.org",kind:"partial",note:"Ontario dates vary by region. Confirm with your local JA office."}
+    }
+  ];
+
+  /* ---------- Date helpers ---------- */
+  var MS = 86400000;
+  var today = new Date(); today.setHours(0,0,0,0);
+  var MON = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+  function isMonth(s){ return s.split("-").length === 2; }
+  function parse(s){ var p = s.split("-").map(Number); return p.length === 3 ? new Date(p[0],p[1]-1,p[2]) : new Date(p[0],p[1]-1,15); }
+  function endOf(s){ var p = s.split("-").map(Number); return p.length === 3 ? new Date(p[0],p[1]-1,p[2]) : new Date(p[0],p[1],0); }
+  function fmt(s, est){ var d = parse(s); var t = isMonth(s) ? MON[d.getMonth()] + " " + d.getFullYear() : MON[d.getMonth()] + " " + d.getDate() + ", " + d.getFullYear(); return (est ? "~" : "") + t; }
+  function fmtShort(s, est){ var d = parse(s); return (est ? "~" : "") + (isMonth(s) ? MON[d.getMonth()] + " " + d.getFullYear() : MON[d.getMonth()] + " " + d.getDate()); }
+  function days(a,b){ return Math.round((b - a) / MS); }
+  function plural(n,w){ return n + " " + w + (n === 1 ? "" : "s"); }
+  function esc(s){ return String(s).replace(/[&<>"']/g, function(c){ return {"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"}[c]; }); }
+  function gradeText(g){ return g.length === 1 ? "Grade " + g[0] : "Grades " + g[0] + "–" + g[g.length-1]; }
+  var CHECKED_TXT = fmt(CHECKED);
+
+  function status(o){
+    var w = o.window, n;
+    if (w && w.to){
+      var to = parse(w.to), from = w.from ? parse(w.from) : null;
+      if (from && today < from){ n = days(today, from); return {key:"soon", pill:"Opens soon", text:"Opens " + fmtShort(w.from) + " · in " + plural(n,"day"), rank:1, n:n}; }
+      if (today <= to){ n = days(today, to); return {key:"open", pill:"Open", text: n === 0 ? "Closes today" : "Closes in " + plural(n,"day"), urgent: n <= 30, rank:0, n:n}; }
+    }
+    if (o.next){
+      n = days(today, parse(o.next.d));
+      var wasClosed = o.next.closed || (w && w.to && today > parse(w.to));
+      return {key: wasClosed ? "closed" : "expected", pill: wasClosed ? "Closed" : "Expected", text:o.next.label, rank: wasClosed ? 3 : 2, n:n};
+    }
+    return {key:"closed", pill:"Closed", text:"Check the organizer for next year's dates", rank:4, n:99999};
+  }
+  DATA.forEach(function(o){ o._s = status(o); });
+  DATA.sort(function(a,b){ return a._s.rank - b._s.rank || a._s.n - b._s.n; });
+  function byId(id){ for (var i = 0; i < DATA.length; i++) if (DATA[i].id === id) return DATA[i]; return null; }
+
+  /* ---------- State (grade and view are per-browser conveniences) ---------- */
+  var GKEY = "opening-bell:grade", VKEY = "opening-bell:view";
+  var state = {grade:11, type:"all", mine:true, open:false, free:false, q:"", view:"list"};
+  try { var g = Number(localStorage.getItem(GKEY)); if (g >= 9 && g <= 12) state.grade = g; } catch(e){}
+  try { if (localStorage.getItem(VKEY) === "season") state.view = "season"; } catch(e){}
+  var hg = /grade=(9|10|11|12)/.exec(location.search + location.hash); if (hg) state.grade = Number(hg[1]);
+  if (/season/.test(location.hash)) state.view = "season";
+
+  var $ = function(id){ return document.getElementById(id); };
+  function forGrade(o){ return o.grades.indexOf(state.grade) >= 0; }
+
+  /* ---------- Your next moves ---------- */
+  function renderMoves(){
+    var all = [];
+    DATA.forEach(function(o){
+      if (!forGrade(o)) return;
+      o.steps.forEach(function(s){
+        var d = parse(s.by);
+        if (endOf(s.by) < today) return;
+        all.push({o:o, s:s, d:d, n:days(today, d)});
+      });
+    });
+    all.sort(function(a,b){ return a.d - b.d; });
+    var seen = {}, picks = [];
+    /* one step per listing so the list stays varied, then fill up to 5 */
+    all.forEach(function(m){ if (!seen[m.o.id] && picks.length < 5){ seen[m.o.id] = 1; picks.push(m); } });
+    $("weekSub").textContent = "Grade " + state.grade + " · Ontario · as of " + fmtShort(today.getFullYear() + "-" + (today.getMonth()+1) + "-" + today.getDate());
+    $("moves").innerHTML = picks.length ? picks.map(function(m){
+      var urgent = m.n <= 14 && !m.s.est;
+      var whenTxt = m.n <= 0 ? "today" : (m.n === 1 ? "tomorrow" : "in " + m.n + " days");
+      var last = m.o.lastGrade === state.grade ? '<span class="last">Last year you can do this</span>' : "";
+      return '<li class="move"><div class="when' + (urgent ? ' urgent' : '') + '"><span>Do by</span><b>' + esc(fmtShort(m.s.by, m.s.est)) + '</b><span>' + whenTxt + '</span></div>' +
+        '<div><h3>' + esc(m.s.t) + '</h3><p>' + esc(m.o.name) + (m.o._s.key === "open" ? " · " + esc(m.o._s.text.toLowerCase()) : "") + '</p>' +
+        '<div class="for">' + last + '<button type="button" class="jump" data-go="' + m.o.id + '">See details</button></div></div></li>';
+    }).join("") : '<li class="move"><div></div><div><h3>Nothing to do right now</h3><p>Check back soon, or browse all listings below.</p></div></li>';
+  }
+
+  /* ---------- Deadline board ---------- */
+  function renderBoard(){
+    var items = DATA.filter(function(o){ return o._s.key === "open" || o._s.key === "soon"; }).sort(function(a,b){ return a._s.n - b._s.n; });
+    $("board").innerHTML = items.map(function(o){
+      return '<li><span class="b-name">' + esc(o.short) + '</span><span class="b-days">' + o._s.n + '<small>' + (o._s.n === 1 ? 'DAY' : 'DAYS') + '</small></span><span class="b-what">' + esc(o.board || "Deadline") + '</span></li>';
+    }).join("") || '<li><span class="b-name">Quiet week</span><span class="b-what">Nothing open right now</span></li>';
+  }
+
+  /* ---------- Chips ---------- */
+  function renderChips(){
+    var base = DATA.filter(function(o){ return !state.mine || forGrade(o); });
+    function cnt(t){ return base.filter(function(o){ return t === "all" || o.type === t; }).length; }
+    $("typeChips").innerHTML = [["all","All"]].concat(TYPES).map(function(t){
+      return '<button type="button" class="chip" data-t="' + t[0] + '" aria-pressed="' + (state.type === t[0]) + '">' + esc(t[1]) + ' <span class="n">' + cnt(t[0]) + '</span></button>';
+    }).join("");
+  }
+
+  /* ---------- Cards ---------- */
+  var CAL = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3.5" y="5" width="17" height="15" rx="2"/><path d="M3.5 10h17M8 3v4M16 3v4"/></svg>';
+  var WARN = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3 2.5 20h19z"/><path d="M12 10v4M12 17.2v.1"/></svg>';
+  var CHECK = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12 5 5 9-10"/></svg>';
+
+  function card(o){
+    var s = o._s;
+    var steps = o.steps.map(function(x){
+      var past = endOf(x.by) < today;
+      return '<li class="' + (past ? 'past' : '') + '"><time>' + esc(fmtShort(x.by, x.est)) + '</time><span>' + esc(x.t) + '</span></li>';
+    }).join("");
+    var dates = o.dates.map(function(x){
+      var past = endOf(x.d) < today;
+      return '<li class="k-' + x.k + (past ? ' past' : '') + (x.est ? ' est' : '') + '"><time>' + fmt(x.d, x.est) + '</time><span>' + esc(x.t) + (past ? ' (passed)' : '') + (x.est ? '<i class="tag est">est.</i>' : '') + '</span></li>';
+    }).join("");
+    var req = o.requires.map(function(r){ return '<li>' + WARN + '<span>' + esc(r) + '</span></li>'; }).join("");
+    var src = o.src.kind === "partial"
+      ? '<span class="warn">' + esc(o.src.note) + ' <a href="' + o.src.url + '" target="_blank" rel="noopener">' + esc(o.src.name) + ' ↗</a></span>'
+      : '<span>' + CHECK + 'Checked ' + CHECKED_TXT + ' on the organizer\'s site: <a href="' + o.src.url + '" target="_blank" rel="noopener">' + esc(o.src.name) + ' ↗</a></span>';
+    var last = (o.lastGrade && o.lastGrade === state.grade) ? ' <span class="last">Last year you can do this</span>' : "";
+    return '<article class="item" id="item-' + o.id + '">' +
+      '<div class="item-top"><span class="pill ' + s.key + '">' + s.pill + '</span>' +
+        '<span class="count' + (s.urgent ? ' urgent' : '') + '">' + esc(s.text) + '</span>' +
+        '<span class="type">' + esc(TYPE_LABEL[o.type]) + '</span>' + last +
+        '<button type="button" class="cal" data-ics="' + o.id + '">' + CAL + 'Add to calendar</button></div>' +
+      '<h3>' + esc(o.name) + '</h3><p class="org">' + esc(o.org) + '</p>' +
+      '<div class="start"><h4>When to start</h4><ol>' + steps + '</ol></div>' +
+      '<p class="req-h">What people miss</p><ul class="req">' + req + '</ul>' +
+      '<div class="item-body"><div class="main">' +
+        '<dl class="facts">' +
+          '<dt>Who</dt><dd>' + gradeText(o.grades) + (o.gradeNote ? ' · ' + esc(o.gradeNote) : '') + '</dd>' +
+          '<dt>Cost</dt><dd>' + esc(o.cost) + (o.aid ? '<span class="aid">' + esc(o.aid) + '</span>' : '') + '</dd>' +
+          '<dt>Format</dt><dd>' + esc(o.format) + '</dd>' +
+          '<dt>Where</dt><dd>' + esc(o.where) + '</dd>' +
+          '<dt>To enter</dt><dd>' + esc(o.entry) + '</dd>' +
+        '</dl>' +
+        '<p class="note"><b>Why it counts</b>' + esc(o.why) + '</p>' +
+        '<p class="note"><b>Tip</b>' + esc(o.tip) + '</p>' +
+      '</div><div class="dates"><h4>Key dates</h4><ol>' + dates + '</ol></div></div>' +
+      '<div class="src">' + src + (o.src.kind === "partial" ? '<span>Checked ' + CHECKED_TXT + '</span>' : '') + '</div>' +
+    '</article>';
+  }
+
+  /* ---------- Season calendar: Nov 2026 to Oct 2027 ---------- */
+  var AX0 = new Date(2026,10,1), AX1 = new Date(2027,10,1), NM = 12;
+  function pct(d){ return Math.max(0, Math.min(100, (d - AX0) / (AX1 - AX0) * 100)); }
+  function inAxis(d){ return d >= AX0 && d < AX1; }
+  function monthsHtml(withLabels){
+    var h = "";
+    for (var i = 0; i < NM; i++){
+      var m = new Date(2026, 10 + i, 1), p = pct(m).toFixed(3);
+      h += '<span class="mline" style="left:' + p + '%"></span>';
+      if (withLabels) h += '<span class="mlabel" style="left:' + p + '%">' + MON[m.getMonth()] + (m.getMonth() === 0 ? " " + m.getFullYear() : "") + '</span>';
+    }
+    return h;
+  }
+  function todayHtml(label){
+    if (!inAxis(today)) return "";
+    var p = pct(today).toFixed(3);
+    return '<span class="today" style="left:' + p + '%"></span>' + (label ? '<span class="todaylabel" style="left:' + p + '%">Today</span>' : '');
+  }
+  function seasonRow(o){
+    var s = o._s, h = monthsHtml(false) + todayHtml(false);
+    if (o.window && o.window.to && (s.key === "open" || s.key === "soon")){
+      var from = o.window.from ? parse(o.window.from) : AX0, to = parse(o.window.to);
+      var a = pct(from), b = pct(to);
+      if (b > a) h += '<span class="bar ' + s.key + '" style="left:' + a.toFixed(3) + '%;width:' + (b - a).toFixed(3) + '%"></span>';
+    }
+    o.dates.forEach(function(x){
+      var d = parse(x.d);
+      if (!inAxis(d)) return;
+      var p = pct(d), side = p > 72 ? " r" : (p < 12 ? " l" : "");
+      var tip = fmt(x.d, x.est) + " · " + x.t;
+      h += '<span class="mkw k-' + x.k + (x.est ? ' est' : '') + (endOf(x.d) < today ? ' past' : '') + side + '" style="left:' + p.toFixed(3) + '%" tabindex="0" role="img" aria-label="' + esc(tip) + '" data-tip="' + esc(tip) + '"><span class="shape"></span></span>';
+    });
+    return '<div class="srow"><button type="button" class="slabel" data-go="' + o.id + '"><span class="nm"><span class="dot ' + s.key + '"></span>' + esc(o.short) + '</span><span class="tp">' + esc(TYPE_LABEL[o.type]) + '</span></button><div class="track">' + h + '</div></div>';
+  }
+  function season(items){
+    return '<div class="season-card"><p class="season-intro">The whole season, one line per listing. Hover or tab to a marker for its date. Select a name to open its listing.</p>' +
+      '<div class="season-scroll"><div class="season">' +
+        '<div class="srow head"><div class="slabel"><span class="tp">Nov 2026 – Oct 2027</span></div><div class="track">' + monthsHtml(true) + todayHtml(true) + '</div></div>' +
+        items.map(seasonRow).join("") +
+      '</div></div>' +
+      '<div class="legend">' +
+        '<span><span class="lbar"></span>Open window</span>' +
+        '<span><span class="mkw k-deadline"><span class="shape"></span></span>Deadline</span>' +
+        '<span><span class="mkw k-event"><span class="shape"></span></span>Event or results</span>' +
+        '<span><span class="mkw k-opens"><span class="shape"></span></span>Registration opens</span>' +
+        '<span><span class="mkw k-event est"><span class="shape"></span></span>Estimated from past years</span>' +
+        '<span><span class="ltoday"></span>Today</span>' +
+      '</div></div>';
+  }
+
+  /* ---------- Add to calendar (.ics, generated on the device) ---------- */
+  function icsDate(s){ var d = parse(s); return d.getFullYear() + String(d.getMonth()+1).padStart(2,"0") + String(d.getDate()).padStart(2,"0"); }
+  function icsNext(s){ var d = parse(s); d.setDate(d.getDate()+1); return d.getFullYear() + String(d.getMonth()+1).padStart(2,"0") + String(d.getDate()).padStart(2,"0"); }
+  function icsEsc(s){ return String(s).replace(/\\/g,"\\\\").replace(/;/g,"\\;").replace(/,/g,"\\,").replace(/\n/g,"\\n"); }
+  function fold(line){ var out = "", i = 0; while (line.length - i > 73){ out += line.slice(i, i + 73) + "\r\n "; i += 73; } return out + line.slice(i); }
+  function buildIcs(o){
+    var stamp = new Date().toISOString().replace(/[-:]/g,"").replace(/\.\d+Z$/,"Z");
+    var ev = [];
+    function add(dateStr, title, desc, est, uidPart){
+      if (isMonth(dateStr) || endOf(dateStr) < today) return;
+      ev.push(["BEGIN:VEVENT","UID:" + o.id + "-" + uidPart + "-" + icsDate(dateStr) + "@opening-bell","DTSTAMP:" + stamp,
+        "DTSTART;VALUE=DATE:" + icsDate(dateStr),"DTEND;VALUE=DATE:" + icsNext(dateStr),
+        "SUMMARY:" + icsEsc(title + (est ? " (estimated)" : "")),
+        "DESCRIPTION:" + icsEsc(desc + "\nDetails: " + o.src.url + "\nFrom Opening Bell. Always confirm dates with the organizer."),
+        "TRANSP:TRANSPARENT",
+        "BEGIN:VALARM","ACTION:DISPLAY","DESCRIPTION:" + icsEsc(title),"TRIGGER:-P1DT6H","END:VALARM",
+        "END:VEVENT"].map(fold).join("\r\n"));
+    }
+    var used = {};
+    o.steps.forEach(function(s, i){ used[s.by] = 1; add(s.by, o.short + ": " + s.t, o.name, s.est, "step" + i); });
+    o.dates.forEach(function(d, i){ if ((d.k === "deadline" || d.k === "opens") && !used[d.d]) add(d.d, o.short + ": " + d.t, o.name, d.est, "date" + i); });
+    if (!ev.length) return null;
+    return ["BEGIN:VCALENDAR","VERSION:2.0","PRODID:-//Opening Bell//EN","CALSCALE:GREGORIAN","METHOD:PUBLISH","X-WR-CALNAME:" + icsEsc("Opening Bell: " + o.short)].join("\r\n") + "\r\n" + ev.join("\r\n") + "\r\nEND:VCALENDAR\r\n";
+  }
+  function downloadIcs(o){
+    var ics = buildIcs(o);
+    if (!ics){ toast("No exact dates to add yet for " + o.short + ". Check back once the organizer posts them."); return; }
+    try {
+      var blob = new Blob([ics], {type:"text/calendar;charset=utf-8"});
+      var url = URL.createObjectURL(blob), a = document.createElement("a");
+      a.href = url; a.download = "opening-bell-" + o.id + ".ics";
+      document.body.appendChild(a); a.click(); a.remove();
+      setTimeout(function(){ URL.revokeObjectURL(url); }, 4000);
+      toast("Calendar file downloaded for " + o.short + ". Open it to add the dates, with a reminder before each one.");
+    } catch(e){ toast("Couldn't create the calendar file in this browser."); }
+  }
+
+  /* ---------- Render ---------- */
+  function filtered(){
+    var q = state.q.trim().toLowerCase();
+    return DATA.filter(function(o){
+      if (state.mine && !forGrade(o)) return false;
+      if (state.type !== "all" && o.type !== state.type) return false;
+      if (state.open && o._s.key !== "open") return false;
+      if (state.free && !o.free) return false;
+      if (q){
+        var hay = [o.name,o.org,TYPE_LABEL[o.type],o.where,o.why,o.short,o.requires.join(" ")].join(" ").toLowerCase();
+        if (hay.indexOf(q) < 0) return false;
+      }
+      return true;
+    });
+  }
+  function anyFilter(){ return state.type !== "all" || state.open || state.free || state.q.trim() !== ""; }
+
+  function renderList(){
+    var items = filtered();
+    $("resultline").innerHTML = "Showing " + items.length + " of " + DATA.length + (state.mine ? " for Grade " + state.grade : "") + ", sorted by what needs attention first" +
+      (anyFilter() ? ' <button type="button" class="linkbtn" id="clear">Clear filters</button>' : "");
+    var empty = '<div class="empty">Nothing matches these filters. <button type="button" class="linkbtn" data-clear="1">Clear filters</button></div>';
+    var list = $("listView"), sea = $("seasonView");
+    list.hidden = state.view !== "list";
+    sea.hidden = state.view !== "season";
+    if (state.view === "list") list.innerHTML = items.length ? items.map(card).join("") : empty;
+    else sea.innerHTML = items.length ? season(items) : empty;
+    $("vList").setAttribute("aria-pressed", state.view === "list");
+    $("vSeason").setAttribute("aria-pressed", state.view === "season");
+  }
+
+  function renderAll(){
+    document.querySelectorAll("#gradeSeg button").forEach(function(b){ b.setAttribute("aria-pressed", Number(b.dataset.g) === state.grade); });
+    $("fGradeLbl").textContent = "Only Grade " + state.grade;
+    renderMoves(); renderChips(); renderList();
+  }
+
+  function clearFilters(){
+    state.type = "all"; state.open = state.free = false; state.q = "";
+    $("q").value = ""; $("fOpen").checked = $("fFree").checked = false;
+    renderChips(); renderList();
+  }
+  function setView(v){
+    state.view = v;
+    try { localStorage.setItem(VKEY, v); } catch(e){}
+    renderList();
+  }
+  var toastTimer;
+  function toast(msg){
+    var t = $("toast"); t.textContent = msg; t.hidden = false;
+    clearTimeout(toastTimer); toastTimer = setTimeout(function(){ t.hidden = true; }, 5200);
+  }
+  function go(id){
+    var o = byId(id);
+    if (state.mine && o && !forGrade(o)){ state.mine = false; $("fGrade").checked = false; }
+    clearFilters(); setView("list");
+    var el = document.getElementById("item-" + id);
+    if (el){
+      el.scrollIntoView({behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth", block:"start"});
+      el.classList.remove("flash"); void el.offsetWidth; el.classList.add("flash");
+    }
+  }
+
+  /* ---------- Events ---------- */
+  $("gradeSeg").addEventListener("click", function(e){
+    var b = e.target.closest("button"); if (!b) return;
+    state.grade = Number(b.dataset.g);
+    try { localStorage.setItem(GKEY, String(state.grade)); } catch(err){}
+    renderAll();
+  });
+  $("q").addEventListener("input", function(e){ state.q = e.target.value; renderList(); });
+  $("vList").addEventListener("click", function(){ setView("list"); });
+  $("vSeason").addEventListener("click", function(){ setView("season"); });
+  $("typeChips").addEventListener("click", function(e){
+    var b = e.target.closest(".chip"); if (!b) return;
+    state.type = b.dataset.t; renderChips(); renderList();
+  });
+  $("fGrade").addEventListener("change", function(e){ state.mine = e.target.checked; renderChips(); renderList(); });
+  $("fOpen").addEventListener("change", function(e){ state.open = e.target.checked; renderList(); });
+  $("fFree").addEventListener("change", function(e){ state.free = e.target.checked; renderList(); });
+  document.addEventListener("click", function(e){
+    if (e.target.closest("#clear") || e.target.closest("[data-clear]")){ clearFilters(); return; }
+    var c = e.target.closest("[data-ics]"); if (c){ downloadIcs(byId(c.dataset.ics)); return; }
+    var g = e.target.closest("[data-go]"); if (g){ go(g.dataset.go); }
+  });
+
+  renderBoard();
+  renderAll();
+})();
+</script>
+</body>
+</html>
