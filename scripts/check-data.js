@@ -9,6 +9,7 @@ const html = fs.readFileSync(path.join(__dirname, "..", "index.html"), "utf8");
 const m = /var DATA = (\[[\s\S]*?\n  \]);/.exec(html);
 if (!m) { console.error("Couldn't find the DATA array in index.html"); process.exit(1); }
 const DATA = vm.runInNewContext(m[1]);
+const RECEIPTS = JSON.parse(fs.readFileSync(path.join(__dirname, "..", "data", "receipts.json"), "utf8"));
 const TYPES = new Set(["case", "pitch", "invest", "math", "summer", "deca", "venture"]);
 const KINDS = new Set(["deadline", "opens", "event", "result"]);
 
@@ -83,7 +84,21 @@ for (const o of DATA) {
   if (!o.src || !/^https:\/\//.test(o.src.url)) err(o, "source url must be https");
   if (!["organizer", "partial", "third"].includes(o.src && o.src.kind)) err(o, "src.kind invalid");
   if (o.src && o.src.kind === "partial" && !o.src.note) err(o, "partial source needs a note");
+
+  // Receipts: no fact without the organizer's own sentence behind it (data/receipts.json)
+  const rc = RECEIPTS[o.id] || [];
+  const need = ["who", "how", "when"];
+  if (o.team) need.push("team");
+  if (!/not (listed|posted)|no entry fee is listed|fee tba/i.test(o.cost)) need.push("cost");
+  for (const a of need) {
+    if (!rc.some(r => r.about === a)) err(o, `no receipt for "${a}". Add the organizer's exact sentence to data/receipts.json`);
+  }
+  for (const r of rc) {
+    if (!/^https:\/\//.test(r.url || "") || !(r.quote || "").trim()) err(o, "receipt needs an https url and a quote");
+    if (r.manual && !/^\d{4}-\d{2}-\d{2}$/.test(r.checked || "")) err(o, "hand-checked receipt needs a checked date");
+  }
 }
+for (const id of Object.keys(RECEIPTS)) if (id !== "_about" && !ids.has(id)) errors.push(`receipts.json has "${id}" but no listing uses it`);
 
 if (errors.length) {
   console.error(`${errors.length} problem(s) found:\n- ` + errors.join("\n- "));

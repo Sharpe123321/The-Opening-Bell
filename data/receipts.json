@@ -1,0 +1,85 @@
+{
+  "_about": "Every fact shown on Opening Bell needs a receipt: the exact sentence from the organizer's page and its URL. scripts/verify-sources.js re-reads each page and fails if a sentence has changed or disappeared. 'about' is one of: who, how, when, cost, team. 'manual': true means a person checked it (for example, a PDF the robot can't read).",
+  "shad": [
+    {"about": "who", "url": "https://www.shad.ca/apply", "quote": "Shad 2027 applications are open to high school students currently completing Grade 10 and 11"},
+    {"about": "how", "url": "https://www.shad.ca/faqs/", "quote": "Applicants complete a profile, answer questions, upload their most recent report card, and provide a reference contact."},
+    {"about": "how", "url": "https://www.shad.ca/apply", "quote": "Ask your teacher to be your reference early, so they have time to support your application."},
+    {"about": "when", "url": "https://www.shad.ca/apply", "quote": "Applications close January 6, 2027 at 11:59 p.m. ET"},
+    {"about": "cost", "url": "https://www.shad.ca/participate/", "quote": "Live-in $7,875 Virtual $3,975"},
+    {"about": "cost", "url": "https://www.shad.ca/faqs/", "quote": "applicants submit a $750 deposit to secure their spot in the program"}
+  ],
+  "diamond": [
+    {"about": "team", "url": "https://diamondchallenge.org/competition/", "quote": "Teams must consist of 2-4 high school students aged 14-18 at the submission deadline."},
+    {"about": "how", "url": "https://diamondchallenge.org/competition/", "quote": "Each team is required to have one adult advisor aged 21 or older."},
+    {"about": "how", "url": "https://diamondchallenge.org/competition/", "quote": "The narrative is limited to 3-5 pages"},
+    {"about": "when", "url": "https://diamondchallenge.org/competition/", "quote": "January 14 | Submission Deadline (5PM EST)"},
+    {"about": "who", "url": "https://diamondchallenge.org/competition/", "quote": "high school students aged 14-18 at the submission deadline"}
+  ],
+  "deca": [
+    {"about": "how", "url": "https://deca.ca/v2/join/", "quote": "Your Chapter Advisor must approve your application."},
+    {"about": "how", "url": "https://deca.ca/v2/join/", "quote": "Each school will determine HOW you get slotted"},
+    {"about": "how", "url": "https://deca.ca/v2/join/", "quote": "Find a teacher advisor to lead your chapter and initiate the registration process."},
+    {"about": "how", "url": "https://deca.ca/v2/about-regionals/regionals-online-testing/", "quote": "only the Top X number of kids move on per event for EACH regional"},
+    {"about": "when", "url": "https://deca.ca/v2/join/", "quote": "NO changes to membership after October 15"},
+    {"about": "when", "url": "https://deca.ca/v2/join/", "quote": "Payment must be received in full by December 18, 2026."},
+    {"about": "when", "url": "https://deca.ca/v2/about-regionals/", "quote": "AREA 2 REGIONAL @ Goodman Sunday, November 8, 2026"},
+    {"about": "when", "url": "https://deca.ca/v2/about-provincials/", "quote": "February 4-6, 2027"},
+    {"about": "who", "url": "https://deca.ca/v2/join/", "quote": "Each school has various levels of commitment, student expectations, chapter size limits"},
+    {"about": "cost", "url": "https://deca.ca/v2/join/", "quote": "Combined Student Membership/Regionals fee: $35 USD per student"}
+  ],
+  "blueocean": [
+    {"about": "who", "url": "https://blueoceancompetition.org/compete/", "quote": "You must be enrolled in high school or an equivalent pre-university level"},
+    {"about": "team", "url": "https://www.blueoceancompetition.org", "quote": "Register for the competition solo or team up with up to four friends to compete together."},
+    {"about": "how", "url": "https://www.blueoceancompetition.org", "quote": "Record your 5-minute video, upload on YouTube, submit a link and the video file."},
+    {"about": "when", "url": "https://blueoceancompetition.org/compete/", "quote": "Submit your pitch by February 21, 2027 at midnight in the time zone where you are located."},
+    {"about": "cost", "url": "https://blueoceancompetition.org/faqs/", "quote": "No. The competition is completely free."}
+  ],
+  "euclid": [
+    {"about": "how", "url": "https://cemc.uwaterloo.ca/contests/how-contests-work", "quote": "It is not possible for students to individually register for a contest"},
+    {"about": "how", "url": "https://cemc.uwaterloo.ca/contests/how-contests-work", "quote": "students can look for another local school that will allow them to join as a participant"},
+    {"about": "how", "url": "https://cemc.uwaterloo.ca/contests/how-contests-work", "quote": "Account creation is not automatic and can take up to three weeks"},
+    {"about": "when", "url": "https://cemc.uwaterloo.ca/contests/euclid", "quote": "Ordering deadline: Thursday, March 11, 2027"},
+    {"about": "when", "url": "https://cemc.uwaterloo.ca/contests/euclid", "quote": "North and South America: Tuesday, April 6, 2027"},
+    {"about": "who", "url": "https://cemc.uwaterloo.ca/contests/euclid", "quote": "Motivated students in lower grades are welcome to write the contest."},
+    {"about": "cost", "url": "https://cemc.uwaterloo.ca/contests/euclid", "quote": "Contest fee per participant: $18.00"}
+  ],
+  "ihscc": [
+    {"about": "who", "url": "https://www.ivey.uwo.ca/high-school-case-competitions/", "quote": "High school students in grades 10 through 12"},
+    {"about": "how", "url": "https://www.ivey.uwo.ca/high-school-case-competitions/", "quote": "You'll register individually and be placed on a team with peers from different schools"},
+    {"about": "when", "url": "https://www.ivey.uwo.ca/high-school-case-competitions/", "quote": "Applications for 2027 IHSCC will open soon!"},
+    {"about": "when", "url": "https://www.ivey.uwo.ca/high-school-case-competitions/", "quote": "Saturday, May 1st at Ivey Business School"}
+  ],
+  "boardroom": [
+    {"about": "who", "url": "https://rotmancommerce.utoronto.ca/future-students/?p=2006", "quote": "The competition is open to only current grade 9-11 students who are Canadian citizens."},
+    {"about": "who", "url": "https://rotmancommerce.utoronto.ca/future-students/wp-content/uploads/sites/2/2026/04/The-Boardroom-2026-Rules.pdf", "quote": "The competition is open only to Canadian citizens and Permanent Residents of Canada who are currently in grades 9-11.", "manual": true, "checked": "2026-11-20"},
+    {"about": "team", "url": "https://rotmancommerce.utoronto.ca/future-students/wp-content/uploads/sites/2/2026/04/The-Boardroom-2026-Rules.pdf", "quote": "Any group of 3-4 within grades 9-11 may form a team and members can be from the same or different schools.", "manual": true, "checked": "2026-11-20"},
+    {"about": "how", "url": "https://rotmancommerce.utoronto.ca/future-students/wp-content/uploads/sites/2/2026/04/The-Boardroom-2026-Rules.pdf", "quote": "Each individual member of a team must register themselves with the identical formatting of team names.", "manual": true, "checked": "2026-11-20"},
+    {"about": "how", "url": "https://rotmancommerce.utoronto.ca/future-students/?p=2006", "quote": "students can also opt to register as a Free Agent"},
+    {"about": "when", "url": "https://rotmancommerce.utoronto.ca/future-students/?p=2006", "quote": "Registration for The Boardroom will open in April 2027."},
+    {"about": "cost", "url": "https://rotmancommerce.utoronto.ca/future-students/?p=2006", "quote": "Each member of the winning team will receive a $2,500 scholarship to Rotman Commerce"}
+  ],
+  "wharton": [
+    {"about": "how", "url": "https://globalyouth.wharton.upenn.edu/competitions/investment-competition/faq/", "quote": "Advisors may begin registering their team(s) for this year's competition on August 10, 2026 through September 11, 2026."},
+    {"about": "team", "url": "https://globalyouth.wharton.upenn.edu/competitions/investment-competition/faq/", "quote": "minimum of four (4) team members and a maximum of six (6) members"},
+    {"about": "how", "url": "https://globalyouth.wharton.upenn.edu/competitions/investment-competition/faq/", "quote": "Students must form a team with members (and an advisor) from the same high school. No exceptions."},
+    {"about": "who", "url": "https://globalyouth.wharton.upenn.edu/competitions/investment-competition/faq/", "quote": "Teams are required to have one advisor, who must be a teacher/educator at the high school of their students' team(s)."},
+    {"about": "when", "url": "https://globalyouth.wharton.upenn.edu/competitions/investment-competition/", "quote": "Registration for the 2026-2027 Competition is closed."},
+    {"about": "cost", "url": "https://globalyouth.wharton.upenn.edu/competitions/investment-competition/faq/", "quote": "No, the competition is free for all participants."}
+  ],
+  "slp": [
+    {"about": "who", "url": "https://www.ivey.uwo.ca/summerleadership/", "quote": "High school students currently in Grades 9, 10, and 11"},
+    {"about": "when", "url": "https://www.ivey.uwo.ca/summerleadership/", "quote": "2027 Dates: Coming Soon!"},
+    {"about": "how", "url": "https://www.ivey.uwo.ca/summerleadership/", "quote": "Applications for 2027 will open soon."}
+  ],
+  "ja": [
+    {"about": "how", "url": "https://www.jacentralontario.org/company-program/", "quote": "registration is first-come, first-served and we are not able to reserve spots for students"},
+    {"about": "how", "url": "https://jaswo.org/company-program", "quote": "Registration is completed online and is first-come, first-serve."},
+    {"about": "when", "url": "https://www.jacentralontario.org/company-program/registration/", "quote": "JA Company Program Registration for 2026-2027 IS now closed."},
+    {"about": "when", "url": "https://jaswo.org/company-program", "quote": "Registration for the 2026-2027 JA Company Program is NOW OPEN!"},
+    {"about": "who", "url": "https://www.jacentralontario.org/company-program/", "quote": "JA Company Program empowers young people in grades 9-12"},
+    {"about": "team", "url": "https://www.jacentralontario.org/company-program/", "quote": "You will be working in a team of 10 to 25 students"},
+    {"about": "how", "url": "https://www.jacentralontario.org/company-program/", "quote": "Students must commit to attending a minimum of 80% of the 18 weekly meetings."},
+    {"about": "cost", "url": "https://www.jacentralontario.org/company-program/", "quote": "there is no program cost to participating in the program"},
+    {"about": "cost", "url": "https://www.jacentralontario.org/company-program/", "quote": "This investment will be between $5 and a maximum of $30"}
+  ]
+}
