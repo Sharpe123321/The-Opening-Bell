@@ -373,3 +373,7 @@ details.more[open] summary::after{content:"▴"}
 @media (min-width:1100px){ body.panel-open .t-here,body.panel-open .t-stop,body.panel-open .t-end{grid-template-columns:44px minmax(0,1fr)} body.panel-open .trail::before{left:27px} body.panel-open .t-mon{text-align:left}
   body.panel-open .t-here canvas,body.panel-open .t-end .t-node,body.panel-open .t-stop .t-node{grid-column:1;justify-self:start;margin-left:5px}
   body.panel-open .t-here .bubble,body.panel-open .t-end > span:last-child,body.panel-open .t-stop.L .t-card,body.panel-open .t-stop.R .t-card{grid-column:2;justify-self:stretch;max-width:none} }
+
+/* Headings and tabs never wrap mid-phrase; the side label drops below on narrow screens */
+.sec{flex-wrap:wrap}
+.sec h2,.tab{white-space:nowrap}
