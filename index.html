@@ -389,16 +389,18 @@ h1{margin:0;font-stretch:108%;font-weight:820;font-size:clamp(1.9rem,4.4vw,3.1re
     {
       id:"shad", short:"Shad", board:"Final deadline", name:"Shad 2027", org:"Shad Canada", type:"summer",
       grades:[10,11], lastGrade:11, gradeNote:"Currently in Grade 10 or 11", free:false,
-      cost:"Free to apply. 2027 program fee: $7,875 live-in or $3,975 virtual.", aid:"Need-based fee assistance; about 1 in 3 students receive support",
+      cost:"Free to apply. 2027 program fee: $7,875 live-in or $3,975 virtual. If you get an offer, a $750 deposit secures your spot.", aid:"Need-based fee assistance, up to the full cost. About 1 in 3 students receive support.",
       format:"Month-long live-in program on a university campus, or virtual", where:"Campuses across Canada, or online",
-      entry:"Individual application",
+      entry:"Apply yourself online: a profile, written answers, your latest report card and a reference",
       window:{from:"2026-09-15", to:"2027-01-06"},
       requires:[
-        "Only students currently in Grade 10 or 11 can apply. If you're in Grade 11, this is your last chance.",
-        "Don't let the fee stop you. The application is free, and fee assistance is based on need."
+        "You need a reference. Shad's own advice is to ask your teacher early, so they have time to support your application.",
+        "You upload your most recent report card with the application.",
+        "Only students currently in Grade 10 or 11 can apply. If you're in Grade 11, this is your last chance."
       ],
       steps:[
-        {by:"2026-11-27", t:"Open the free application and read every question"},
+        {by:"2026-11-27", t:"Ask a teacher to be your reference"},
+        {by:"2026-12-04", t:"Open the free application and read every question"},
         {by:"2026-12-18", t:"Finish a full draft before winter break"},
         {by:"2027-01-06", t:"Submit by 11:59 pm ET (official deadline)"}
       ],
@@ -410,7 +412,7 @@ h1{margin:0;font-stretch:108%;font-weight:820;font-size:clamp(1.9rem,4.4vw,3.1re
       ],
       why:"One of the best-known pre-university programs in Canada. Shad mixes STEM with entrepreneurship, and the team project gives you a concrete story for supplementary applications.",
       tip:"Write about something you actually built, organized or fixed. Specific beats impressive.",
-      src:{url:"https://www.shad.ca/apply",name:"shad.ca",kind:"organizer"}
+      src:{url:"https://www.shad.ca/faqs/",name:"shad.ca",kind:"organizer"}
     },
     {
       id:"diamond", short:"Diamond", board:"Submission due", name:"Diamond Challenge 2027", org:"Horn Entrepreneurship, University of Delaware", type:"pitch",
@@ -441,34 +443,35 @@ h1{margin:0;font-stretch:108%;font-weight:820;font-size:clamp(1.9rem,4.4vw,3.1re
       src:{url:"https://diamondchallenge.org/competition/",name:"diamondchallenge.org",kind:"organizer"}
     },
     {
-      id:"deca", short:"DECA ON", board:"Registration due", name:"DECA Ontario Provincials 2027", org:"Ontario DECA", type:"deca",
-      grades:[9,10,11,12], free:false,
-      cost:"Set by your school chapter. Includes registration and a required hotel stay.",
-      format:"In-person conference with written, role-play and team events", where:"Sheraton Centre, Toronto",
-      entry:"Through your school's DECA chapter",
-      window:{to:"2026-12-07"},
-      next:{d:"2027-09", label:"Next season's registration expected ~fall 2027", closed:true},
+      id:"deca", short:"DECA", name:"DECA Ontario", org:"Ontario DECA", type:"deca",
+      grades:[9,10,11], gradeNote:"For next season (2027–28). Current members: your chapter advisor handles this season.", free:false,
+      cost:"$35 USD membership and regionals fee, paid to your chapter advisor. Provincials qualifiers also pay for a required hotel stay.",
+      format:"An online multiple-choice test plus a case presentation at a November regional. Top scorers in each event qualify for Provincials.", where:"Regionals across Ontario (one is virtual), then Provincials in Toronto",
+      entry:"Join your school's DECA chapter. Your chapter advisor approves you and assigns your event.",
+      next:{d:"2027-09", label:"Join your school's chapter in September 2027", closed:true},
       requires:[
-        "You can only compete through a DECA chapter at your school. If there isn't one, a teacher has to start it.",
-        "Your chapter advisor registers you. DECA lists Provincials registration and payment as due December 7, so talk to your advisor before then.",
-        "Some events need a written paper or slide deck submitted online by January 7."
+        "You can't enter on your own. You join your school's DECA chapter, and your chapter advisor has to approve you. If your school has no chapter, a teacher has to register one first.",
+        "You list your top 3 events, but your school decides which one you get. Everyone is assigned an event by October 15, and nothing can change after that.",
+        "Provincials isn't open entry. You qualify by placing in your event at a November regional, and there are no second-chance events."
       ],
       steps:[
-        {by:"2026-11-27", t:"Ask a business teacher whether your school has a DECA chapter"},
-        {by:"2026-12-04", t:"Confirm with your chapter advisor that you're registered for Provincials"},
-        {by:"2026-12-11", t:"If your event needs a paper, have an outline done"},
-        {by:"2027-01-07", t:"Written papers due online (official deadline)"}
+        {by:"2027-01-29", t:"Ask a business teacher whether your school has a DECA chapter, or would start one"},
+        {by:"2027-09-17", t:"Join your chapter and register online with your top 3 events", est:true},
+        {by:"2027-10-15", t:"Membership and events lock (based on 2026's October 15)", est:true}
       ],
       dates:[
-        {d:"2026-12-07",k:"deadline",t:"Provincials registration and payment due, through your chapter advisor. Hotel booking opens the same day."},
-        {d:"2027-01-07",k:"deadline",t:"Written papers and decks due online"},
-        {d:"2027-01-13",k:"event",t:"Multiple-choice exams, Jan 13 or 14, at school or on site"},
+        {d:"2026-10-15",k:"deadline",t:"2026–27 membership and event assignments locked"},
+        {d:"2026-11-02",k:"event",t:"Regional online tests, November 2, 3 or 5"},
+        {d:"2026-11-08",k:"event",t:"Six regional competitions, November 8 to 22"},
+        {d:"2026-12-07",k:"event",t:"Provincials registration opens for qualifiers' chapters"},
+        {d:"2026-12-18",k:"deadline",t:"Provincials payment due (handled by advisors)"},
+        {d:"2027-01-07",k:"deadline",t:"Written papers due (written-event qualifiers only)"},
         {d:"2027-02-04",k:"event",t:"Provincials in Toronto, Feb 4–6"},
-        {d:"2027-04",k:"event",t:"International conference (ICDC) for qualifiers",est:true}
+        {d:"2027-10",k:"deadline",t:"2027–28 membership locks, based on 2026 (October 15)",est:true}
       ],
-      why:"Ontario's biggest business competition circuit, with about 5,500 students at Provincials. Placing or qualifying for internationals is easy for admissions readers to recognize.",
-      tip:"Pick an event that matches what you'd want to talk about in an application, not just the one your friends pick.",
-      src:{url:"https://deca.ca/v2/about-provincials/",name:"deca.ca",kind:"organizer"}
+      why:"Ontario DECA is the largest DECA association in the world, with about 5,500 students at Provincials. Placing at Provincials or qualifying for internationals is easy for admissions readers to recognize.",
+      tip:"Ask what your chapter expects. Schools set their own commitment rules and chapter size limits, and missing them can cost you your spot.",
+      src:{url:"https://deca.ca/v2/join/",name:"deca.ca",kind:"organizer"}
     },
     {
       id:"blueocean", short:"Blue Ocean", board:"Pitch video due", name:"Blue Ocean Student Entrepreneur Competition 2027", org:"Blue Ocean Student Entrepreneurs", type:"pitch",
@@ -503,12 +506,13 @@ h1{margin:0;font-stretch:108%;font-weight:820;font-size:clamp(1.9rem,4.4vw,3.1re
       id:"euclid", short:"Euclid", board:"School sign-up", name:"Euclid Mathematics Contest", org:"CEMC, University of Waterloo", type:"math",
       grades:[10,11,12], gradeNote:"Written for Grade 12. Students in Grades 10 and 11 often write it for practice.", free:false,
       cost:"$18 per student",
-      format:"Written contest at your school", where:"Your school",
-      entry:"Your school orders the contest for you",
+      format:"Written contest at your school", where:"Your school, or another local school that lets you join",
+      entry:"Your school orders the contest for you. Students can't register on their own.",
       window:{to:"2027-03-11"},
       requires:[
-        "You can't sign up yourself. Your school has to order the contest by March 11, usually through a math teacher.",
-        "Waterloo's Faculty of Math uses Euclid for most of its entrance scholarships, including the Waterloo–Laurier BBA/BMath double degree."
+        "You can't sign up yourself. A teacher at your school has to order the contest by March 11.",
+        "If your school doesn't take part, CEMC says you can ask another local school to let you write with them.",
+        "A school that has never ordered CEMC contests needs an account first, and approval can take up to three weeks."
       ],
       steps:[
         {by:"2027-02-12", t:"Ask your math teacher to register you"},
@@ -519,9 +523,9 @@ h1{margin:0;font-stretch:108%;font-weight:820;font-size:clamp(1.9rem,4.4vw,3.1re
         {d:"2027-03-11",k:"deadline",t:"Ordering deadline for schools"},
         {d:"2027-04-06",k:"event",t:"Contest day in North America"}
       ],
-      why:"Over 25,000 students write it each year. It isn't required for admission, but a strong score shows the quantitative skill that finance and business programs want.",
+      why:"Over 25,000 students write it each year. It isn't required for admission, but Waterloo's Faculty of Math uses it for most entrance scholarships, including for the Waterloo–Laurier BBA/BMath double degree.",
       tip:"Many students write it in Grade 11 for practice, then again in Grade 12 when it counts most.",
-      src:{url:"https://cemc.uwaterloo.ca/contests/euclid",name:"cemc.uwaterloo.ca",kind:"organizer"}
+      src:{url:"https://cemc.uwaterloo.ca/contests/how-contests-work",name:"cemc.uwaterloo.ca",kind:"organizer"}
     },
     {
       id:"ihscc", short:"Ivey Case", name:"Ivey High School Case Competition", org:"Ivey Business School, Western University", type:"case",
@@ -550,25 +554,29 @@ h1{margin:0;font-stretch:108%;font-weight:820;font-size:clamp(1.9rem,4.4vw,3.1re
     },
     {
       id:"boardroom", short:"Boardroom", name:"The Boardroom", org:"Rotman Commerce, University of Toronto", type:"case",
-      grades:[9,10,11], lastGrade:11, gradeNote:"Canadian citizens only", free:false,
+      grades:[9,10,11], lastGrade:11, gradeNote:"Canadian citizens and permanent residents", free:false,
       cost:"Not listed",
       format:"Online first round in spring, then in-person rounds in the fall", where:"Online, then University of Toronto (virtual for teams outside the GTA)",
-      team:{min:3, max:4, extra:"or register alone as a free agent and be placed on a team"},
+      team:{min:3, max:4, extra:"from the same or different schools, or register alone as a free agent"},
       next:{d:"2027-04",label:"Registration opens in April 2027"},
       requires:[
-        "Only current Grade 9–11 students who are Canadian citizens can enter.",
+        "Open to current Grade 9–11 students who are Canadian citizens or permanent residents (2026 rules). Rotman's web page only mentions citizens, so confirm if you're a permanent resident.",
+        "Every team member registers themselves, using exactly the same team name.",
         "No team? Register as a free agent and you'll be placed on a team with others from your region.",
         "Round 1 gives you about 30 days to write a case proposal, so plan around exams."
       ],
       steps:[
         {by:"2026-12-04", t:"Fill in Rotman's Junior Outreach form to hear when registration opens"},
         {by:"2027-03-31", t:"Form your team ({team}), or plan to register as a free agent", est:true},
-        {by:"2027-04-15", t:"Register when it opens", est:true}
+        {by:"2027-04-27", t:"Every member registers themselves with the same team name", est:true}
       ],
       dates:[
         {d:"2027-04",k:"opens",t:"Registration opens"},
-        {d:"2027-06",k:"result",t:"Top 12 teams notified"},
-        {d:"2027-10",show:"Fall 2027",k:"event",t:"Rounds 2 and 3 at U of T (exact date not announced)"}
+        {d:"2027-04-27",k:"deadline",t:"Registration closes, based on 2026",est:true},
+        {d:"2027-05-01",k:"event",t:"Case released, based on 2026",est:true},
+        {d:"2027-06-01",k:"deadline",t:"Round 1 proposal due, based on 2026",est:true},
+        {d:"2027-06-19",k:"result",t:"Top 12 teams announced, based on 2026",est:true},
+        {d:"2027-09",show:"Sep 2027",k:"event",t:"Round 2 and finals at U of T, based on 2026 (Sep 19)",est:true}
       ],
       why:"Each member of the winning team gets a $2,500 Rotman Commerce scholarship, if they're admitted to and enrol in Rotman Commerce. Every finalist gets a $100 gift card.",
       tip:"Grade 11 students: this is your last year to enter, and the scholarship only pays out if you go to Rotman.",
@@ -577,13 +585,14 @@ h1{margin:0;font-stretch:108%;font-weight:820;font-size:clamp(1.9rem,4.4vw,3.1re
     {
       id:"wharton", short:"Wharton", name:"Wharton Global High School Investment Competition", org:"Wharton Global Youth Program, University of Pennsylvania", type:"invest",
       grades:[9,10,11], gradeNote:"Students in Grades 9–11 this year can enter next season (2027–28)", free:true,
-      cost:"Free. Finalists pay their own travel.",
+      cost:"Free. Finalists pay their own travel, or join the finale by video.",
       format:"Online portfolio simulation, with a finale in Philadelphia", where:"Open worldwide",
-      team:{min:4, max:6, extra:"registered by a teacher advisor at your school"},
+      team:{min:4, max:6, extra:"all from the same school, registered by a teacher advisor"},
       next:{d:"2027-08",label:"Next round expected ~Aug 2027",closed:true},
       requires:[
-        "A teacher from your school must be your advisor and register the team. Students can't register themselves, and a team is {team}.",
-        "Registration is open for only about a month, from mid-August to mid-September (based on 2026), so you need an advisor lined up before summer."
+        "A teacher at your school must be your advisor and register the team. Students can't register themselves, and a team is {team}.",
+        "Everyone on the team, and the advisor, must be from the same school. Wharton says there are no exceptions.",
+        "Registration is open for only about a month, from mid-August to mid-September (based on 2026), so line up an advisor before summer."
       ],
       steps:[
         {by:"2027-05-28", t:"Ask a teacher to be your advisor before school ends", est:true},
@@ -597,7 +606,7 @@ h1{margin:0;font-stretch:108%;font-weight:820;font-size:clamp(1.9rem,4.4vw,3.1re
       ],
       why:"A free global competition from Wharton. Your team manages a virtual portfolio for a real client case and defends its strategy.",
       tip:"Treat it as a school-year project: deliverables run from October to December, so pick teammates who'll stay committed.",
-      src:{url:"https://globalyouth.wharton.upenn.edu/competitions/investment-competition/",name:"globalyouth.wharton.upenn.edu",kind:"organizer"}
+      src:{url:"https://globalyouth.wharton.upenn.edu/competitions/investment-competition/faq/",name:"globalyouth.wharton.upenn.edu",kind:"organizer"}
     },
     {
       id:"slp", short:"Ivey SLP", name:"Ivey Summer Leadership Program", org:"Ivey Business School, Western University", type:"summer",
@@ -624,25 +633,28 @@ h1{margin:0;font-stretch:108%;font-weight:820;font-size:clamp(1.9rem,4.4vw,3.1re
       src:{url:"https://www.ivey.uwo.ca/summerleadership/",name:"ivey.uwo.ca",kind:"organizer"}
     },
     {
-      id:"ja", short:"JA Company", name:"JA Company Program", org:"Junior Achievement (regional offices in Ontario)", type:"venture",
-      grades:[9,10,11], free:false,
-      cost:"Often free, but Ontario costs aren't confirmed. Ask your regional office.",
-      format:"After school, about 18–20 weeks", where:"Regional JA offices across Ontario",
-      entry:"Sign up through your regional JA office",
-      next:{d:"2027-09",label:"Next intake expected ~Sep 2027",closed:true},
+      id:"ja", short:"JA Company", name:"JA Company Program", org:"Junior Achievement (JA Central Ontario, JA South Western Ontario and other regions)", type:"venture",
+      grades:[9,10,11], gradeNote:"Open to Grades 9–12, so this year's Grade 9–11 students can join next year", free:true,
+      cost:"Free. Each student buys a $5–$30 share in their team's company, and JA helps anyone who can't.",
+      format:"After school, 18 weekly meetings from November to April (about 3 hours a week)", where:"In person across Ontario, with some virtual groups",
+      team:{min:10, max:25, assigned:true},
+      next:{d:"2027-09",label:"2027–28 registration expected ~fall 2027",closed:true},
       requires:[
-        "Each region runs its own program and dates. Find your office through JA Canada's locator."
+        "You sign up yourself online, not through school. Spots are first come, first served, so register as soon as it opens.",
+        "Each region runs its own sign-up. JA Central Ontario's 2026–27 registration is closed, but its page has a form to be told when 2027–28 opens. JA South Western Ontario's page says its registration is open.",
+        "You must attend at least 80% of the 18 weekly meetings."
       ],
       steps:[
-        {by:"2026-12-11", t:"Ask your regional JA office whether a winter group has spots"},
-        {by:"2027-09-15", t:"Sign up for the fall intake", est:true}
+        {by:"2026-12-04", t:"Fill in JA Central Ontario's form to hear when 2027–28 registration opens (or check your region's page)"},
+        {by:"2027-09-15", t:"Register online as soon as registration opens", est:true}
       ],
       dates:[
-        {d:"2027-09",k:"opens",t:"Fall groups usually start between September and November",est:true}
+        {d:"2026-11",k:"event",t:"2026–27 program started (runs November to April)"},
+        {d:"2027-09",k:"opens",t:"2027–28 registration expected to open",est:true}
       ],
-      why:"You and classmates run a real company for a school year: raise money, make a product, sell it and report results. Real numbers make strong application material.",
+      why:"You and other students run a real company for a school year: raise money, make a product, sell it and report results. Real numbers make strong application material.",
       tip:"The role you take matters. Running finance or sales gives you specific results to talk about.",
-      src:{url:"https://jacan.org",name:"jacan.org",kind:"partial",note:"Ontario dates vary by region. Confirm with your local JA office."}
+      src:{url:"https://www.jacentralontario.org/company-program/",name:"jacentralontario.org",kind:"organizer"}
     }
   ];
 
@@ -663,8 +675,8 @@ h1{margin:0;font-stretch:108%;font-weight:820;font-size:clamp(1.9rem,4.4vw,3.1re
 
   /* Team sizes are stored once per listing (team:{min,max}) and every sentence uses
      the same numbers through the {team} token, so they can't contradict each other. */
-  function teamSize(t){ return t.min === 1 ? "up to " + t.max + " people, including you" : t.min + "–" + t.max + " students, including you"; }
-  function teamEntry(t){ return (t.min === 1 ? "On your own, or a team of up to " + t.max : "Team of " + t.min + "–" + t.max + " students") + (t.extra ? ", " + t.extra : ""); }
+  function teamSize(t){ return t.assigned ? "about " + t.min + "–" + t.max + " students" : t.min === 1 ? "up to " + t.max + " people, including you" : t.min + "–" + t.max + " students, including you"; }
+  function teamEntry(t){ if (t.assigned) return "Register yourself online. JA places you on a team of about " + t.min + "–" + t.max + " students."; return (t.min === 1 ? "On your own, or a team of up to " + t.max : "Team of " + t.min + "–" + t.max + " students") + (t.extra ? ", " + t.extra : ""); }
   DATA.forEach(function(o){
     function fill(str){ return o.team ? str.replace(/\{team\}/g, teamSize(o.team)) : str; }
     if (o.team) o.entry = teamEntry(o.team);

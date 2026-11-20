@@ -18,7 +18,7 @@ const isDate = s => /^\d{4}-\d{2}(-\d{2})?$/.test(s) && !isNaN(new Date(s.length
 const day = s => new Date(s.length === 7 ? s + "-15" : s);
 
 // Team sizes must only come from team:{min,max} via {team}. Hard-coded numbers drift.
-const TEAM_NUMBERS = /(?<!grades?\s)(\d+\s*[–-]\s*\d+|up to (\d+|two|three|four|five|six))\s+(teammates|students|members|people|friends|others)|team of \d|teams? of (two|three|four|five|six)/i;
+const TEAM_NUMBERS = /(?<!grades?\s)(\d+\s*[–-]\s*\d+|up to (\d+|two|three|four|five|six))\s+(teammates|students|members|people|friends|others)\b|team of \d|teams? of (two|three|four|five|six)/i;
 
 const ids = new Set();
 for (const o of DATA) {
