@@ -7,7 +7,7 @@
   var D = window.OB_DATA, C = window.OB_CORE;
 
   /* Stages ship in order. A feature stays hidden until its stage is built and tested. */
-  var FEATURES = { ask: true, season: true, subscribe: true, trail: false };
+  var FEATURES = { ask: true, season: true, subscribe: true, trail: true };
   var REPORT_EMAIL = null; /* set an address to show "Report a mistake" on every listing */
 
   var NOW = C.today();
@@ -24,7 +24,7 @@
     set: function (k, v) { try { localStorage.setItem("ob:" + k, JSON.stringify(v)); } catch (e) {} }
   };
   var state = {
-    grade: store.get("grade", null), filter: "all", allGrades: false,
+    grade: store.get("grade", null), filter: "all", allGrades: false, trailMine: false,
     picks: (store.get("picks", []) || []).filter(function (id) { return BY[id]; }),
     done: store.get("done", {}) || {}
   };
@@ -38,6 +38,7 @@
   function isPhone() { return !window.matchMedia("(min-width: 1100px)").matches; }
   function eligible(o) { return !state.grade || o.grades.indexOf(state.grade) >= 0; }
   function picked(id) { return state.picks.indexOf(id) >= 0; }
+  function orgShort(o) { return o.org.split(" (")[0].split(",")[0]; }
   function key(o, s) { return o.id + ":" + s.id; }
   function mine(s) { return s.who === "you" || !!s.ask; }
   function askChipClass(a) { return a.to === "friends" ? "friends" : (a.to === "parent" ? "parent" : "teacher"); }
@@ -91,23 +92,27 @@
     }
     var base = isOverlay(r) ? (page || "home") : (r.name === "parent" ? "parent" + location.search : r.name);
     if (!isOverlay(r)) { basePath = location.pathname + location.search; baseDepth = depth; }
-    if (base !== page) { page = base; renderPage(); window.scrollTo(0, 0); }
+    if (base !== page) {
+      var tabSwitch = (base === "home" && page === "trail") || (base === "trail" && page === "home"), y = window.scrollY;
+      page = base; renderPage(); window.scrollTo(0, tabSwitch ? y : 0);
+    }
     if (r.name === "listing") { openPanel(sheetHtml(BY[r.id]), BY[r.id]); document.title = BY[r.id].name + " · Opening Bell"; }
     else if (r.name === "ask") { var ob = BY[r.id]; openPanel(askHtml(ob, ob.asks[r.ask]), ob); document.title = ob.asks[r.ask].title + " · " + ob.short + " · Opening Bell"; }
-    else { closePanelNow(); document.title = page === "season" ? "Your season · Opening Bell" : /^parent/.test(page) ? "Your teen's season · Opening Bell" : "Opening Bell · Business competitions for Ontario high school students"; }
+    else { closePanelNow(); document.title = page === "season" ? "Your season · Opening Bell" : /^parent/.test(page) ? "Your teen's season · Opening Bell" : page === "trail" ? "The Trail · Opening Bell" : "Opening Bell · Business competitions for Ontario high school students"; }
   }
   function renderPage() {
     var app = $("#app");
     if (page === "season") { app.innerHTML = seasonPageHtml(); drawArt(); renderSeason(); return; }
     if (/^parent/.test(page)) { app.innerHTML = parentPageHtml(); drawArt(); return; }
-    app.innerHTML = homeHtml();
+    app.innerHTML = homeHtml(page === "trail" ? "trail" : "board");
     drawArt();
-    bindHome();
+    bindHome(page === "trail" ? "trail" : "board");
   }
   /* Something changed (a pick or a tick): repaint what shows it, keep the reader's place */
   function refresh() {
     updateNav();
     if (page === "home") { renderMoves(); renderBoard(); }
+    if (page === "trail") { renderMoves(); renderTrail(); }
     if (page === "season") renderSeason();
     var r = parseRoute(location.pathname), panel = $("#panel");
     if (panel.hidden) return;
@@ -174,20 +179,34 @@
     return '<section class="grade" aria-labelledby="gradeQ"><p id="gradeQ">What grade are you in?</p><div class="gbtns" role="group" aria-labelledby="gradeQ">' +
       [9, 10, 11, 12].map(function (g) { return '<button type="button" data-g="' + g + '" aria-pressed="' + (state.grade === g) + '">' + g + "</button>"; }).join("") + "</div></section>";
   }
-  function homeHtml() {
+  function homeHtml(view) {
+    var tabs = '<div class="tabs" role="group" aria-label="View">' +
+      '<a class="tab" href="/" data-nav' + (view === "board" ? ' aria-current="page"' : "") + ">The Board</a>" +
+      (FEATURES.trail ? '<a class="tab" href="/trail" data-nav' + (view === "trail" ? ' aria-current="page"' : "") + ">The Trail</a>" : "") + "</div>";
+    var body = view === "trail"
+      ? '<div class="filters" id="trailFilter" role="group" aria-label="Show on the trail"></div><div id="trail"></div>'
+      : '<div class="filters" id="filters" role="group" aria-label="Filter listings"></div><p class="scope" id="scope"></p><div class="board" id="board"></div>';
     return heroHtml() +
       '<main id="main"><div class="wrap">' + gradeHtml() + '<section aria-labelledby="movesH"><div class="sec"><h2 id="movesH">Your next moves</h2><span class="lab" id="movesSub"></span></div><div id="movesBox"></div></section></div>' +
       '<nav class="strip" id="strip" aria-label="Closing soon"></nav>' +
-      '<div class="wrap"><section aria-labelledby="boardH"><div class="sec"><h2 id="boardH">The Board</h2><span class="lab">Checked ' + esc(C.fmt(D.CHECKED)) + '</span></div><div class="filters" id="filters" role="group" aria-label="Filter listings"></div><p class="scope" id="scope"></p><div class="board" id="board"></div></section>' +
+      '<div class="wrap"><section aria-label="Listings" id="listings"><div class="sec tabsec">' + tabs + '<span class="lab">Checked ' + esc(C.fmt(D.CHECKED)) + "</span></div>" + body + "</section>" +
       aboutHtml() + "</div></main>";
   }
-  function bindHome() {
+  function bindHome(view) {
     $(".gbtns").addEventListener("click", function (e) {
       var b = e.target.closest("button[data-g]"); if (!b) return;
       state.grade = Number(b.dataset.g); store.set("grade", state.grade); state.allGrades = false;
       document.querySelectorAll(".gbtns button").forEach(function (x) { x.setAttribute("aria-pressed", x === b); });
-      renderMoves(); renderBoard();
+      renderMoves(); if (view === "trail") renderTrail(); else renderBoard();
     });
+    if (view === "trail") {
+      $("#trailFilter").addEventListener("click", function (e) {
+        var b = e.target.closest("button[data-tm]"); if (!b) return;
+        state.trailMine = b.dataset.tm === "mine"; renderTrail();
+      });
+      renderMoves(); renderStrip(); renderTrail();
+      return;
+    }
     $("#filters").addEventListener("click", function (e) {
       var b = e.target.closest("button[data-f]"); if (!b) return;
       state.filter = b.dataset.f; renderBoard();
@@ -196,6 +215,48 @@
       if (e.target.closest("[data-all]")) { state.allGrades = !state.allGrades; renderBoard(); }
     });
     renderMoves(); renderStrip(); renderBoard();
+  }
+
+  /* ---------- The Trail: the whole season as a path, one stop per listing ---------- */
+  function renderTrail() {
+    var mineOnly = state.trailMine && state.picks.length;
+    $("#trailFilter").innerHTML =
+      '<button type="button" class="chip" data-tm="all" aria-pressed="' + !mineOnly + '">' + (state.grade ? "Everything for Grade " + state.grade : "Everything") + "</button>" +
+      (state.picks.length ? '<button type="button" class="chip" data-tm="mine" aria-pressed="' + !!mineOnly + '">My season (' + state.picks.length + ")</button>" : "");
+    var list = L.filter(function (o) { return mineOnly ? picked(o.id) : eligible(o); });
+    var stops = list.map(function (o) {
+      var s = o._s;
+      if (s.key === "open") return { o: o, d: o.window.to, est: false, label: o.boardWhat, extra: "in " + C.plural(s.n, "day") };
+      return { o: o, d: o.next.d, est: !!o.next.est, label: s.key === "closed" ? "Next round opens" : "Opens", extra: "" };
+    }).sort(function (a, b) { return C.parse(a.d) - C.parse(b.d); });
+    var openN = list.filter(function (o) { return o._s.key === "open"; }).length;
+    var html = "", lastMon = "", side = 0, hereDone = false;
+    function month(d) { var m = C.MON[d.getMonth()]; return m + (d.getMonth() === 0 ? " " + d.getFullYear() : ""); }
+    function here() {
+      hereDone = true;
+      return '<div class="t-here"><canvas class="me" width="10" height="12" aria-hidden="true"></canvas><div class="bubble"><small>You are here · ' + esc(C.fmtShort(C.iso(NOW))) + "</small>" +
+        openN + (openN === 1 ? " thing is" : " things are") + " open right now</div></div>";
+    }
+    var nowMon = month(NOW);
+    html += '<div class="t-mon"><span>' + esc(nowMon) + "</span></div>"; lastMon = nowMon;
+    stops.forEach(function (x) {
+      var d = C.parse(x.d), m = month(d);
+      if (!hereDone && d >= NOW) html += here();
+      if (m !== lastMon) { html += '<div class="t-mon"><span>' + esc(m) + "</span></div>"; lastMon = m; }
+      var o = x.o, up = C.upcoming(o, NOW, state.done).filter(mine)[0], on = picked(o.id);
+      var when = (x.est ? "~" : "") + (C.isMonth(x.d) ? C.MON[d.getMonth()] + " " + d.getFullYear() : C.fmtShort(x.d));
+      html += '<a class="t-stop ' + (side++ % 2 ? "R" : "L") + " " + o._s.key + (on ? " on" : "") + '" href="/l/' + o.id + '" data-nav>' +
+        '<span class="t-node" aria-hidden="true">' + (on ? "✓" : o._s.key === "open" ? "!" : "") + "</span>" +
+        '<span class="t-card"><span class="t-top"><span class="tk ' + o._s.key + '">' + esc(o.tk) + '</span><span class="lab' + (o._s.urgent ? " u" : "") + '">' + esc(when + " · " + x.label + (x.extra ? " · " + x.extra : "")) + "</span>" +
+        (o.lastGrade && o.lastGrade === state.grade ? '<span class="last">Last year</span>' : "") + (on ? '<span class="act friends">In your season</span>' : "") + "</span>" +
+        "<b>" + esc(o.name) + "</b><small>" + esc(orgShort(o)) + " · " + esc(o.costShort.split(" · ")[0]) + "</small>" +
+        (up ? '<span class="t-next"><em>Next · by ' + esc(C.fmtShort(up.by, up.est)) + "</em> " + esc(up.t) + "</span>" : "") + "</span></a>";
+    });
+    if (!hereDone) html += here();
+    var end = state.grade === 11 ? "Grade 12 · application season" : state.grade === 12 ? "Graduation" : "Next school year";
+    html += '<div class="t-end"><span class="t-node end" aria-hidden="true">★</span><span>' + esc(end) + "</span></div>";
+    $("#trail").innerHTML = stops.length ? '<div class="trail">' + html + "</div>" : '<p class="empty">Nothing on your trail yet. Add listings to your season with + on the Board.</p>';
+    var me = $("#trail canvas.me"); if (me) drawSprite(me, STUDENT, { X: "#16193A", H: "#6B3E1E", F: "#F2C29B", B: "#F2715A", P: "#3B4A9C" });
   }
 
   /* Your next moves: from your season if you have picks, otherwise for your grade */
@@ -266,7 +327,7 @@
     var note = !eligible(o) ? " · Not for Grade " + state.grade : "";
     return '<div class="rw' + (selected ? " sel" : "") + (FEATURES.season ? " has-add" : "") + '" data-id="' + o.id + '"' + (!eligible(o) ? ' style="opacity:.6"' : "") + ">" +
       '<span class="tk ' + s.key + '">' + esc(o.tk) + "</span>" +
-      '<span class="nm"><a href="/l/' + o.id + '" data-nav>' + esc(o.name) + "</a>" + last + "<small>" + esc(o.org.split(",")[0]) + " · " + esc(o.costShort.split(" · ")[0]) + esc(note) + "</small></span>" +
+      '<span class="nm"><a href="/l/' + o.id + '" data-nav>' + esc(o.name) + "</a>" + last + "<small>" + esc(orgShort(o)) + " · " + esc(o.costShort.split(" · ")[0]) + esc(note) + "</small></span>" +
       nx + '<span class="win" aria-hidden="true"><span class="seg">' + seg(o) + '</span><span class="wl">' + wl + "</span></span>" + dy + addButton(o) + "</div>";
   }
   function renderBoard() {

@@ -326,3 +326,50 @@ details.more[open] summary::after{content:"▴"}
 .whatlist li{background:#fff;border:2px solid var(--ink);padding:10px 12px;font-size:14px}
 .whatlist a{color:var(--ink);text-decoration:none}
 .whatlist span{display:block;color:var(--muted);margin-top:2px}
+
+/* ---------- Stage 4: the Trail ---------- */
+.tabsec{align-items:center}
+.tabs{display:inline-flex;border:3px solid var(--ink);box-shadow:4px 4px 0 var(--ink);background:#fff}
+.tab{font-family:var(--display);font-size:24px;line-height:1;padding:7px 14px 4px;color:var(--ink);text-decoration:none}
+.tab + .tab{border-left:3px solid var(--ink)}
+.tab[aria-current="page"]{background:var(--ink);color:var(--gold)}
+.trail{position:relative;border:3px solid var(--ink);box-shadow:6px 6px 0 var(--ink);padding:16px 12px 22px;background-color:#F3FBEA;background-image:radial-gradient(#BFE3A1 2px,transparent 2.5px);background-size:22px 22px}
+.trail::before{content:"";position:absolute;top:0;bottom:0;left:27px;width:16px;background:repeating-linear-gradient(180deg,#E9C98B 0 10px,#D9B472 10px 12px);border-left:3px solid var(--ink);border-right:3px solid var(--ink)}
+.t-mon{position:relative;z-index:2;margin:6px 0 12px}
+.t-mon span{display:inline-block;font-family:var(--display);font-size:22px;line-height:1;background:var(--ink);color:var(--gold);padding:2px 10px 1px;border:3px solid var(--ink)}
+.t-here{position:relative;z-index:2;display:grid;grid-template-columns:44px minmax(0,1fr);gap:12px;align-items:center;margin:0 0 14px}
+.t-here canvas{width:40px;height:48px;image-rendering:pixelated;margin-left:-2px}
+.bubble{position:relative;font-family:var(--display);font-size:22px;line-height:1.05;background:var(--ink);color:#fff;padding:6px 10px 4px;width:max-content;max-width:100%}
+.bubble small{display:block;font-family:var(--label);font-size:9.5px;color:var(--gold);text-transform:uppercase}
+.bubble::before{content:"";position:absolute;left:-10px;top:14px;border:5px solid transparent;border-right:6px solid var(--ink);border-left:0}
+.t-stop{position:relative;z-index:2;display:grid;grid-template-columns:44px minmax(0,1fr);gap:12px;align-items:start;margin:0 0 14px;color:var(--ink);text-decoration:none}
+.t-node{width:30px;height:30px;margin:10px 0 0 5px;border:3px solid var(--ink);background:var(--gold);display:grid;place-items:center;font-family:var(--display);font-size:20px;line-height:1}
+.t-stop.expected .t-node,.t-stop.soon .t-node{background:#fff;border-style:dashed}
+.t-stop.closed .t-node{background:#D9D6E4}
+.t-stop.on .t-node{background:var(--mint);color:#fff;border-style:solid}
+.t-card{display:block;background:#fff;border:2px solid var(--ink);box-shadow:3px 3px 0 var(--ink);padding:10px 12px;min-width:0}
+.t-stop:hover .t-card{background:#FFFBF2}
+.t-stop.on .t-card{box-shadow:3px 3px 0 var(--mint)}
+.t-top{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+.t-top .tk{font-size:20px}
+.t-top .lab.u{color:var(--red)}
+.t-card b{display:block;margin-top:6px;font-size:15px;line-height:1.25}
+.t-card small{display:block;font-size:12px;color:var(--muted)}
+.t-next{display:block;margin-top:8px;padding-top:7px;border-top:2px dashed var(--rule);font-size:13px}
+.t-next em{font-style:normal;font-family:var(--label);font-size:9.5px;color:var(--gold-d);text-transform:uppercase;margin-right:4px}
+.t-end{position:relative;z-index:2;display:grid;grid-template-columns:44px minmax(0,1fr);gap:12px;align-items:center;margin-top:6px;font-family:var(--label);font-size:10.5px;color:var(--muted);text-transform:uppercase}
+.t-node.end{margin-top:0;background:var(--mint);color:#fff}
+@media (min-width:900px){
+  .trail{padding:22px 24px 28px}
+  .trail::before{left:calc(50% - 8px)}
+  .t-mon{text-align:center}
+  .t-here,.t-stop,.t-end{grid-template-columns:minmax(0,1fr) 60px minmax(0,1fr);gap:18px}
+  .t-here canvas,.t-end .t-node{grid-column:2;justify-self:center;margin:0}
+  .t-here .bubble,.t-end > span:last-child{grid-column:3}
+  .t-stop .t-node{grid-column:2;grid-row:1;justify-self:center;margin:12px 0 0}
+  .t-stop.L .t-card{grid-column:1;grid-row:1;justify-self:end;width:100%;max-width:440px}
+  .t-stop.R .t-card{grid-column:3;grid-row:1;max-width:440px}
+}
+@media (min-width:1100px){ body.panel-open .t-here,body.panel-open .t-stop,body.panel-open .t-end{grid-template-columns:44px minmax(0,1fr)} body.panel-open .trail::before{left:27px} body.panel-open .t-mon{text-align:left}
+  body.panel-open .t-here canvas,body.panel-open .t-end .t-node,body.panel-open .t-stop .t-node{grid-column:1;justify-self:start;margin-left:5px}
+  body.panel-open .t-here .bubble,body.panel-open .t-end > span:last-child,body.panel-open .t-stop.L .t-card,body.panel-open .t-stop.R .t-card{grid-column:2;justify-self:stretch;max-width:none} }
