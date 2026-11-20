@@ -83,7 +83,8 @@ for (const o of DATA.LISTINGS) {
     if (!used.has(k)) err(o, `ask "${k}" isn't used by any step`);
     if (!ASK_TO.has(a.to)) err(o, `ask "${k}": unknown recipient "${a.to}"`);
     if (!/\{link\}/.test(a.msg || "")) err(o, `ask "${k}": message must include {link}`);
-    for (const t of [a.title, a.hint, a.msg]) if (TYPED_DATE.test(t || "")) err(o, `ask "${k}": typed date in "${(t.match(TYPED_DATE) || [])[0]}". Use {deadline} or {opens}`);
+    if ((a.to === "teacher" || a.to === "parent") && !a.subject) err(o, `ask "${k}": asks to a ${a.to} need an email subject`);
+    for (const t of [a.title, a.subject, a.hint, a.msg]) if (TYPED_DATE.test(t || "")) err(o, `ask "${k}": typed date in "${(t.match(TYPED_DATE) || [])[0]}". Use {deadline} or {opens}`);
   }
 
   // Window and status

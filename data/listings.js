@@ -4,6 +4,7 @@
  * - Every fact needs a receipt in data/receipts.json: the organizer's exact sentence and link.
  * - Team sizes live only in team:{min,max}. Write {team} in any sentence that needs the size.
  * - Ask messages use tokens instead of typed dates: {deadline}, {opens}, {team}, {link}, {name}.
+ *   Asks to a teacher or parent need an email subject.
  *   [Square brackets] mark blanks the student fills in.
  * - "by" dates on steps are our advice; steps marked official:true must match a listed deadline.
  * - who: you | teacher | advisor | parent | friends | school | org
@@ -50,7 +51,7 @@
         ],
         asks: {
           reference: {
-            to: "teacher", title: "Ask for a reference",
+            to: "teacher", title: "Ask for a reference", subject: "Reference for my Shad 2027 application",
             hint: "Ask in person first if you can, then send this so they have the details in writing. Shad's own advice is to ask early.",
             msg: "Hi [Mr./Ms. ______],\n\nI'm applying to Shad 2027, and the application asks for a reference. Would you be willing to be my reference?\n\nApplications close {deadline}, so I wanted to ask you early.\n\nThank you,\n[Your name]\n\nAbout Shad: {link}"
           }
@@ -95,7 +96,7 @@
             msg: "Want to do the Diamond Challenge with me? It's a pitch competition for high school students aged 14–18. Teams are {team}, plus an adult advisor. Submissions are due {deadline}.\n\nDetails: {link}"
           },
           advisor: {
-            to: "parent", title: "Ask an adult to be your advisor",
+            to: "parent", title: "Ask an adult to be your advisor", subject: "Can you be our Diamond Challenge advisor?",
             hint: "The advisor must be 21 or older. Their contact details go on your submission.",
             msg: "Hi [Mom/Dad/______],\n\nI'm entering the Diamond Challenge with a team, and every team needs an adult advisor aged 21 or older, listed with contact details on our submission. Would you be our advisor?\n\nOur submission is due {deadline}.\n\nDetails: {link}"
           }
@@ -136,7 +137,7 @@
         ],
         asks: {
           chapter: {
-            to: "teacher", title: "Ask about a DECA chapter",
+            to: "teacher", title: "Ask about a DECA chapter", subject: "DECA at our school",
             hint: "If your school has no chapter, a teacher has to register one with Ontario DECA before students can join.",
             msg: "Hi [Mr./Ms. ______],\n\nDoes our school have a DECA chapter? I'd like to join next year. If we don't have one, would you consider starting one? A teacher registers the chapter with Ontario DECA each year.\n\nThank you,\n[Your name]\n\nAbout DECA: {link}"
           }
@@ -217,7 +218,7 @@
         ],
         asks: {
           register: {
-            to: "teacher", title: "Ask to write the Euclid",
+            to: "teacher", title: "Ask to write the Euclid", subject: "Writing the Euclid Mathematics Contest",
             hint: "Ask your math teacher or head of math. If your school has never ordered CEMC contests, setting up an account can take up to three weeks.",
             msg: "Hi [Mr./Ms. ______],\n\nI'd like to write the Euclid Mathematics Contest this year. Could you register me? Schools have to order it by {deadline}.\n\nThank you,\n[Your name]\n\nDetails: {link}"
           }
@@ -319,7 +320,7 @@
         ],
         asks: {
           advisor: {
-            to: "teacher", title: "Ask a teacher to be your advisor",
+            to: "teacher", title: "Ask a teacher to be your advisor", subject: "Advisor for the Wharton investment competition",
             hint: "Advisors must teach at your school, and they can't be paid.",
             msg: "Hi [Mr./Ms. ______],\n\nWould you be the teacher advisor for a team from our school in the Wharton Global High School Investment Competition next year? It's free. Teams are {team}, and the advisor registers the team. Based on this year, registration runs from mid-August to mid-September.\n\nThank you,\n[Your name]\n\nDetails: {link}"
           },

@@ -1,4 +1,4 @@
-/* Opening Bell: the Board, the details sheet, and (as each stage ships) the Ask, My Season,
+/* Opening Bell: the Board, the details sheet, the Ask, My Season, and (as each stage ships)
  * the parent view and the Trail. No framework and no build step. All listing facts come from
  * data/listings.js; all date and wording logic comes from lib/core.js.
  */
@@ -7,7 +7,7 @@
   var D = window.OB_DATA, C = window.OB_CORE;
 
   /* Stages ship in order. A feature stays hidden until its stage is built and tested. */
-  var FEATURES = { ask: false, season: false, subscribe: false, trail: false };
+  var FEATURES = { ask: true, season: true, subscribe: false, trail: false };
   var REPORT_EMAIL = null; /* set an address to show "Report a mistake" on every listing */
 
   var NOW = C.today();
@@ -23,63 +23,119 @@
     get: function (k, d) { try { var v = localStorage.getItem("ob:" + k); return v == null ? d : JSON.parse(v); } catch (e) { return d; } },
     set: function (k, v) { try { localStorage.setItem("ob:" + k, JSON.stringify(v)); } catch (e) {} }
   };
-  var state = { grade: store.get("grade", null), filter: "all", allGrades: false, done: store.get("done", {}) };
+  var state = {
+    grade: store.get("grade", null), filter: "all", allGrades: false,
+    picks: (store.get("picks", []) || []).filter(function (id) { return BY[id]; }),
+    done: store.get("done", {}) || {}
+  };
   if ([9, 10, 11, 12].indexOf(state.grade) < 0) state.grade = null;
   var ICON = { ok: "✓", warn: "!", no: "✕" };
   var WHO = { you: "You", teacher: "Teacher", advisor: "Advisor", parent: "Parent", friends: "Friends", school: "Your school" };
   var ASK_CHIP = { teacher: "Ask a teacher", parent: "Ask an adult", friends: "Invite friends", counsellor: "Ask a counsellor" };
+  var ASK_TO = { teacher: "A teacher", parent: "A parent or other adult", friends: "Friends", counsellor: "Your counsellor" };
   var toastTimer;
   function toast(msg) { var t = $("#toast"); t.textContent = msg; t.hidden = false; clearTimeout(toastTimer); toastTimer = setTimeout(function () { t.hidden = true; }, 4200); }
   function isPhone() { return !window.matchMedia("(min-width: 1100px)").matches; }
   function eligible(o) { return !state.grade || o.grades.indexOf(state.grade) >= 0; }
+  function picked(id) { return state.picks.indexOf(id) >= 0; }
+  function key(o, s) { return o.id + ":" + s.id; }
+  function mine(s) { return s.who === "you" || !!s.ask; }
+  function askChipClass(a) { return a.to === "friends" ? "friends" : (a.to === "parent" ? "parent" : "teacher"); }
   function whoChip(o, s) {
-    if (s.ask && o.asks[s.ask]) return '<span class="act ' + esc(o.asks[s.ask].to === "parent" ? "parent" : o.asks[s.ask].to) + '">' + esc(ASK_CHIP[o.asks[s.ask].to]) + "</span>";
+    if (s.ask && o.asks[s.ask]) return '<span class="act ' + askChipClass(o.asks[s.ask]) + '">' + esc(ASK_CHIP[o.asks[s.ask].to]) + "</span>";
     return '<span class="act ' + esc(s.who) + '">' + esc(s.who === "org" ? o.short : WHO[s.who]) + "</span>";
   }
   function dueLabel(o, s) {
     var d = C.fmtShort(s.by, s.est).toUpperCase();
     if (s.official) return '<span class="dt off">' + d + " · Official deadline</span>";
-    return '<span class="dt">' + (s.who === "you" || s.ask ? "Do by " : "By ") + d + "</span>";
+    return '<span class="dt">' + (mine(s) ? "Do by " : "By ") + d + "</span>";
   }
+  function askButton(o, s, small) {
+    if (!FEATURES.ask || !s.ask || !o.asks[s.ask]) return "";
+    return '<a class="btn ' + (small ? "sm " : "") + 'gold" href="/l/' + o.id + "/ask/" + s.ask + '" data-nav>' + (o.asks[s.ask].to === "friends" ? "Invite" : "✉ Message") + "</a>";
+  }
+  function openButton(s) { return s.href ? '<a class="btn sm" href="' + esc(s.href) + '" target="_blank" rel="noopener">Open ↗</a>' : ""; }
 
-  /* ---------- Routing: real paths, so every listing has a shareable link ---------- */
+  /* ---------- Routing: real paths, so every listing and every ask has a shareable link ---------- */
   function parseRoute(path) {
     var m;
-    if ((m = /^\/l\/([a-z0-9-]+)\/ask\/([a-z0-9-]+)\/?$/.exec(path))) return { name: "ask", id: m[1], ask: m[2] };
-    if ((m = /^\/l\/([a-z0-9-]+)\/?$/.exec(path))) return { name: "listing", id: m[1] };
+    if ((m = /^\/l\/([a-z0-9-]+)\/ask\/([a-z0-9-]+)\/?$/.exec(path)) && FEATURES.ask) return { name: "ask", id: m[1], ask: m[2] };
+    if ((m = /^\/l\/([a-z0-9-]+)(\/.*)?$/.exec(path))) return { name: "listing", id: m[1] };
     if (path === "/season" && FEATURES.season) return { name: "season" };
     if (path === "/parent" && FEATURES.subscribe) return { name: "parent" };
     if (path === "/trail" && FEATURES.trail) return { name: "trail" };
     return { name: "home" };
   }
-  var page = null, basePath = "/", inAppNav = false, lastFocus = null;
+  var page = null, basePath = "/", depth = 0, baseDepth = 0, lastFocus = null;
+  history.replaceState({ d: 0 }, "", location.pathname + location.search);
   function go(path, replace) {
-    if (replace) history.replaceState({}, "", path); else { history.pushState({ app: true }, "", path); inAppNav = true; }
+    if (replace) history.replaceState({ d: depth }, "", path); else { depth++; history.pushState({ d: depth }, "", path); }
     render();
   }
   document.addEventListener("click", function (e) {
     var a = e.target.closest("a[data-nav]");
     if (!a || e.defaultPrevented || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button) return;
     e.preventDefault();
-    if (/^\/l\//.test(a.getAttribute("href"))) lastFocus = a;
+    if (/^\/l\//.test(a.getAttribute("href")) && $("#panel").hidden) lastFocus = a;
     go(a.getAttribute("href"));
   });
-  window.addEventListener("popstate", function () { render(); });
+  window.addEventListener("popstate", function (e) { depth = (e.state && e.state.d) || 0; render(); });
 
+  function isOverlay(r) { return r.name === "listing" || r.name === "ask"; }
   function render() {
     var r = parseRoute(location.pathname);
-    if ((r.name === "listing" || r.name === "ask") && !BY[r.id]) { history.replaceState({}, "", "/"); r = { name: "home" }; }
-    var base = (r.name === "listing" || r.name === "ask") ? (page || "home") : r.name;
-    if (r.name !== "listing" && r.name !== "ask") basePath = location.pathname + location.search;
+    if (isOverlay(r) && !BY[r.id]) { history.replaceState({ d: depth }, "", "/"); r = { name: "home" }; }
+    if (r.name === "ask") {
+      var o = BY[r.id], a = o.asks[r.ask], step = o.steps.filter(function (s) { return s.ask === r.ask; })[0];
+      if (!a || !step) { history.replaceState({ d: depth }, "", "/l/" + r.id); r = { name: "listing", id: r.id }; }
+    }
+    var base = isOverlay(r) ? (page || "home") : r.name;
+    if (!isOverlay(r)) { basePath = location.pathname + location.search; baseDepth = depth; }
     if (base !== page) { page = base; renderPage(); window.scrollTo(0, 0); }
     if (r.name === "listing") { openPanel(sheetHtml(BY[r.id]), BY[r.id]); document.title = BY[r.id].name + " · Opening Bell"; }
-    else { closePanelNow(); document.title = "Opening Bell · Business competitions for Ontario high school students"; }
+    else if (r.name === "ask") { var ob = BY[r.id]; openPanel(askHtml(ob, ob.asks[r.ask]), ob); document.title = ob.asks[r.ask].title + " · " + ob.short + " · Opening Bell"; }
+    else { closePanelNow(); document.title = page === "season" ? "Your season · Opening Bell" : "Opening Bell · Business competitions for Ontario high school students"; }
   }
   function renderPage() {
     var app = $("#app");
+    if (page === "season") { app.innerHTML = seasonPageHtml(); drawArt(); renderSeason(); return; }
     app.innerHTML = homeHtml();
     drawArt();
     bindHome();
+  }
+  /* Something changed (a pick or a tick): repaint what shows it, keep the reader's place */
+  function refresh() {
+    updateNav();
+    if (page === "home") { renderMoves(); renderBoard(); }
+    if (page === "season") renderSeason();
+    var r = parseRoute(location.pathname), panel = $("#panel");
+    if (panel.hidden) return;
+    if (r.name === "listing") repaintPanel(sheetHtml(BY[r.id]));
+    if (r.name === "ask") {
+      var o = BY[r.id], st = o.steps.filter(function (s) { return s.ask === r.ask; })[0], b = $("[data-done]", panel);
+      if (b && st) { var done = !!state.done[key(o, st)]; b.setAttribute("aria-pressed", done); $(".box", b).textContent = done ? "✓" : ""; $("b", b).textContent = done ? "Done" : "Mark as done"; }
+    }
+  }
+  function repaintPanel(html) {
+    var panel = $("#panel"), body = $(".sh-body", panel), top = body ? body.scrollTop : 0;
+    var f = document.activeElement, fsel = f && f.dataset && (f.dataset.pick ? '[data-pick="' + f.dataset.pick + '"]' : f.dataset.done ? '[data-done="' + f.dataset.done + '"]' : null);
+    panel.innerHTML = html;
+    body = $(".sh-body", panel); if (body) body.scrollTop = top;
+    if (fsel && $(fsel, panel)) $(fsel, panel).focus({ preventScroll: true });
+  }
+
+  /* ---------- Picks and ticks (saved only in this browser) ---------- */
+  function togglePick(id) {
+    var o = BY[id], i = state.picks.indexOf(id);
+    if (i >= 0) { state.picks.splice(i, 1); toast("Removed " + o.short + " from your season."); }
+    else { state.picks.push(id); toast("Added " + o.short + " to your season. Your steps are in My Season."); }
+    store.set("picks", state.picks);
+    refresh();
+  }
+  function toggleDone(k) {
+    if (state.done[k]) delete state.done[k]; else state.done[k] = true;
+    store.set("done", state.done);
+    refresh();
   }
 
   /* ---------- Pixel art ---------- */
@@ -88,10 +144,10 @@
   function drawArt() {
     document.querySelectorAll("canvas.bell").forEach(function (c) { if (!c.dataset.drawn) { drawSprite(c, BELL, { X: "#16193A", Y: "#FFC23D", H: "#FFF1B8", C: "#16193A" }); c.dataset.drawn = 1; } });
     var cv = $("canvas.sky"); if (!cv) return;
-    var host = cv.parentNode, wide = window.innerWidth >= 900, px = wide ? 3 : 2.44;
+    var host = cv.parentNode, wide = window.innerWidth >= 900, small = host.classList.contains("sm"), px = wide ? 3 : 2.44;
     artWidth = host.clientWidth;
     cv.width = Math.max(1, Math.round(host.clientWidth / px)); cv.height = Math.max(1, Math.round(host.clientHeight / px));
-    drawSkyline(cv, { seed: 11, sunX: 0.78, sunY: 0.62, sunR: wide ? 14 : 9, towerX: wide ? 0.66 : 0.3, heightScale: wide ? 0.72 : 1,
+    drawSkyline(cv, { seed: 11, sunX: 0.78, sunY: 0.62, sunR: wide ? 14 : 9, towerX: wide ? 0.66 : (small ? 0.86 : 0.3), heightScale: small ? 0.5 : (wide ? 0.72 : 1),
       clouds: [[0.06, 0.18, 26], [0.55, 0.12, 30], [0.82, 0.3, 20]], palette: SUNRISE });
   }
   var resizeTimer;
@@ -100,13 +156,19 @@
     resizeTimer = setTimeout(function () { var cv = $("canvas.sky"); if (cv && cv.parentNode.clientWidth !== artWidth) drawArt(); }, 150);
   });
 
-  /* ---------- Home ---------- */
+  /* ---------- Header ---------- */
+  function navHtml(back) {
+    return '<nav class="nav" aria-label="Main"><a class="logo" href="/" data-nav><canvas class="bell" width="14" height="12" aria-hidden="true"></canvas>Opening Bell</a>' +
+      '<div class="nav-r">' + (back ? '<a class="navchip" href="/" data-nav>← The Board</a>' : '<span class="navchip wide-only">Ontario · Business</span>') +
+      (FEATURES.season && !back ? '<a class="navchip" id="seasonChip" href="/season" data-nav>My season<b>' + state.picks.length + "</b></a>" : "") + "</div></nav>";
+  }
+  function updateNav() { var c = $("#seasonChip b"); if (c) c.textContent = state.picks.length; }
   function heroHtml() {
-    return '<header class="hero"><canvas class="sky" aria-hidden="true"></canvas><div class="hero-in wrap">' +
-      '<nav class="nav" aria-label="Main"><a class="logo" href="/" data-nav><canvas class="bell" width="14" height="12" aria-hidden="true"></canvas>Opening Bell</a>' +
-      '<div class="nav-r"><span class="navchip">Ontario · Business</span></div></nav>' +
+    return '<header class="hero"><canvas class="sky" aria-hidden="true"></canvas><div class="hero-in wrap">' + navHtml(false) +
       '<p class="tag">' + esc(D.SEASON) + " season</p><h1>Know what to do this week.</h1></div></header>";
   }
+
+  /* ---------- Home ---------- */
   function gradeHtml() {
     return '<section class="grade" aria-labelledby="gradeQ"><p id="gradeQ">What grade are you in?</p><div class="gbtns" role="group" aria-labelledby="gradeQ">' +
       [9, 10, 11, 12].map(function (g) { return '<button type="button" data-g="' + g + '" aria-pressed="' + (state.grade === g) + '">' + g + "</button>"; }).join("") + "</div></section>";
@@ -135,38 +197,41 @@
     renderMoves(); renderStrip(); renderBoard();
   }
 
-  /* Your next moves: the next step of each listing for your grade, soonest first */
+  /* Your next moves: from your season if you have picks, otherwise for your grade */
   function nextMoves(limit) {
+    var src = state.picks.length ? state.picks.map(function (id) { return BY[id]; }) : L.filter(eligible);
     var all = [];
-    L.forEach(function (o) {
-      if (!eligible(o)) return;
-      var up = C.upcoming(o, NOW, state.done);
+    src.forEach(function (o) {
+      var up = C.upcoming(o, NOW, state.done).filter(mine);
       if (up.length) all.push({ o: o, s: up[0], d: C.parse(up[0].by) });
     });
     all.sort(function (a, b) { return a.d - b.d; });
     return all.slice(0, limit);
   }
+  function whenBox(s) {
+    var n = C.days(NOW, C.parse(s.by)), d = C.parse(s.by), month = C.isMonth(s.by), late = C.endOf(s.by) < NOW;
+    return '<div class="when' + ((n <= 7 && !s.est) || late ? " urgent" : "") + '"><small>' + (late ? "Overdue" : "Do by") + "</small><b>" + (month ? "~" : d.getDate()) + "</b><small>" + C.MON[d.getMonth()] + "</small></div>";
+  }
   function moveHtml(m) {
-    var o = m.o, s = m.s, n = C.days(NOW, C.parse(s.by)), d = C.parse(s.by), month = C.isMonth(s.by);
-    var urgent = n <= 7 && !s.est;
-    var when = '<div class="when' + (urgent ? " urgent" : "") + '"><small>Do by</small><b>' + (month ? "~" : d.getDate()) + "</b><small>" + C.MON[d.getMonth()] + "</small></div>";
+    var o = m.o, s = m.s;
     var acts = (o.lastGrade && o.lastGrade === state.grade ? '<span class="last">Last year you can</span>' : "") +
-      (FEATURES.ask && s.ask ? '<a class="btn sm gold" href="/l/' + o.id + "/ask/" + s.ask + '" data-nav>' + (o.asks[s.ask].to === "friends" ? "Invite" : "✉ Message") + "</a>" : "") +
-      (s.href ? '<a class="btn sm" href="' + esc(s.href) + '" target="_blank" rel="noopener">Open ↗</a>' : "") +
-      '<a class="btn sm" href="/l/' + o.id + '" data-nav>Details</a>';
-    return '<li class="move">' + when + '<div><h3>' + esc(s.t) + "</h3><p>" + esc(o.name) + " · " + esc(o._s.key === "open" ? o._s.text : o._s.pill) + "</p>" +
+      askButton(o, s, true) + openButton(s) + '<a class="btn sm" href="/l/' + o.id + '" data-nav>Details</a>';
+    return '<li class="move">' + whenBox(s) + '<div><h3>' + esc(s.t) + "</h3><p>" + esc(o.name) + " · " + esc(o._s.key === "open" ? o._s.text : o._s.pill) + "</p>" +
       '<div class="mv-acts">' + acts + "</div></div></li>";
   }
   function renderMoves() {
-    var box = $("#movesBox"), sub = $("#movesSub");
-    if (!state.grade) {
+    var box = $("#movesBox"), sub = $("#movesSub"), today = C.fmtShort(C.iso(NOW));
+    if (!state.grade && !state.picks.length) {
       sub.textContent = "";
       box.innerHTML = '<p class="empty">Pick your grade above. You\'ll see the next thing to do for each competition and program, with the date to do it by.</p>';
       return;
     }
-    sub.textContent = "Grade " + state.grade + " · " + C.fmtShort(C.iso(NOW));
+    sub.textContent = (state.picks.length ? "From your season" : "Grade " + state.grade) + " · " + today;
     var ms = nextMoves(3);
-    box.innerHTML = ms.length ? '<ol class="moves">' + ms.map(moveHtml).join("") + "</ol>" : '<p class="empty">Nothing due right now. Check the Board for what opens next.</p>';
+    box.innerHTML = (ms.length ? '<ol class="moves">' + ms.map(moveHtml).join("") + "</ol>" : '<p class="empty">Nothing due right now. Check the Board for what opens next.</p>') +
+      (FEATURES.season ? '<p class="after">' + (state.picks.length
+        ? '<a href="/season" data-nav>See your whole season →</a>'
+        : "Tap <b>+</b> on any listing to add it to your season and get a week-by-week plan.") + "</p>" : "");
   }
   function renderStrip() {
     var open = L.filter(function (o) { return o._s.key === "open"; }).sort(function (a, b) { return a._s.n - b._s.n; });
@@ -184,8 +249,13 @@
     for (var j = 0; j < n; j++) out += j < f ? '<i class="f"></i>' : (j === f ? '<i class="' + (o._s.urgent ? "u" : "n") + '"></i>' : "<i></i>");
     return out;
   }
+  function addButton(o) {
+    if (!FEATURES.season) return "";
+    var on = picked(o.id);
+    return '<button type="button" class="add' + (on ? " on" : "") + '" data-pick="' + o.id + '" aria-pressed="' + on + '" aria-label="' + (on ? "Remove " : "Add ") + esc(o.name) + (on ? " from" : " to") + ' my season">' + (on ? "✓" : "+") + "</button>";
+  }
   function rowHtml(o, selected) {
-    var s = o._s, up = C.upcoming(o, NOW, state.done)[0];
+    var s = o._s, up = C.upcoming(o, NOW, state.done).filter(mine)[0];
     var dy;
     if (s.key === "open") dy = '<span class="dy' + (s.urgent ? " u" : "") + '"><b>' + s.n + "</b><small>Days left</small></span>";
     else { var d = C.parse(o.next.d); dy = '<span class="dy s"><b>' + (o.next.est ? "~" : "") + C.MON[d.getMonth()] + "</b><small>" + (s.key === "closed" ? "Next round" : "Opens") + "</small></span>"; }
@@ -193,10 +263,10 @@
     var last = o.lastGrade && o.lastGrade === state.grade ? '<span class="last">Last year</span>' : "";
     var nx = up ? '<span class="nx"><em>Next · by ' + esc(C.fmtShort(up.by, up.est)) + "</em> " + esc(up.t) + "</span>" : '<span class="nx"><em>Next</em> Check the organizer\'s page</span>';
     var note = !eligible(o) ? " · Not for Grade " + state.grade : "";
-    return '<div class="rw' + (selected ? " sel" : "") + '" data-id="' + o.id + '"' + (!eligible(o) ? ' style="opacity:.6"' : "") + ">" +
+    return '<div class="rw' + (selected ? " sel" : "") + (FEATURES.season ? " has-add" : "") + '" data-id="' + o.id + '"' + (!eligible(o) ? ' style="opacity:.6"' : "") + ">" +
       '<span class="tk ' + s.key + '">' + esc(o.tk) + "</span>" +
       '<span class="nm"><a href="/l/' + o.id + '" data-nav>' + esc(o.name) + "</a>" + last + "<small>" + esc(o.org.split(",")[0]) + " · " + esc(o.costShort.split(" · ")[0]) + esc(note) + "</small></span>" +
-      nx + '<span class="win" aria-hidden="true"><span class="seg">' + seg(o) + '</span><span class="wl">' + wl + "</span></span>" + dy + "</div>";
+      nx + '<span class="win" aria-hidden="true"><span class="seg">' + seg(o) + '</span><span class="wl">' + wl + "</span></span>" + dy + addButton(o) + "</div>";
   }
   function renderBoard() {
     var types = D.TYPES.filter(function (t) { return L.some(function (o) { return o.type === t[0]; }); });
@@ -230,23 +300,20 @@
     return '<div class="about">' +
       '<section aria-labelledby="whyH"><h2 id="whyH">Why this exists</h2><p>When I applied to business school, grades were nearly all that mattered. That has changed. Programs like Ivey, Rotman, Queen\'s and Waterloo now look closely at what you\'ve done outside class.</p><p>The opportunities exist, but the dates are scattered and the important steps are buried. This site puts them in one place, for the students who are where I was.</p></section>' +
       '<section aria-labelledby="checkH"><h2 id="checkH">How we check facts</h2><p>Every fact here is quoted from the organizer\'s own page. Open any listing and tap "See the receipts" to read the exact sentences and where they came from.</p><p>A script re-reads those pages to catch changes. Dates marked ~ are our estimates from past years, and "do by" dates are our advice.</p></section>' +
-      '<section aria-labelledby="privH"><h2 id="privH">Your privacy</h2><p>No accounts, no email, no tracking cookies. Your grade is saved only in your own browser.</p><p>A calendar file is made on your device; nothing about you is sent to us.</p></section>' +
+      '<section aria-labelledby="privH"><h2 id="privH">Your privacy</h2><p>No accounts, no email, no tracking cookies. Your grade, your season and your ticks are saved only in your own browser.</p><p>Messages and calendar files are made on your device; nothing about you is sent to us.</p></section>' +
       '</div><footer class="foot"><p>Grades mean your grade in the ' + esc(D.SEASON) + ' school year. For next year\'s rounds, we list the grades that will still be eligible when they open.</p><p>Always confirm details with the organizer before you apply. Opening Bell is independent and isn\'t affiliated with any organizer listed.</p></footer>';
   }
 
   /* ---------- Details sheet ---------- */
   function sheetHtml(o) {
-    var s = o._s, gr = C.gradeRow(o, state.grade, s);
+    var s = o._s, gr = C.gradeRow(o, state.grade, s), on = picked(o.id);
     var rows = (gr ? [gr] : []).concat(o.can);
     var can = rows.map(function (c) { return '<div class="c"><span class="ck ' + c.k + '" aria-hidden="true">' + ICON[c.k] + '</span><div><b>' + esc(c.t) + "</b>" + (c.s ? "<small>" + esc(c.s) + "</small>" : "") + "</div></div>"; }).join("");
     var steps = o.steps.map(function (st, i) {
-      var past = C.endOf(st.by) < NOW;
-      var go = "";
-      if (FEATURES.ask && st.ask) go += '<a class="btn sm gold" href="/l/' + o.id + "/ask/" + st.ask + '" data-nav>' + (o.asks[st.ask].to === "friends" ? "Invite" : "✉ Message") + "</a>";
-      if (st.href) go += '<a class="btn sm" href="' + esc(st.href) + '" target="_blank" rel="noopener">Open ↗</a>';
-      return '<li class="' + (past ? "past" : "") + '"><span class="n">' + (i + 1) + "</span><div><b>" + esc(st.t) + "</b>" +
+      var past = C.endOf(st.by) < NOW, done = !!state.done[key(o, st)];
+      return '<li class="' + (past || done ? "past" : "") + '"><span class="n">' + (done ? "✓" : i + 1) + "</span><div><b>" + esc(st.t) + "</b>" +
         '<div class="meta">' + whoChip(o, st) + dueLabel(o, st) + "</div>" + (st.note ? '<span class="note">' + esc(st.note) + "</span>" : "") +
-        '</div><div class="go">' + go + "</div></li>";
+        '</div><div class="go">' + askButton(o, st, true) + openButton(st) + "</div></li>";
     }).join("");
     var kd = o.dates.map(function (x) {
       var past = C.endOf(x.d) < NOW;
@@ -264,16 +331,100 @@
         '<details class="more"><summary>Cost, format and key dates</summary><dl class="facts">' +
           "<dt>Cost</dt><dd>" + esc(o.cost) + (o.aid ? '<span class="aid">' + esc(o.aid) + "</span>" : "") + "</dd>" +
           "<dt>Format</dt><dd>" + esc(o.format) + "</dd><dt>Where</dt><dd>" + esc(o.where) + "</dd><dt>To enter</dt><dd>" + esc(o.entry) + "</dd></dl>" +
-          '<ol class="kd">' + kd + "</ol></details>" +
+          '<ol class="kd">' + kd + '</ol><p class="calrow"><button type="button" class="linkbtn" data-cal="' + o.id + '">Download these dates to your calendar</button></p></details>' +
         '<div class="rcpt"><b>✓ Every fact here is quoted from the organizer</b> · checked ' + esc(C.fmt(D.CHECKED)) +
           '<details data-receipts="' + o.id + '"><summary>See the receipts</summary><div class="rc-list">Loading…</div></details>' +
           (REPORT_EMAIL ? '<p style="margin:8px 0 0"><a href="mailto:' + esc(REPORT_EMAIL) + "?subject=" + encodeURIComponent("Mistake on " + o.name) + '">Report a mistake</a></p>' : "") + "</div>" +
       "</div>" +
       '<div class="sh-bar">' +
-        '<button type="button" class="btn gold grow" data-cal="' + o.id + '">+ Add to my calendar</button>' +
+        (FEATURES.season
+          ? '<button type="button" class="btn grow ' + (on ? "mint" : "gold") + '" data-pick="' + o.id + '" aria-pressed="' + on + '">' + (on ? "✓ In my season" : "+ Add to my season") + "</button>"
+          : '<button type="button" class="btn gold grow" data-cal="' + o.id + '">+ Add to my calendar</button>') +
         '<button type="button" class="btn" data-share="' + o.id + '">Share</button></div>';
   }
 
+  /* ---------- The Ask ---------- */
+  function askHtml(o, a) {
+    var st = o.steps.filter(function (s) { return s.ask === a.id; })[0], done = !!state.done[key(o, st)];
+    var third = a.to === "friends"
+      ? '<a class="btn" data-asksms href="#">Text</a>'
+      : '<a class="btn" data-askmail href="#">Email</a>';
+    return '<div class="grab" aria-hidden="true"></div>' +
+      '<div class="sh-head"><div class="sh-top"><a class="back" href="/l/' + o.id + '" data-nav>← ' + esc(o.short) + '</a><button type="button" class="x" data-close aria-label="Close">✕</button></div>' +
+      '<p class="kicker">The Ask · ' + esc(o.name) + '</p><h2 id="shTitle" tabindex="-1">' + esc(a.title) + "</h2>" +
+      '<div class="status"><span class="act ' + askChipClass(a) + '">To: ' + esc(ASK_TO[a.to]) + "</span>" + dueLabel(o, st) + "</div></div>" +
+      '<div class="sh-body">' +
+        '<div class="sec-h"><label for="askMsg">Your message</label><span>Edit anything</span></div>' +
+        '<p class="fillnote">Fill in the parts in [square brackets] before you send it.</p>' +
+        '<textarea id="askMsg" class="msg" rows="13" spellcheck="true">' + esc(a.msg) + "</textarea>" +
+        '<div class="hint"><span class="ck warn" aria-hidden="true">!</span><span>' + esc(a.hint) + "</span></div>" +
+        '<button type="button" class="donebox" data-done="' + key(o, st) + '" aria-pressed="' + done + '"><span class="box" aria-hidden="true">' + (done ? "✓" : "") + "</span><span><b>" + (done ? "Done" : "Mark as done") + "</b><small>" +
+          (a.to === "friends" ? "Tick it once your team is set." : "Tick it once they say yes.") + "</small></span></button>" +
+      "</div>" +
+      '<div class="sh-bar"><button type="button" class="btn" data-askcopy>Copy</button><button type="button" class="btn gold grow" data-askshare>Share</button>' + third + "</div>";
+  }
+  function askContext() {
+    var r = parseRoute(location.pathname); if (r.name !== "ask") return null;
+    var o = BY[r.id]; return { o: o, a: o.asks[r.ask], text: ($("#askMsg") || {}).value || o.asks[r.ask].msg };
+  }
+
+  /* ---------- My Season ---------- */
+  function seasonPageHtml() {
+    return '<header class="hero sm"><canvas class="sky" aria-hidden="true"></canvas><div class="hero-in wrap">' + navHtml(true) +
+      '<h1>Your season</h1><p class="sea-sub" id="seaSub"></p></div></header><main id="main" class="wrap season"><div id="seasonBox"></div></main>';
+  }
+  function todoHtml(o, s) {
+    var k = key(o, s), done = !!state.done[k], late = !done && C.endOf(s.by) < NOW;
+    return '<li class="todo' + (done ? " is-done" : "") + (late ? " late" : "") + '"><button type="button" class="box" data-done="' + k + '" aria-pressed="' + done + '" aria-label="' + (done ? "Mark not done: " : "Mark done: ") + esc(s.t) + '">' + (done ? "✓" : "") + "</button>" +
+      "<div><b>" + esc(s.t) + '</b><div class="meta"><a class="lab tklink" href="/l/' + o.id + '" data-nav>' + esc(o.tk) + "</a>" + dueLabel(o, s) + (late ? '<span class="lab latel">Overdue</span>' : "") + "</div></div>" +
+      '<div class="go">' + (done ? "" : askButton(o, s, true) + openButton(s)) + "</div></li>";
+  }
+  function renderSeason() {
+    var box = $("#seasonBox"), sub = $("#seaSub");
+    var picks = state.picks.map(function (id) { return BY[id]; });
+    if (!picks.length) {
+      sub.textContent = state.grade ? "Grade " + state.grade : "";
+      var sugg = L.filter(function (o) { return eligible(o) && o._s.key === "open"; }).slice(0, 4);
+      box.innerHTML = '<section class="sea-empty"><h2>Pick what you want to do</h2><p>Add competitions and programs to your season. You\'ll get one week-by-week plan with every step, who to ask and what to say.</p>' +
+        (sugg.length ? '<ul class="sugg">' + sugg.map(function (o) {
+          return '<li><span class="tk ' + o._s.key + '">' + esc(o.tk) + '</span><div><a href="/l/' + o.id + '" data-nav>' + esc(o.name) + "</a><small>" + esc(o._s.text) + "</small></div>" + addButton(o) + "</li>";
+        }).join("") + "</ul>" : "") + '<p><a class="btn" href="/" data-nav>Browse the Board</a></p></section>';
+      return;
+    }
+    var all = [];
+    picks.forEach(function (o) { o.steps.forEach(function (s) { all.push({ o: o, s: s, d: C.parse(s.by) }); }); });
+    all.sort(function (a, b) { return a.d - b.d; });
+    var mineAll = all.filter(function (x) { return mine(x.s); });
+    var doneN = mineAll.filter(function (x) { return state.done[key(x.o, x.s)]; }).length;
+    sub.textContent = (state.grade ? "Grade " + state.grade + " · " : "") + picks.length + (picks.length === 1 ? " pick" : " picks") + " · " + doneN + " of " + mineAll.length + " moves done";
+    var weekEnd = new Date(NOW); weekEnd.setDate(weekEnd.getDate() + 7);
+    var open = mineAll.filter(function (x) { return !state.done[key(x.o, x.s)]; });
+    var thisWeek = open.filter(function (x) { return C.endOf(x.s.by) <= weekEnd && !C.isMonth(x.s.by); });
+    var head = thisWeek.length ? "This week · " + C.fmtShort(C.iso(NOW)) + "–" + C.fmtShort(C.iso(weekEnd)) : "Nothing due this week · next up";
+    var weekList = thisWeek.length ? thisWeek : open.slice(0, 2);
+    var later = all.filter(function (x) { return weekList.indexOf(x) < 0 && C.endOf(x.s.by) >= NOW && !state.done[key(x.o, x.s)]; });
+    var trail = "", lastMon = "";
+    later.forEach(function (x) {
+      var d = x.d, mon = C.MON[d.getMonth()] + (d.getMonth() === 0 ? " " + d.getFullYear() : "");
+      if (mon !== lastMon) { trail += '<div class="mon">' + esc(mon) + "</div>"; lastMon = mon; }
+      trail += '<a class="stop' + (x.s.est ? " est" : "") + (mine(x.s) ? "" : " info") + '" href="/l/' + x.o.id + '" data-nav><span class="d">' + esc(C.fmtShort(x.s.by, x.s.est)) + " · " + esc(x.o.tk) +
+        (x.s.official ? " · official" : "") + "</span>" + esc(x.s.t) + (mine(x.s) ? "" : " <i>(" + esc(x.s.who === "school" ? "your school" : x.s.who) + ")</i>") + "</a>";
+    });
+    var doneList = all.filter(function (x) { return state.done[key(x.o, x.s)]; });
+    var prog = mineAll.map(function (x) { return '<i class="' + (state.done[key(x.o, x.s)] ? "f" : "") + '"></i>'; }).join("");
+    box.innerHTML =
+      '<div class="sea-sum"><div class="prog" aria-hidden="true">' + prog + '</div><div class="picks">' + picks.map(function (o) {
+        return '<a class="tk ' + o._s.key + '" href="/l/' + o.id + '" data-nav title="' + esc(o.name) + '">' + esc(o.tk) + "</a>";
+      }).join("") + '<a class="tk addmore" href="/" data-nav aria-label="Add more listings">+</a></div></div>' +
+      '<section class="wk" aria-labelledby="wkH"><div class="wk-h"><span id="wkH">' + esc(head) + "</span><span>" + weekList.length + (weekList.length === 1 ? " move" : " moves") + '</span></div><ul class="todos">' +
+        (weekList.length ? weekList.map(function (x) { return todoHtml(x.o, x.s); }).join("") : '<li class="todo"><span></span><div><b>Every step is done. Nice work.</b></div><span></span></li>') + "</ul></section>" +
+      (trail ? '<section aria-labelledby="upH"><div class="sec"><h2 id="upH">Coming up</h2><span class="lab">Tap any stop for details</span></div><div class="trail-mini">' + trail + "</div></section>" : "") +
+      (doneList.length ? '<details class="more donelist"><summary>Done (' + doneList.length + ')</summary><ul class="todos">' + doneList.map(function (x) { return todoHtml(x.o, x.s); }).join("") + "</ul></details>" : "") +
+      '<section class="sea-acts"><button type="button" class="btn gold" data-calseason>+ Add my season to my calendar</button>' +
+        '<p class="small">Downloads a calendar file with every step and deadline. Open it on your phone to add them.</p></section>';
+  }
+
+  /* ---------- Receipts ---------- */
   var receiptsCache = null;
   function loadReceipts(id, box) {
     function paint(all) {
@@ -287,6 +438,7 @@
       .catch(function () { box.textContent = "Couldn't load the receipts. Check your connection and try again."; });
   }
 
+  /* ---------- Panel ---------- */
   function openPanel(html, o) {
     var panel = $("#panel"), scrim = $("#scrim"), wasOpen = !panel.hidden;
     panel.innerHTML = html;
@@ -312,17 +464,26 @@
     document.querySelectorAll(".rw.sel").forEach(function (r) { r.classList.remove("sel"); });
     if (lastFocus && document.contains(lastFocus)) lastFocus.focus({ preventScroll: true });
   }
-  function closePanel() {
-    if (inAppNav && history.state && history.state.app) history.back();
-    else go(basePath, true);
-  }
+  /* Closing goes back to the page underneath: back through history if we came from it, otherwise replace */
+  function closePanel() { if (depth > baseDepth) history.go(baseDepth - depth); else go(basePath, true); }
 
-  /* Panel actions */
+  /* ---------- Actions ---------- */
   document.addEventListener("click", function (e) {
-    var t;
+    var t, ctx;
     if (e.target.closest("[data-close]") || e.target.id === "scrim") { closePanel(); return; }
+    if ((t = e.target.closest("[data-pick]"))) { e.preventDefault(); togglePick(t.dataset.pick); return; }
+    if ((t = e.target.closest("[data-done]"))) { toggleDone(t.dataset.done); return; }
     if ((t = e.target.closest("[data-share]"))) { share(BY[t.dataset.share]); return; }
-    if ((t = e.target.closest("[data-cal]"))) { downloadIcs(BY[t.dataset.cal]); return; }
+    if ((t = e.target.closest("[data-cal]"))) { downloadIcs([BY[t.dataset.cal]], BY[t.dataset.cal].short, "opening-bell-" + t.dataset.cal); return; }
+    if (e.target.closest("[data-calseason]")) { downloadIcs(state.picks.map(function (id) { return BY[id]; }), "your season", "opening-bell-season"); return; }
+    if (e.target.closest("[data-askcopy]") && (ctx = askContext())) { copy(ctx.text, "Message copied. Paste it into an email or text."); return; }
+    if (e.target.closest("[data-askshare]") && (ctx = askContext())) {
+      if (navigator.share) navigator.share({ text: ctx.text }).catch(function () {});
+      else copy(ctx.text, "Message copied. Paste it into an email or text.");
+      return;
+    }
+    if (e.target.closest("[data-askmail]") && (ctx = askContext())) { e.preventDefault(); location.href = "mailto:?subject=" + encodeURIComponent(ctx.a.subject) + "&body=" + encodeURIComponent(ctx.text); return; }
+    if (e.target.closest("[data-asksms]") && (ctx = askContext())) { e.preventDefault(); location.href = "sms:?&body=" + encodeURIComponent(ctx.text); return; }
   });
   document.addEventListener("toggle", function (e) {
     var d = e.target;
@@ -336,17 +497,24 @@
     copy(o.link, "Link copied. Paste it anywhere to share " + o.short + ".");
   }
   function copy(text, msg) {
-    if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(text).then(function () { toast(msg); }, function () { toast("Couldn't copy. Select the text and copy it yourself."); });
-    else toast("Couldn't copy. Select the text and copy it yourself.");
+    function fallback() {
+      var ta = document.createElement("textarea"); ta.value = text; ta.setAttribute("readonly", ""); ta.style.position = "fixed"; ta.style.opacity = "0";
+      document.body.appendChild(ta); ta.select();
+      var ok = false; try { ok = document.execCommand("copy"); } catch (err) {}
+      ta.remove(); toast(ok ? msg : "Couldn't copy. Select the text and copy it yourself.");
+    }
+    if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(text).then(function () { toast(msg); }, fallback);
+    else fallback();
   }
-  function downloadIcs(o) {
+  function downloadIcs(list, label, file) {
+    if (!list.length) return;
     try {
-      var blob = new Blob([C.ics([o], { name: "Opening Bell: " + o.short })], { type: "text/calendar;charset=utf-8" });
+      var blob = new Blob([C.ics(list, { name: "Opening Bell" + (list.length === 1 ? ": " + list[0].short : "") })], { type: "text/calendar;charset=utf-8" });
       var url = URL.createObjectURL(blob), a = document.createElement("a");
-      a.href = url; a.download = "opening-bell-" + o.id + ".ics";
+      a.href = url; a.download = file + ".ics";
       document.body.appendChild(a); a.click(); a.remove();
       setTimeout(function () { URL.revokeObjectURL(url); }, 4000);
-      toast("Calendar file downloaded. Open it to add " + o.short + "'s steps and deadlines.");
+      toast("Calendar file downloaded. Open it to add " + label + "'s steps and deadlines.");
     } catch (err) { toast("Couldn't create the calendar file in this browser."); }
   }
 
