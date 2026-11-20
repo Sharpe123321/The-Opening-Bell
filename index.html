@@ -394,7 +394,7 @@ h1{margin:0;font-stretch:108%;font-weight:820;font-size:clamp(1.9rem,4.4vw,3.1re
       entry:"Individual application",
       window:{from:"2026-09-15", to:"2027-01-06"},
       requires:[
-        "This is the last year Grade 11 students can apply. Shad is only open to students currently in Grade 10 or 11.",
+        "Only students currently in Grade 10 or 11 can apply. If you're in Grade 11, this is your last chance.",
         "Don't let the fee stop you. The application is free, and fee assistance is based on need."
       ],
       steps:[
@@ -414,18 +414,18 @@ h1{margin:0;font-stretch:108%;font-weight:820;font-size:clamp(1.9rem,4.4vw,3.1re
     },
     {
       id:"diamond", short:"Diamond", board:"Submission due", name:"Diamond Challenge 2027", org:"Horn Entrepreneurship, University of Delaware", type:"pitch",
-      grades:[9,10,11,12], gradeNote:"Ages 14–18 on the submission deadline", free:true,
-      cost:"No entry fee listed in the official rules",
+      grades:[9,10,11,12], gradeNote:"Ages 14–18 on the submission deadline", free:false,
+      cost:"No entry fee is listed in the official rules. Confirm with the organizer.",
       format:"Online submission, then live or virtual pitch rounds. Finals in Delaware.", where:"Open worldwide",
-      entry:"Team of 2–4 students plus one adult advisor",
+      team:{min:2, max:4, extra:"plus one adult advisor aged 21 or older"},
       window:{from:"2026-09-16", to:"2027-01-14"},
       requires:[
-        "You need a team of 2–4 high school students. You can't enter alone.",
+        "You can't enter alone. A team is {team}.",
         "Every team needs an adult advisor aged 21 or older, with their contact details on the submission.",
         "The first round is a 3–5 page written concept (PDF) plus a short team video, not just a pitch."
       ],
       steps:[
-        {by:"2026-11-30", t:"Lock in 1–3 teammates and an adult advisor (21+)"},
+        {by:"2026-11-30", t:"Form your team ({team}) and find an adult advisor aged 21 or older"},
         {by:"2026-12-11", t:"Pick your problem and talk to at least five people who have it"},
         {by:"2027-01-08", t:"Write the 3–5 page concept and record the intro video"},
         {by:"2027-01-14", t:"Submit by 5:00 pm ET (official deadline)"}
@@ -433,7 +433,7 @@ h1{margin:0;font-stretch:108%;font-weight:820;font-size:clamp(1.9rem,4.4vw,3.1re
       dates:[
         {d:"2027-01-14",k:"deadline",t:"Submission deadline, 5:00 pm ET"},
         {d:"2027-02-10",k:"result",t:"Advancing teams notified"},
-        {d:"2027-03-09",k:"result",t:"Next-round results"},
+        {d:"2027-03-09",k:"result",t:"Finalists announced"},
         {d:"2027-04-29",k:"event",t:"Limitless World Summit in Delaware, Apr 29–30"}
       ],
       why:"A global pitch competition with a $100,000 prize pool. Building a real venture concept with a team is clear evidence of business interest.",
@@ -441,15 +441,16 @@ h1{margin:0;font-stretch:108%;font-weight:820;font-size:clamp(1.9rem,4.4vw,3.1re
       src:{url:"https://diamondchallenge.org/competition/",name:"diamondchallenge.org",kind:"organizer"}
     },
     {
-      id:"deca", short:"DECA ON", board:"Papers due", name:"DECA Ontario Provincials 2027", org:"Ontario DECA", type:"deca",
+      id:"deca", short:"DECA ON", board:"Registration due", name:"DECA Ontario Provincials 2027", org:"Ontario DECA", type:"deca",
       grades:[9,10,11,12], free:false,
       cost:"Set by your school chapter. Includes registration and a required hotel stay.",
       format:"In-person conference with written, role-play and team events", where:"Sheraton Centre, Toronto",
       entry:"Through your school's DECA chapter",
-      window:{to:"2027-01-07"},
+      window:{to:"2026-12-07"},
+      next:{d:"2027-09", label:"Next season's registration expected ~fall 2027", closed:true},
       requires:[
         "You can only compete through a DECA chapter at your school. If there isn't one, a teacher has to start it.",
-        "Your chapter advisor registers you. DECA's page lists December 7 for Provincials registration, so talk to your advisor before then.",
+        "Your chapter advisor registers you. DECA lists Provincials registration and payment as due December 7, so talk to your advisor before then.",
         "Some events need a written paper or slide deck submitted online by January 7."
       ],
       steps:[
@@ -459,7 +460,7 @@ h1{margin:0;font-stretch:108%;font-weight:820;font-size:clamp(1.9rem,4.4vw,3.1re
         {by:"2027-01-07", t:"Written papers due online (official deadline)"}
       ],
       dates:[
-        {d:"2026-12-07",k:"deadline",t:"Provincials registration through your chapter (portal opens; registration and payment listed for this date)"},
+        {d:"2026-12-07",k:"deadline",t:"Provincials registration and payment due, through your chapter advisor. Hotel booking opens the same day."},
         {d:"2027-01-07",k:"deadline",t:"Written papers and decks due online"},
         {d:"2027-01-13",k:"event",t:"Multiple-choice exams, Jan 13 or 14, at school or on site"},
         {d:"2027-02-04",k:"event",t:"Provincials in Toronto, Feb 4–6"},
@@ -474,7 +475,7 @@ h1{margin:0;font-stretch:108%;font-weight:820;font-size:clamp(1.9rem,4.4vw,3.1re
       grades:[9,10,11,12], gradeNote:"Any high school student", free:true,
       cost:"Free, including the mini-course",
       format:"Online. A 5-minute video pitch.", where:"Open worldwide",
-      entry:"Solo, or a team of up to five",
+      team:{min:1, max:5},
       window:{to:"2027-02-21"},
       requires:[
         "Register first. That's how you get the Blue Ocean mini-course the competition is built around.",
@@ -492,7 +493,7 @@ h1{margin:0;font-stretch:108%;font-weight:820;font-size:clamp(1.9rem,4.4vw,3.1re
         {d:"2027-04-05",k:"result",t:"Top 500 and Top 100 announced"},
         {d:"2027-04-22",k:"result",t:"Top 30 announced"},
         {d:"2027-05-04",k:"result",t:"Top 10 announced"},
-        {d:"2027-05-13",k:"result",t:"Winners announced. First place wins $1,000 USD."}
+        {d:"2027-05-13",k:"result",t:"Winners announced. First place wins $1,000."}
       ],
       why:"Free, fully online and open to any high school student. A good first pitch competition, because all you need is an idea and a video.",
       tip:"Use their pitch template. Judges score your idea against the blue ocean method, so show what you'd drop, reduce, raise and create.",
@@ -500,7 +501,7 @@ h1{margin:0;font-stretch:108%;font-weight:820;font-size:clamp(1.9rem,4.4vw,3.1re
     },
     {
       id:"euclid", short:"Euclid", board:"School sign-up", name:"Euclid Mathematics Contest", org:"CEMC, University of Waterloo", type:"math",
-      grades:[10,11,12], gradeNote:"Written for Grade 12; younger students are welcome", free:false,
+      grades:[10,11,12], gradeNote:"Written for Grade 12. Students in Grades 10 and 11 often write it for practice.", free:false,
       cost:"$18 per student",
       format:"Written contest at your school", where:"Your school",
       entry:"Your school orders the contest for you",
@@ -552,42 +553,42 @@ h1{margin:0;font-stretch:108%;font-weight:820;font-size:clamp(1.9rem,4.4vw,3.1re
       grades:[9,10,11], lastGrade:11, gradeNote:"Canadian citizens only", free:false,
       cost:"Not listed",
       format:"Online first round in spring, then in-person rounds in the fall", where:"Online, then University of Toronto (virtual for teams outside the GTA)",
-      entry:"Team of 3–4, or register alone as a free agent",
+      team:{min:3, max:4, extra:"or register alone as a free agent and be placed on a team"},
       next:{d:"2027-04",label:"Registration opens in April 2027"},
       requires:[
         "Only current Grade 9–11 students who are Canadian citizens can enter.",
-        "No team? Register as a free agent and you'll be matched with 2–3 others in your region.",
+        "No team? Register as a free agent and you'll be placed on a team with others from your region.",
         "Round 1 gives you about 30 days to write a case proposal, so plan around exams."
       ],
       steps:[
         {by:"2026-12-04", t:"Fill in Rotman's Junior Outreach form to hear when registration opens"},
-        {by:"2027-03-31", t:"Find 2–3 teammates, or plan to go as a free agent", est:true},
+        {by:"2027-03-31", t:"Form your team ({team}), or plan to register as a free agent", est:true},
         {by:"2027-04-15", t:"Register when it opens", est:true}
       ],
       dates:[
         {d:"2027-04",k:"opens",t:"Registration opens"},
-        {d:"2027-06",k:"result",t:"Top 12 teams notified",est:true},
-        {d:"2027-10",k:"event",t:"Rounds 2 and 3 at U of T, in the fall",est:true}
+        {d:"2027-06",k:"result",t:"Top 12 teams notified"},
+        {d:"2027-10",show:"Fall 2027",k:"event",t:"Rounds 2 and 3 at U of T (exact date not announced)"}
       ],
-      why:"Each member of the winning team gets a $2,500 Rotman Commerce scholarship if admitted. Finalists get to present to Rotman judges.",
+      why:"Each member of the winning team gets a $2,500 Rotman Commerce scholarship, if they're admitted to and enrol in Rotman Commerce. Every finalist gets a $100 gift card.",
       tip:"Grade 11 students: this is your last year to enter, and the scholarship only pays out if you go to Rotman.",
       src:{url:"https://rotmancommerce.utoronto.ca/future-students/?p=2006",name:"rotmancommerce.utoronto.ca",kind:"organizer"}
     },
     {
       id:"wharton", short:"Wharton", name:"Wharton Global High School Investment Competition", org:"Wharton Global Youth Program, University of Pennsylvania", type:"invest",
-      grades:[9,10,11], gradeNote:"Next season (2027–28) is open to grades 9–12", free:true,
+      grades:[9,10,11], gradeNote:"Students in Grades 9–11 this year can enter next season (2027–28)", free:true,
       cost:"Free. Finalists pay their own travel.",
       format:"Online portfolio simulation, with a finale in Philadelphia", where:"Open worldwide",
-      entry:"Team of 4–6, registered by a teacher advisor at your school",
+      team:{min:4, max:6, extra:"registered by a teacher advisor at your school"},
       next:{d:"2027-08",label:"Next round expected ~Aug 2027",closed:true},
       requires:[
-        "A teacher from your school must be your advisor and register the team. Students can't register alone.",
-        "Registration is open for only about a month in late summer, while school is out. Most teams that miss it never found an advisor in time."
+        "A teacher from your school must be your advisor and register the team. Students can't register themselves, and a team is {team}.",
+        "Registration is open for only about a month, from mid-August to mid-September (based on 2026), so you need an advisor lined up before summer."
       ],
       steps:[
         {by:"2027-05-28", t:"Ask a teacher to be your advisor before school ends", est:true},
-        {by:"2027-06-18", t:"Lock in a team of 4–6", est:true},
-        {by:"2027-08-10", t:"Registration expected to open", est:true}
+        {by:"2027-06-18", t:"Form your team ({team})", est:true},
+        {by:"2027-08-10", t:"Have your advisor register the team when registration opens", est:true}
       ],
       dates:[
         {d:"2026-09-11",k:"deadline",t:"2026–27 registration closed"},
@@ -624,8 +625,8 @@ h1{margin:0;font-stretch:108%;font-weight:820;font-size:clamp(1.9rem,4.4vw,3.1re
     },
     {
       id:"ja", short:"JA Company", name:"JA Company Program", org:"Junior Achievement (regional offices in Ontario)", type:"venture",
-      grades:[9,10,11], free:true,
-      cost:"Usually free. Confirm with your regional office.",
+      grades:[9,10,11], free:false,
+      cost:"Often free, but Ontario costs aren't confirmed. Ask your regional office.",
       format:"After school, about 18–20 weeks", where:"Regional JA offices across Ontario",
       entry:"Sign up through your regional JA office",
       next:{d:"2027-09",label:"Next intake expected ~Sep 2027",closed:true},
@@ -659,6 +660,18 @@ h1{margin:0;font-stretch:108%;font-weight:820;font-size:clamp(1.9rem,4.4vw,3.1re
   function esc(s){ return String(s).replace(/[&<>"']/g, function(c){ return {"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"}[c]; }); }
   function gradeText(g){ return g.length === 1 ? "Grade " + g[0] : "Grades " + g[0] + "–" + g[g.length-1]; }
   var CHECKED_TXT = fmt(CHECKED);
+
+  /* Team sizes are stored once per listing (team:{min,max}) and every sentence uses
+     the same numbers through the {team} token, so they can't contradict each other. */
+  function teamSize(t){ return t.min === 1 ? "up to " + t.max + " people, including you" : t.min + "–" + t.max + " students, including you"; }
+  function teamEntry(t){ return (t.min === 1 ? "On your own, or a team of up to " + t.max : "Team of " + t.min + "–" + t.max + " students") + (t.extra ? ", " + t.extra : ""); }
+  DATA.forEach(function(o){
+    function fill(str){ return o.team ? str.replace(/\{team\}/g, teamSize(o.team)) : str; }
+    if (o.team) o.entry = teamEntry(o.team);
+    o.requires = o.requires.map(fill);
+    o.steps.forEach(function(s){ s.t = fill(s.t); });
+    o.why = fill(o.why); o.tip = fill(o.tip);
+  });
 
   function status(o){
     var w = o.window, n;
@@ -745,7 +758,7 @@ h1{margin:0;font-stretch:108%;font-weight:820;font-size:clamp(1.9rem,4.4vw,3.1re
     }).join("");
     var dates = o.dates.map(function(x){
       var past = endOf(x.d) < today;
-      return '<li class="k-' + x.k + (past ? ' past' : '') + (x.est ? ' est' : '') + '"><time>' + fmt(x.d, x.est) + '</time><span>' + esc(x.t) + (past ? ' (passed)' : '') + (x.est ? '<i class="tag est">est.</i>' : '') + '</span></li>';
+      return '<li class="k-' + x.k + (past ? ' past' : '') + (x.est ? ' est' : '') + '"><time>' + (x.show ? esc(x.show) : fmt(x.d, x.est)) + '</time><span>' + esc(x.t) + (past ? ' (passed)' : '') + (x.est ? '<i class="tag est">est.</i>' : '') + '</span></li>';
     }).join("");
     var req = o.requires.map(function(r){ return '<li>' + WARN + '<span>' + esc(r) + '</span></li>'; }).join("");
     var src = o.src.kind === "partial"
@@ -804,7 +817,7 @@ h1{margin:0;font-stretch:108%;font-weight:820;font-size:clamp(1.9rem,4.4vw,3.1re
       var d = parse(x.d);
       if (!inAxis(d)) return;
       var p = pct(d), side = p > 72 ? " r" : (p < 12 ? " l" : "");
-      var tip = fmt(x.d, x.est) + " · " + x.t;
+      var tip = (x.show || fmt(x.d, x.est)) + " · " + x.t;
       h += '<span class="mkw k-' + x.k + (x.est ? ' est' : '') + (endOf(x.d) < today ? ' past' : '') + side + '" style="left:' + p.toFixed(3) + '%" tabindex="0" role="img" aria-label="' + esc(tip) + '" data-tip="' + esc(tip) + '"><span class="shape"></span></span>';
     });
     return '<div class="srow"><button type="button" class="slabel" data-go="' + o.id + '"><span class="nm"><span class="dot ' + s.key + '"></span>' + esc(o.short) + '</span><span class="tp">' + esc(TYPE_LABEL[o.type]) + '</span></button><div class="track">' + h + '</div></div>';

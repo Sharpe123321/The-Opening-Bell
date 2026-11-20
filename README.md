@@ -19,3 +19,13 @@ The site collects nothing. The selected grade and view are stored in the visitor
 ## Deploying
 
 Hosted on Vercel as a static site. Pushing to the production branch redeploys it.
+
+## Before every change goes live
+
+Run the data check. It catches contradictions such as mismatched team sizes, steps out of order, a "Free" label that doesn't match the cost, or an "official deadline" step that isn't a listed deadline:
+
+```
+node scripts/check-data.js
+```
+
+Team sizes are stored once per listing as `team:{min, max}`. Write `{team}` in any sentence that mentions team size, and the site fills in the same numbers everywhere.
