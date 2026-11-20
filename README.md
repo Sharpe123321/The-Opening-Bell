@@ -4,13 +4,13 @@ Business competitions and programs for Ontario high school students, with every 
 
 ## What's here
 
-- `index.html`: the whole site. A single static page with no build step and no backend.
-- Listing data lives in the `DATA` array inside `index.html`. Each listing has:
-  - `steps`: our suggested "do by" dates (`est: true` when they depend on an estimate)
-  - `requires`: the requirements students usually miss
-  - `dates`: official dates (`est: true` marks our estimates from past years)
-  - `src`: the organizer page each listing was checked against
-- `CHECKED` at the top of the data sets the "checked on" date shown on every listing.
+- `index.html`, `styles.css`, `app.js`: the site. No framework and no build step.
+- `data/listings.js`: every listing, in one file that the page, the checks and the calendar feed all read. Rules for editing it are at the top of the file.
+- `data/receipts.json`: the organizer's exact sentence and link behind every fact.
+- `lib/core.js`: shared logic for dates, statuses, team-size wording, message tokens and calendar files.
+- `lib/pixel.js`: the pixel-art skyline and bell.
+- `vercel.json`: sends listing links like `/l/shad` to the page.
+- `scripts/`: the checks and a local preview server (`node scripts/dev-server.js`, then open http://localhost:4173).
 
 ## Privacy
 
