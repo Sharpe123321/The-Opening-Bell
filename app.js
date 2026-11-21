@@ -1,140 +1,195 @@
-/* Opening Bell: the Board, the details sheet, the Ask, My Season, and (as each stage ships)
- * the parent view and the Trail. No framework and no build step. All listing facts come from
- * data/listings.js; all date and wording logic comes from lib/core.js.
+/* Opening Bell: a watchlist of business competitions and programs for Ontario high school students.
+ * Each listing has a ticker and a "days left" tag, and its page reads like a stock page, with a chart
+ * of your plan. No framework and no build step. Every listing fact comes from data/listings.js and
+ * every date and wording rule from lib/core.js.
  */
 (function () {
   "use strict";
-  var D = window.OB_DATA, C = window.OB_CORE;
+  const D = window.OB_DATA, C = window.OB_CORE;
+  const REPORT_EMAIL = null; /* set an address to show "Report a mistake" on every listing */
 
-  /* Stages ship in order. A feature stays hidden until its stage is built and tested. */
-  var FEATURES = { ask: true, season: true, subscribe: true, trail: true };
-  var REPORT_EMAIL = null; /* set an address to show "Report a mistake" on every listing */
-
-  var NOW = C.today();
-  var L = C.prepare(D, location.origin);
-  var BY = {};
-  L.forEach(function (o) { BY[o.id] = o; o._s = C.status(o, NOW); });
-  L.sort(function (a, b) { return a._s.rank - b._s.rank || a._s.n - b._s.n; });
+  const NOW = C.today();
+  const L = C.prepare(D, location.origin);
+  const BY = {};
+  L.forEach(o => { BY[o.id] = o; o._s = C.status(o, NOW); });
+  L.sort((a, b) => a._s.rank - b._s.rank || a._s.n - b._s.n);
 
   /* ---------- Small helpers ---------- */
-  var $ = function (sel, root) { return (root || document).querySelector(sel); };
-  function esc(s) { return String(s == null ? "" : s).replace(/[&<>"']/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]; }); }
-  var store = {
-    get: function (k, d) { try { var v = localStorage.getItem("ob:" + k); return v == null ? d : JSON.parse(v); } catch (e) { return d; } },
-    set: function (k, v) { try { localStorage.setItem("ob:" + k, JSON.stringify(v)); } catch (e) {} }
+  const $ = (sel, root) => (root || document).querySelector(sel);
+  const $$ = (sel, root) => Array.from((root || document).querySelectorAll(sel));
+  const esc = s => String(s == null ? "" : s).replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+  const store = {
+    get(k, d) { try { const v = localStorage.getItem("ob:" + k); return v == null ? d : JSON.parse(v); } catch (e) { return d; } },
+    set(k, v) { try { localStorage.setItem("ob:" + k, JSON.stringify(v)); } catch (e) {} }
   };
-  var state = {
-    grade: store.get("grade", null), filter: "all", allGrades: false, trailMine: false,
-    picks: (store.get("picks", []) || []).filter(function (id) { return BY[id]; }),
+  const state = {
+    grade: store.get("grade", null), filter: "all", allGrades: false, calMine: null, calOffset: 0,
+    picks: (store.get("picks", []) || []).filter(id => BY[id]),
     done: store.get("done", {}) || {}
   };
-  if ([9, 10, 11, 12].indexOf(state.grade) < 0) state.grade = null;
-  var ICON = { ok: "✓", warn: "!", no: "✕" };
-  var WHO = { you: "You", teacher: "Teacher", advisor: "Advisor", parent: "Parent", friends: "Friends", school: "Your school" };
-  var ASK_CHIP = { teacher: "Ask a teacher", parent: "Ask an adult", friends: "Invite friends", counsellor: "Ask a counsellor" };
-  var ASK_TO = { teacher: "A teacher", parent: "A parent or other adult", friends: "Friends", counsellor: "Your counsellor" };
-  var toastTimer;
-  function toast(msg) { var t = $("#toast"); t.textContent = msg; t.hidden = false; clearTimeout(toastTimer); toastTimer = setTimeout(function () { t.hidden = true; }, 4200); }
-  function isPhone() { return !window.matchMedia("(min-width: 1100px)").matches; }
-  function eligible(o) { return !state.grade || o.grades.indexOf(state.grade) >= 0; }
-  function picked(id) { return state.picks.indexOf(id) >= 0; }
-  function orgShort(o) { return o.org.split(" (")[0].split(",")[0]; }
-  function key(o, s) { return o.id + ":" + s.id; }
-  function mine(s) { return s.who === "you" || !!s.ask; }
-  function askChipClass(a) { return a.to === "friends" ? "friends" : (a.to === "parent" ? "parent" : "teacher"); }
-  function whoChip(o, s) {
-    if (s.ask && o.asks[s.ask]) return '<span class="act ' + askChipClass(o.asks[s.ask]) + '">' + esc(ASK_CHIP[o.asks[s.ask].to]) + "</span>";
-    return '<span class="act ' + esc(s.who) + '">' + esc(s.who === "org" ? o.short : WHO[s.who]) + "</span>";
-  }
-  function dueLabel(o, s) {
-    var d = C.fmtShort(s.by, s.est).toUpperCase();
-    if (s.official) return '<span class="dt off">' + d + " · Official deadline</span>";
-    return '<span class="dt">' + (mine(s) ? "Do by " : "By ") + d + "</span>";
-  }
-  function askButton(o, s, small) {
-    if (!FEATURES.ask || !s.ask || !o.asks[s.ask]) return "";
-    return '<a class="btn ' + (small ? "sm " : "") + 'gold" href="/l/' + o.id + "/ask/" + s.ask + '" data-nav>' + (o.asks[s.ask].to === "friends" ? "Invite" : "✉ Message") + "</a>";
-  }
-  function openButton(s) { return s.href ? '<a class="btn sm" href="' + esc(s.href) + '" target="_blank" rel="noopener">Open ↗</a>' : ""; }
+  if (![9, 10, 11, 12].includes(state.grade)) state.grade = null;
 
-  /* ---------- Routing: real paths, so every listing and every ask has a shareable link ---------- */
+  const WD = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+  const WDL = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+  const MONTH = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+  const ASK_ACT = { teacher: "Ask your teacher", parent: "Ask an adult", friends: "Invite your team", counsellor: "Ask your counsellor" };
+  const ASK_TO = { teacher: "A teacher", parent: "A parent or other adult", friends: "Your friends", counsellor: "Your counsellor" };
+  const WHO = { teacher: "A teacher does this", advisor: "Your advisor does this", parent: "A parent or adult does this", friends: "Your team does this", school: "Your school does this", org: "The organizer does this" };
+  const MARK = { ok: "✓", warn: "!", no: "✕" };
+
+  const I = {
+    home: '<svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M3.5 10.5 12 4l8.5 6.5"/><path d="M5.5 9.5V20h4.5v-5.5h4V20h4.5V9.5"/></svg>',
+    cal: '<svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="5" width="17" height="15.5" rx="2.5"/><path d="M3.5 10h17M8 3v4M16 3v4"/></svg>',
+    list: '<svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M6.5 3.5h11v17l-5.5-4-5.5 4z"/></svg>',
+    listOn: '<svg class="ic fill" viewBox="0 0 24 24" aria-hidden="true"><path d="M6.5 3.5h11v17l-5.5-4-5.5 4z"/></svg>',
+    back: '<svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg>',
+    share: '<svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3.5v11M8 7.5l4-4 4 4"/><path d="M6 11.5H5v9h14v-9h-1"/></svg>',
+    down: '<svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>',
+    left: '<svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg>',
+    right: '<svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5l7 7-7 7"/></svg>',
+    check: '<svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>',
+    close: '<svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>',
+    sun: '<svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2.5v2M12 19.5v2M4.6 4.6l1.4 1.4M18 18l1.4 1.4M2.5 12h2M19.5 12h2M4.6 19.4L6 18M18 6l1.4-1.4"/></svg>',
+    moon: '<svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5z"/></svg>'
+  };
+
+  let toastTimer;
+  function toast(msg) { const t = $("#toast"); t.textContent = msg; t.hidden = false; clearTimeout(toastTimer); toastTimer = setTimeout(() => { t.hidden = true; }, 4200); }
+  const isDesk = () => window.matchMedia("(min-width: 960px)").matches;
+  const eligible = o => !state.grade || o.grades.includes(state.grade);
+  const picked = id => state.picks.includes(id);
+  const key = (o, s) => o.id + ":" + s.id;
+  const mine = s => s.who === "you" || !!s.ask;
+  const md = d => C.MON[d.getMonth()] + " " + d.getDate();
+  const addDays = (d, n) => { const x = new Date(d); x.setDate(x.getDate() + n); return x; };
+  const domain = u => u.replace(/^https?:\/\/(www\.)?/, "").split("/")[0];
+  const urgency = n => (n <= 7 ? "r" : n <= 30 ? "o" : "");
+  function dayText(s) {
+    const d = C.parse(s.by);
+    if (C.isMonth(s.by)) return (s.est ? "~" : "") + MONTH[d.getMonth()] + " " + d.getFullYear();
+    return (s.est ? "around " : WDL[d.getDay()] + ", ") + MONTH[d.getMonth()] + " " + d.getDate();
+  }
+
+  /* ---------- Theme: dark unless the visitor switched to light ---------- */
+  function themeButton() {
+    const light = document.documentElement.dataset.theme === "light";
+    return '<button type="button" class="iconbtn" data-theme-toggle aria-label="' + (light ? "Switch to dark mode" : "Switch to light mode") + '">' + (light ? I.moon : I.sun) + "</button>";
+  }
+  function setTheme(t) {
+    document.documentElement.dataset.theme = t;
+    store.set("theme", t);
+    const m = $('meta[name="theme-color"]'); if (m) m.content = t === "light" ? "#ffffff" : "#000000";
+    const had = document.activeElement && document.activeElement.matches("[data-theme-toggle]");
+    $$("[data-theme-toggle]").forEach(b => { b.outerHTML = themeButton(); });
+    if (had) { const b = $$("[data-theme-toggle]").filter(x => x.offsetParent !== null)[0]; if (b) b.focus(); }
+  }
+
+  /* ---------- Status words ---------- */
+  function pill(o) {
+    const s = o._s;
+    if (s.key === "open") return '<span class="pill ' + urgency(s.n) + '">' + (s.n === 0 ? "Today" : C.plural(s.n, "day")) + "</span>";
+    if (s.key === "soon") return '<span class="pill g">Opens ' + esc(C.fmtShort(o.window.from)) + "</span>";
+    if (s.key === "closed") return '<span class="pill x">Closed</span>';
+    const d = C.parse(o.next.d);
+    return '<span class="pill g">Opens ' + (o.next.est ? "~" : "") + C.MON[d.getMonth()] + "</span>";
+  }
+  function deadlineLine(o) {
+    const d = C.parse(o.window.to), x = o.dates.filter(e => e.k === "deadline" && e.d === o.window.to)[0];
+    return WDL[d.getDay()] + ", " + C.fmtLong(o.window.to) + ": " + (x ? x.t : o.boardWhat);
+  }
+  function bigStatus(o) {
+    const s = o._s;
+    if (s.key === "open") return { big: s.n === 0 ? "Closes today" : C.plural(s.n, "day") + " left", cls: urgency(s.n), line: deadlineLine(o) };
+    if (s.key === "soon") return { big: "Opens " + C.fmtShort(o.window.from), cls: "g", line: "Closes " + C.fmtLong(o.window.to) };
+    if (s.key === "closed") return { big: "Closed this season", cls: "g", line: s.text };
+    return { big: "Opens " + (o.next.est ? "~" : "") + C.fmtLong(o.next.d), cls: "g", line: s.text };
+  }
+
+  /* ---------- Routing: real paths, so every listing and every message has a shareable link ---------- */
   function parseRoute(path) {
-    var m;
-    if ((m = /^\/l\/([a-z0-9-]+)\/ask\/([a-z0-9-]+)\/?$/.exec(path)) && FEATURES.ask) return { name: "ask", id: m[1], ask: m[2] };
+    let m;
+    if ((m = /^\/l\/([a-z0-9-]+)\/ask\/([a-z0-9-]+)\/?$/.exec(path))) return { name: "ask", id: m[1], ask: m[2] };
     if ((m = /^\/l\/([a-z0-9-]+)(\/.*)?$/.exec(path))) return { name: "listing", id: m[1] };
-    if (path === "/season" && FEATURES.season) return { name: "season" };
-    if (path === "/parent" && FEATURES.subscribe) return { name: "parent" };
-    if (path === "/trail" && FEATURES.trail) return { name: "trail" };
+    if (path === "/season") return { name: "season" };
+    if (path === "/parent") return { name: "parent" };
+    if (path === "/calendar" || path === "/trail") return { name: "calendar" };
     return { name: "home" };
   }
-  var page = null, basePath = "/", depth = 0, baseDepth = 0, lastFocus = null;
+  let page = null, depth = 0, sheetOpen = false, lastFocus = null;
+  const scrollMem = {};
   history.replaceState({ d: 0 }, "", location.pathname + location.search);
   function go(path, replace) {
+    scrollMem[location.pathname + location.search] = window.scrollY;
     if (replace) history.replaceState({ d: depth }, "", path); else { depth++; history.pushState({ d: depth }, "", path); }
-    render();
+    render(false);
   }
-  document.addEventListener("click", function (e) {
-    var a = e.target.closest("a[data-nav]");
+  document.addEventListener("click", e => {
+    const a = e.target.closest("a[data-nav]");
     if (!a || e.defaultPrevented || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button) return;
     e.preventDefault();
-    if (/^\/l\//.test(a.getAttribute("href")) && $("#panel").hidden) lastFocus = a;
+    if (/\/ask\//.test(a.getAttribute("href"))) lastFocus = a;
     go(a.getAttribute("href"));
   });
-  window.addEventListener("popstate", function (e) { depth = (e.state && e.state.d) || 0; render(); });
+  window.addEventListener("popstate", e => { depth = (e.state && e.state.d) || 0; render(true); });
 
-  function isOverlay(r) { return r.name === "listing" || r.name === "ask"; }
-  function render() {
-    var r = parseRoute(location.pathname);
-    if (isOverlay(r) && !BY[r.id]) { history.replaceState({ d: depth }, "", "/"); r = { name: "home" }; }
+  function render(restore) {
+    let r = parseRoute(location.pathname);
+    if ((r.name === "listing" || r.name === "ask") && !BY[r.id]) { history.replaceState({ d: depth }, "", "/"); r = { name: "home" }; }
     if (r.name === "ask") {
-      var o = BY[r.id], a = o.asks[r.ask], step = o.steps.filter(function (s) { return s.ask === r.ask; })[0];
-      if (!a || !step) { history.replaceState({ d: depth }, "", "/l/" + r.id); r = { name: "listing", id: r.id }; }
+      const o = BY[r.id], a = o.asks[r.ask], st = o.steps.filter(s => s.ask === r.ask)[0];
+      if (!a || !st) { history.replaceState({ d: depth }, "", "/l/" + r.id); r = { name: "listing", id: r.id }; }
     }
-    var base = isOverlay(r) ? (page || "home") : (r.name === "parent" ? "parent" + location.search : r.name);
-    if (!isOverlay(r)) { basePath = location.pathname + location.search; baseDepth = depth; }
-    if (base !== page) {
-      var tabSwitch = (base === "home" && page === "trail") || (base === "trail" && page === "home"), y = window.scrollY;
-      page = base; renderPage(); window.scrollTo(0, tabSwitch ? y : 0);
+    const pk = (r.name === "ask" || r.name === "listing") ? "l:" + r.id : r.name === "parent" ? "parent" + location.search : r.name;
+    if (pk !== page) {
+      page = pk;
+      paint(r);
+      window.scrollTo(0, restore ? (scrollMem[location.pathname + location.search] || 0) : 0);
     }
-    if (r.name === "listing") { openPanel(sheetHtml(BY[r.id]), BY[r.id]); document.title = BY[r.id].name + " · Opening Bell"; }
-    else if (r.name === "ask") { var ob = BY[r.id]; openPanel(askHtml(ob, ob.asks[r.ask]), ob); document.title = ob.asks[r.ask].title + " · " + ob.short + " · Opening Bell"; }
-    else { closePanelNow(); document.title = page === "season" ? "Your season · Opening Bell" : /^parent/.test(page) ? "Your teen's season · Opening Bell" : page === "trail" ? "The Trail · Opening Bell" : "Opening Bell · Business competitions for Ontario high school students"; }
+    if (r.name === "ask") { const o = BY[r.id]; openSheet(askSheet(o, o.asks[r.ask]), true); }
+    else closeSheetNow();
+    document.title = titleFor(r);
   }
-  function renderPage() {
-    var app = $("#app");
-    if (page === "season") { app.innerHTML = seasonPageHtml(); drawArt(); renderSeason(); return; }
-    if (/^parent/.test(page)) { app.innerHTML = parentPageHtml(); drawArt(); return; }
-    app.innerHTML = homeHtml(page === "trail" ? "trail" : "board");
-    drawArt();
-    bindHome(page === "trail" ? "trail" : "board");
+  function titleFor(r) {
+    if (r.name === "listing") return BY[r.id].name + " · Opening Bell";
+    if (r.name === "ask") return BY[r.id].asks[r.ask].title + " · Opening Bell";
+    return { season: "My list · Opening Bell", parent: "Your teen's season · Opening Bell", calendar: "Calendar · Opening Bell" }[r.name] ||
+      "Opening Bell · Business competitions for Ontario high school students";
   }
-  /* Something changed (a pick or a tick): repaint what shows it, keep the reader's place */
+  function paint(r) {
+    const app = $("#app");
+    if (r.name === "parent") { app.innerHTML = header(null, false) + '<main id="main" class="main solo">' + parentHtml() + "</main>"; return; }
+    if (r.name === "listing" || r.name === "ask") { app.innerHTML = shell(listingHtml(BY[r.id]), "home", r.id); loadReceipts(r.id); return; }
+    if (r.name === "season") { app.innerHTML = shell(seasonHtml(), "list"); return; }
+    if (r.name === "calendar") { app.innerHTML = shell(calendarHtml(), "cal"); return; }
+    app.innerHTML = shell(homeHtml(), "home");
+  }
+  /* A pick or a tick changed: repaint the page underneath, keep the scroll position and focus */
   function refresh() {
-    updateNav();
-    if (page === "home") { renderMoves(); renderBoard(); }
-    if (page === "trail") { renderMoves(); renderTrail(); }
-    if (page === "season") renderSeason();
-    var r = parseRoute(location.pathname), panel = $("#panel");
-    if (panel.hidden) return;
-    if (r.name === "listing") repaintPanel(sheetHtml(BY[r.id]));
-    if (r.name === "ask") {
-      var o = BY[r.id], st = o.steps.filter(function (s) { return s.ask === r.ask; })[0], b = $("[data-done]", panel);
-      if (b && st) { var done = !!state.done[key(o, st)]; b.setAttribute("aria-pressed", done); $(".box", b).textContent = done ? "✓" : ""; $("b", b).textContent = done ? "Done" : "Mark as done"; }
+    const y = window.scrollY, f = document.activeElement;
+    let sel = null;
+    if (f && f.dataset && !(f.closest && f.closest("#panel"))) {
+      for (const k of ["pick", "done", "f", "g", "all", "calmine", "calmonth", "themeToggle"]) {
+        if (f.dataset[k] != null) { sel = "[data-" + k.replace(/[A-Z]/g, c => "-" + c.toLowerCase()) + (f.dataset[k] ? '="' + f.dataset[k] + '"' : "") + "]"; break; }
+      }
     }
-  }
-  function repaintPanel(html) {
-    var panel = $("#panel"), body = $(".sh-body", panel), top = body ? body.scrollTop : 0;
-    var f = document.activeElement, fsel = f && f.dataset && (f.dataset.pick ? '[data-pick="' + f.dataset.pick + '"]' : f.dataset.done ? '[data-done="' + f.dataset.done + '"]' : null);
-    panel.innerHTML = html;
-    body = $(".sh-body", panel); if (body) body.scrollTop = top;
-    if (fsel && $(fsel, panel)) $(fsel, panel).focus({ preventScroll: true });
+    paint(parseRoute(location.pathname));
+    window.scrollTo(0, y);
+    const el = sel && $$(sel, $("#app")).filter(x => x.offsetParent !== null)[0];
+    if (el) el.focus({ preventScroll: true });
+    const b = $("#panel [data-done]");
+    if (b) {
+      const done = !!state.done[b.dataset.done];
+      b.setAttribute("aria-pressed", done);
+      $(".box", b).innerHTML = done ? I.check : "";
+      $("b", b).textContent = done ? "Done" : "Mark as done";
+    }
   }
 
   /* ---------- Picks and ticks (saved only in this browser) ---------- */
   function togglePick(id) {
-    var o = BY[id], i = state.picks.indexOf(id);
-    if (i >= 0) { state.picks.splice(i, 1); toast("Removed " + o.short + " from your season."); }
-    else { state.picks.push(id); toast("Added " + o.short + " to your season. Your steps are in My Season."); }
+    const o = BY[id], i = state.picks.indexOf(id);
+    if (i >= 0) { state.picks.splice(i, 1); toast("Removed " + o.short + " from your list."); }
+    else { state.picks.push(id); toast("Added " + o.short + " to your list. Its steps are in My list."); }
     store.set("picks", state.picks);
     refresh();
   }
@@ -143,505 +198,463 @@
     store.set("done", state.done);
     refresh();
   }
-
-  /* ---------- Pixel art ---------- */
-  var SUNRISE = { sky: ["#3B3F8F", "#5B4FA0", "#8E5BA6", "#D9677A", "#F59563", "#FFC46B"], sun: "#FFF1B8", sunEdge: "#FFD86B", cloud: "#FFE3D0", cloudShade: "#E9A99A", far: "#7A5A9C", near: "#1E2150", window: "#FFC23D", water: "#2A3070", waterHi: "#5B6CC8", reflect: "#FFC46B", litChance: 0.6 };
-  var artWidth = 0;
-  function drawArt() {
-    document.querySelectorAll("canvas.bell").forEach(function (c) { if (!c.dataset.drawn) { drawSprite(c, BELL, { X: "#16193A", Y: "#FFC23D", H: "#FFF1B8", C: "#16193A" }); c.dataset.drawn = 1; } });
-    var cv = $("canvas.sky"); if (!cv) return;
-    var host = cv.parentNode, wide = window.innerWidth >= 900, small = host.classList.contains("sm"), px = wide ? 3 : 2.44;
-    artWidth = host.clientWidth;
-    cv.width = Math.max(1, Math.round(host.clientWidth / px)); cv.height = Math.max(1, Math.round(host.clientHeight / px));
-    drawSkyline(cv, { seed: 11, sunX: 0.78, sunY: 0.62, sunR: wide ? 14 : 9, towerX: wide ? 0.66 : (small ? 0.86 : 0.3), heightScale: small ? 0.5 : (wide ? 0.72 : 1),
-      clouds: [[0.06, 0.18, 26], [0.55, 0.12, 30], [0.82, 0.3, 20]], palette: SUNRISE });
+  function setGrade(g) {
+    state.grade = g || null; state.allGrades = false;
+    store.set("grade", state.grade);
+    closeSheetNow();
+    refresh();
   }
-  var resizeTimer;
-  window.addEventListener("resize", function () {
-    clearTimeout(resizeTimer);
-    resizeTimer = setTimeout(function () { var cv = $("canvas.sky"); if (cv && cv.parentNode.clientWidth !== artWidth) drawArt(); }, 150);
-  });
 
-  /* ---------- Header ---------- */
-  function navHtml(back) {
-    return '<nav class="nav" aria-label="Main"><a class="logo" href="/" data-nav><canvas class="bell" width="14" height="12" aria-hidden="true"></canvas>Opening Bell</a>' +
-      '<div class="nav-r">' + (back ? '<a class="navchip" href="/" data-nav>← The Board</a>' : '<span class="navchip wide-only">Ontario · Business</span>') +
-      (FEATURES.season && !back ? '<a class="navchip" id="seasonChip" href="/season" data-nav>My season<b>' + state.picks.length + "</b></a>" : "") + "</div></nav>";
+  /* ---------- Frame: header, two columns on a computer, tab bar on a phone ---------- */
+  function header(nav, withGrade) {
+    const n = state.picks.length;
+    const link = (k, href, label) => '<a href="' + href + '" data-nav' + (nav === k ? ' aria-current="page"' : "") + ">" + label + "</a>";
+    return '<header class="hd"><a class="word" href="/" data-nav>Opening Bell</a>' +
+      (nav ? '<nav class="dlinks" aria-label="Main">' + link("home", "/", "Home") + link("cal", "/calendar", "Calendar") + link("list", "/season", "My list" + (n ? ' <span class="count">' + n + "</span>" : "")) + "</nav>" : "") +
+      '<div class="hd-r">' + (withGrade === false ? '<a class="chip" href="/" data-nav>See all listings</a>'
+        : '<button type="button" class="chip" data-grade-open aria-haspopup="dialog">' + (state.grade ? "Grade " + state.grade : "Your grade") + I.down + "</button>") +
+      themeButton() + "</div></header>";
   }
-  function updateNav() { var c = $("#seasonChip b"); if (c) c.textContent = state.picks.length; }
-  function heroHtml() {
-    return '<header class="hero"><canvas class="sky" aria-hidden="true"></canvas><div class="hero-in wrap">' + navHtml(false) +
-      '<p class="tag">' + esc(D.SEASON) + " season</p><h1>Know what to do this week.</h1></div></header>";
+  function tabbar(nav) {
+    const n = state.picks.length;
+    const t = (k, href, icon, label) => '<a href="' + href + '" data-nav' + (nav === k ? ' aria-current="page"' : "") + ">" + icon + label + "</a>";
+    return '<nav class="tabbar" aria-label="Main">' + t("home", "/", I.home, "Home") + t("cal", "/calendar", I.cal, "Calendar") +
+      t("list", "/season", (nav === "list" ? I.listOn : I.list) + (n ? '<span class="badge">' + n + "</span>" : ""), "My list") + "</nav>";
+  }
+  function shell(main, nav, currentId) {
+    return header(nav, true) + '<div class="cols"><main id="main" class="main">' + main + '</main><aside class="side" aria-label="All listings">' + watchHtml(currentId) + "</aside></div>" + tabbar(nav);
+  }
+
+  /* ---------- The watchlist ---------- */
+  function rowHtml(o, currentId) {
+    const ok = eligible(o);
+    return '<li><a class="r' + (o._s.key === "closed" ? " dim" : "") + (ok ? "" : " inel") + '" href="/l/' + o.id + '" data-nav' + (currentId === o.id ? ' aria-current="page"' : "") + ">" +
+      '<span class="r-l"><span class="tk">' + esc(o.tk) + '</span><span class="nm">' + esc(o.name) + (ok ? "" : " (not for Grade " + state.grade + ")") + "</span></span>" + pill(o) + "</a></li>";
+  }
+  function watchHtml(currentId) {
+    const types = D.TYPES.filter(t => L.some(o => o.type === t[0]));
+    const chips = [["all", "All"]].concat(types).concat([["free", "Free"]]).map(t =>
+      '<button type="button" class="fchip" data-f="' + t[0] + '" aria-pressed="' + (state.filter === t[0]) + '">' + esc(t[1]) + "</button>").join("");
+    const list = L.filter(o => (state.filter === "free" ? o.free : (state.filter === "all" || o.type === state.filter)) && (state.allGrades || eligible(o)));
+    const showMine = state.filter === "all" && state.picks.length > 0;
+    const rest = list.filter(o => !(showMine && picked(o.id)));
+    let html = '<div class="fchips" role="group" aria-label="Show">' + chips + "</div>";
+    if (showMine) html += '<h2 class="wh">My list<a href="/season" data-nav>See plan</a></h2><ul class="list">' + state.picks.map(id => rowHtml(BY[id], currentId)).join("") + "</ul>";
+    [["Open now", o => o._s.key === "open"], ["Opening later", o => o._s.key === "soon" || o._s.key === "expected"], ["Closed this season", o => o._s.key === "closed"]].forEach(g => {
+      const rows = rest.filter(g[1]);
+      if (rows.length) html += '<h2 class="wh">' + g[0] + '</h2><ul class="list">' + rows.map(o => rowHtml(o, currentId)).join("") + "</ul>";
+    });
+    if (!list.length) html += '<p class="empty">Nothing matches this filter.</p>';
+    const forGrade = L.filter(eligible).length;
+    html += '<p class="scope">' + (state.grade
+      ? (state.allGrades ? "Showing all " + L.length + " listings. " : "Showing " + forGrade + " of " + L.length + " for Grade " + state.grade + ". ") +
+        '<button type="button" class="linkbtn" data-all>' + (state.allGrades ? "Only Grade " + state.grade : "Show all grades") + "</button>"
+      : "Showing all " + L.length + '. <button type="button" class="linkbtn" data-grade-open>Pick your grade</button> to see only what you can enter.') + "</p>";
+    return html;
   }
 
   /* ---------- Home ---------- */
-  function gradeHtml() {
-    return '<section class="grade" aria-labelledby="gradeQ"><p id="gradeQ">What grade are you in?</p><div class="gbtns" role="group" aria-labelledby="gradeQ">' +
-      [9, 10, 11, 12].map(function (g) { return '<button type="button" data-g="' + g + '" aria-pressed="' + (state.grade === g) + '">' + g + "</button>"; }).join("") + "</div></section>";
+  function gradeButtons() {
+    return '<div class="gbtns" role="group" aria-label="Your grade">' + [9, 10, 11, 12].map(g =>
+      '<button type="button" data-g="' + g + '" aria-pressed="' + (state.grade === g) + '">' + g + "</button>").join("") + "</div>";
   }
-  function homeHtml(view) {
-    var tabs = '<div class="tabs" role="group" aria-label="View">' +
-      '<a class="tab" href="/" data-nav' + (view === "board" ? ' aria-current="page"' : "") + ">The Board</a>" +
-      (FEATURES.trail ? '<a class="tab" href="/trail" data-nav' + (view === "trail" ? ' aria-current="page"' : "") + ">The Trail</a>" : "") + "</div>";
-    var body = view === "trail"
-      ? '<div class="filters" id="trailFilter" role="group" aria-label="Show on the trail"></div><div id="trail"></div>'
-      : '<div class="filters" id="filters" role="group" aria-label="Filter listings"></div><p class="scope" id="scope"></p><div class="board" id="board"></div>';
-    return heroHtml() +
-      '<main id="main"><div class="wrap">' + gradeHtml() + '<section aria-labelledby="movesH"><div class="sec"><h2 id="movesH">Your next moves</h2><span class="lab" id="movesSub"></span></div><div id="movesBox"></div></section></div>' +
-      '<nav class="strip" id="strip" aria-label="Closing soon"></nav>' +
-      '<div class="wrap"><section aria-label="Listings" id="listings"><div class="sec tabsec">' + tabs + '<span class="lab">Checked ' + esc(C.fmt(D.CHECKED)) + "</span></div>" + body + "</section>" +
-      aboutHtml() + "</div></main>";
-  }
-  function bindHome(view) {
-    $(".gbtns").addEventListener("click", function (e) {
-      var b = e.target.closest("button[data-g]"); if (!b) return;
-      state.grade = Number(b.dataset.g); store.set("grade", state.grade); state.allGrades = false;
-      document.querySelectorAll(".gbtns button").forEach(function (x) { x.setAttribute("aria-pressed", x === b); });
-      renderMoves(); if (view === "trail") renderTrail(); else renderBoard();
-    });
-    if (view === "trail") {
-      $("#trailFilter").addEventListener("click", function (e) {
-        var b = e.target.closest("button[data-tm]"); if (!b) return;
-        state.trailMine = b.dataset.tm === "mine"; renderTrail();
+  /* Steps to do, soonest first. With a list, its steps (overdue ones too); without one, suggestions for your grade. */
+  function moves() {
+    const all = [];
+    if (state.picks.length) {
+      state.picks.forEach(id => {
+        const o = BY[id];
+        o.steps.forEach(s => {
+          if (!mine(s) || state.done[key(o, s)]) return;
+          const late = C.endOf(s.by) < NOW;
+          if (late && (o._s.key === "closed" || (o.window && o.window.to && C.endOf(o.window.to) < NOW))) return;
+          all.push({ o, s, d: C.parse(s.by), late });
+        });
       });
-      renderMoves(); renderStrip(); renderTrail();
-      return;
+    } else {
+      L.filter(o => eligible(o) && o._s.key !== "closed").forEach(o => C.upcoming(o, NOW, state.done).filter(mine).forEach(s => all.push({ o, s, d: C.parse(s.by), late: false })));
     }
-    $("#filters").addEventListener("click", function (e) {
-      var b = e.target.closest("button[data-f]"); if (!b) return;
-      state.filter = b.dataset.f; renderBoard();
-    });
-    $("#scope").addEventListener("click", function (e) {
-      if (e.target.closest("[data-all]")) { state.allGrades = !state.allGrades; renderBoard(); }
-    });
-    renderMoves(); renderStrip(); renderBoard();
+    return all.sort((a, b) => a.d - b.d);
   }
-
-  /* ---------- The Trail: the whole season as a path, one stop per listing ---------- */
-  function renderTrail() {
-    var mineOnly = state.trailMine && state.picks.length;
-    $("#trailFilter").innerHTML =
-      '<button type="button" class="chip" data-tm="all" aria-pressed="' + !mineOnly + '">' + (state.grade ? "Everything for Grade " + state.grade : "Everything") + "</button>" +
-      (state.picks.length ? '<button type="button" class="chip" data-tm="mine" aria-pressed="' + !!mineOnly + '">My season (' + state.picks.length + ")</button>" : "");
-    var list = L.filter(function (o) { return mineOnly ? picked(o.id) : eligible(o); });
-    var stops = list.map(function (o) {
-      var s = o._s;
-      if (s.key === "open") return { o: o, d: o.window.to, est: false, label: o.boardWhat, extra: "in " + C.plural(s.n, "day") };
-      return { o: o, d: o.next.d, est: !!o.next.est, label: s.key === "closed" ? "Next round opens" : "Opens", extra: "" };
-    }).sort(function (a, b) { return C.parse(a.d) - C.parse(b.d); });
-    var openN = list.filter(function (o) { return o._s.key === "open"; }).length;
-    var html = "", lastMon = "", side = 0, hereDone = false;
-    function month(d) { var m = C.MON[d.getMonth()]; return m + (d.getMonth() === 0 ? " " + d.getFullYear() : ""); }
-    function here() {
-      hereDone = true;
-      return '<div class="t-here"><canvas class="me" width="10" height="12" aria-hidden="true"></canvas><div class="bubble"><small>You are here · ' + esc(C.fmtShort(C.iso(NOW))) + "</small>" +
-        openN + (openN === 1 ? " thing is" : " things are") + " open right now</div></div>";
-    }
-    var nowMon = month(NOW);
-    html += '<div class="t-mon"><span>' + esc(nowMon) + "</span></div>"; lastMon = nowMon;
-    stops.forEach(function (x) {
-      var d = C.parse(x.d), m = month(d);
-      if (!hereDone && d >= NOW) html += here();
-      if (m !== lastMon) { html += '<div class="t-mon"><span>' + esc(m) + "</span></div>"; lastMon = m; }
-      var o = x.o, up = C.upcoming(o, NOW, state.done).filter(mine)[0], on = picked(o.id);
-      var when = (x.est ? "~" : "") + (C.isMonth(x.d) ? C.MON[d.getMonth()] + " " + d.getFullYear() : C.fmtShort(x.d));
-      html += '<a class="t-stop ' + (side++ % 2 ? "R" : "L") + " " + o._s.key + (on ? " on" : "") + '" href="/l/' + o.id + '" data-nav>' +
-        '<span class="t-node" aria-hidden="true">' + (on ? "✓" : o._s.key === "open" ? "!" : "") + "</span>" +
-        '<span class="t-card"><span class="t-top"><span class="tk ' + o._s.key + '">' + esc(o.tk) + '</span><span class="lab' + (o._s.urgent ? " u" : "") + '">' + esc(when + " · " + x.label + (x.extra ? " · " + x.extra : "")) + "</span>" +
-        (o.lastGrade && o.lastGrade === state.grade ? '<span class="last">Last year</span>' : "") + (on ? '<span class="act friends">In your season</span>' : "") + "</span>" +
-        "<b>" + esc(o.name) + "</b><small>" + esc(orgShort(o)) + " · " + esc(o.costShort.split(" · ")[0]) + "</small>" +
-        (up ? '<span class="t-next"><em>Next · by ' + esc(C.fmtShort(up.by, up.est)) + "</em> " + esc(up.t) + "</span>" : "") + "</span></a>";
-    });
-    if (!hereDone) html += here();
-    var end = state.grade === 11 ? "Grade 12 · application season" : state.grade === 12 ? "Graduation" : "Next school year";
-    html += '<div class="t-end"><span class="t-node end" aria-hidden="true">★</span><span>' + esc(end) + "</span></div>";
-    $("#trail").innerHTML = stops.length ? '<div class="trail">' + html + "</div>" : '<p class="empty">Nothing on your trail yet. Add listings to your season with + on the Board.</p>';
-    var me = $("#trail canvas.me"); if (me) drawSprite(me, STUDENT, { X: "#16193A", H: "#6B3E1E", F: "#F2C29B", B: "#F2715A", P: "#3B4A9C" });
+  function actionButton(o, s, cls) {
+    if (s.ask && o.asks[s.ask]) return '<a class="btn ' + (cls || "") + '" href="/l/' + o.id + "/ask/" + s.ask + '" data-nav>' + (o.asks[s.ask].to === "friends" ? "Invite your team" : "Write the message") + "</a>";
+    if (s.href) return '<a class="btn ' + (cls || "") + '" href="' + esc(s.href) + '" target="_blank" rel="noopener">Open ' + esc(domain(s.href)) + "</a>";
+    return '<a class="btn sec ' + (cls || "") + '" href="/l/' + o.id + '" data-nav>See details</a>';
   }
-
-  /* Your next moves: from your season if you have picks, otherwise for your grade */
-  function nextMoves(limit) {
-    var src = state.picks.length ? state.picks.map(function (id) { return BY[id]; }) : L.filter(eligible);
-    var all = [];
-    src.forEach(function (o) {
-      var up = C.upcoming(o, NOW, state.done).filter(mine);
-      if (up.length) all.push({ o: o, s: up[0], d: C.parse(up[0].by) });
-    });
-    all.sort(function (a, b) { return a.d - b.d; });
-    return all.slice(0, limit);
-  }
-  function whenBox(s) {
-    var n = C.days(NOW, C.parse(s.by)), d = C.parse(s.by), month = C.isMonth(s.by), late = C.endOf(s.by) < NOW;
-    return '<div class="when' + ((n <= 7 && !s.est) || late ? " urgent" : "") + '"><small>' + (late ? "Overdue" : "Do by") + "</small><b>" + (month ? "~" : d.getDate()) + "</b><small>" + C.MON[d.getMonth()] + "</small></div>";
-  }
-  function moveHtml(m) {
-    var o = m.o, s = m.s;
-    var acts = (o.lastGrade && o.lastGrade === state.grade ? '<span class="last">Last year you can</span>' : "") +
-      askButton(o, s, true) + openButton(s) + '<a class="btn sm" href="/l/' + o.id + '" data-nav>Details</a>';
-    return '<li class="move">' + whenBox(s) + '<div><h3>' + esc(s.t) + "</h3><p>" + esc(o.name) + " · " + esc(o._s.key === "open" ? o._s.text : o._s.pill) + "</p>" +
-      '<div class="mv-acts">' + acts + "</div></div></li>";
-  }
-  function renderMoves() {
-    var box = $("#movesBox"), sub = $("#movesSub"), today = C.fmtShort(C.iso(NOW));
+  function nextUpHtml() {
     if (!state.grade && !state.picks.length) {
-      sub.textContent = "";
-      box.innerHTML = '<p class="empty">Pick your grade above. You\'ll see the next thing to do for each competition and program, with the date to do it by.</p>';
-      return;
+      return '<section class="gprompt" aria-labelledby="gpH"><h2 id="gpH">What grade are you in?</h2><p>You’ll see what you can enter this school year, with every deadline and the first thing to do.</p>' + gradeButtons() + "</section>";
     }
-    sub.textContent = (state.picks.length ? "From your season" : "Grade " + state.grade) + " · " + today;
-    var ms = nextMoves(3);
-    box.innerHTML = (ms.length ? '<ol class="moves">' + ms.map(moveHtml).join("") + "</ol>" : '<p class="empty">Nothing due right now. Check the Board for what opens next.</p>') +
-      (FEATURES.season ? '<p class="after">' + (state.picks.length
-        ? '<a href="/season" data-nav>See your whole season →</a>'
-        : "Tap <b>+</b> on any listing to add it to your season and get a week-by-week plan.") + "</p>" : "");
+    const all = moves(), mineMode = state.picks.length > 0;
+    const head = '<h2 class="h2" id="nxH">' + (mineMode ? "Next up" : "A good first step") + "</h2>";
+    if (!all.length) return '<section aria-labelledby="nxH">' + head + '<div class="card"><p class="nx-t">Nothing due right now.</p><p class="nx-s">' + (mineMode ? "Every step on your list is done." : "Check what opens next below.") + "</p></div></section>";
+    const x = all[0], o = x.o, s = x.s, d = x.d, n = C.days(NOW, d);
+    const due = x.late ? "Overdue since " + dayText(s) : C.isMonth(s.by) ? "Due " + dayText(s) : "Due " + dayText(s) + ", " + (n === 0 ? "today" : n === 1 ? "tomorrow" : "in " + n + " days");
+    const cls = x.late || (n <= 2 && !C.isMonth(s.by)) ? "r" : n <= 7 && !C.isMonth(s.by) ? "o" : "";
+    const soon = all.slice(1).filter(y => !C.isMonth(y.s.by) && C.days(NOW, y.d) <= 7).length;
+    return '<section aria-labelledby="nxH">' + head + '<div class="card"><p class="due ' + cls + '">' + esc(due) + '</p><p class="nx-t">' + esc(s.t) + '</p><p class="nx-s"><a href="/l/' + o.id + '" data-nav>' + esc(o.name) + "</a></p>" +
+      '<div class="nx-a">' + actionButton(o, s, "") + (mineMode ? '<button type="button" class="tbtn" data-done="' + key(o, s) + '">Mark done</button>' : '<button type="button" class="tbtn" data-pick="' + o.id + '">Add ' + esc(o.short) + " to my list</button>") + "</div></div>" +
+      '<p class="more">' + (mineMode ? '<a href="/season" data-nav>' + (soon ? soon + (soon === 1 ? " more step" : " more steps") + " due in the next 7 days" : "See your whole plan") + "</a>" : "Add listings to your list to get a plan with every step.") + "</p></section>";
   }
-  function renderStrip() {
-    var open = L.filter(function (o) { return o._s.key === "open"; }).sort(function (a, b) { return a._s.n - b._s.n; });
-    $("#strip").innerHTML = open.map(function (o) {
-      return '<a href="/l/' + o.id + '" data-nav><small>' + esc(o.tk) + '</small><b>' + o._s.n + '</b> <small>Days · ' + esc(o.boardWhat) + "</small></a>";
-    }).join("");
+  function homeHtml() {
+    return nextUpHtml() + '<div class="home-watch">' + watchHtml(null) + "</div>" +
+      '<section class="desk-only" aria-labelledby="cuH"><h2 class="h2" id="cuH">Coming up<a href="/calendar" data-nav>Calendar</a></h2>' + comingList(comingItems(state.picks.length > 0).slice(0, 8)) + "</section>" + aboutHtml();
   }
-
-  /* ---------- The Board ---------- */
-  function seg(o) {
-    var n = 12, out = "";
-    if (o._s.key !== "open") { for (var i = 0; i < n; i++) out += "<i></i>"; return out; }
-    var from = C.parse(o.window.from || "2026-09-01"), to = C.parse(o.window.to);
-    var f = Math.max(0, Math.min(n - 1, Math.floor((NOW - from) / (to - from) * n)));
-    for (var j = 0; j < n; j++) out += j < f ? '<i class="f"></i>' : (j === f ? '<i class="' + (o._s.urgent ? "u" : "n") + '"></i>' : "<i></i>");
-    return out;
-  }
-  function addButton(o) {
-    if (!FEATURES.season) return "";
-    var on = picked(o.id);
-    return '<button type="button" class="add' + (on ? " on" : "") + '" data-pick="' + o.id + '" aria-pressed="' + on + '" aria-label="' + (on ? "Remove " : "Add ") + esc(o.name) + (on ? " from" : " to") + ' my season">' + (on ? "✓" : "+") + "</button>";
-  }
-  function rowHtml(o, selected) {
-    var s = o._s, up = C.upcoming(o, NOW, state.done).filter(mine)[0];
-    var dy;
-    if (s.key === "open") dy = '<span class="dy' + (s.urgent ? " u" : "") + '"><b>' + s.n + "</b><small>Days left</small></span>";
-    else { var d = C.parse(o.next.d); dy = '<span class="dy s"><b>' + (o.next.est ? "~" : "") + C.MON[d.getMonth()] + "</b><small>" + (s.key === "closed" ? "Next round" : "Opens") + "</small></span>"; }
-    var wl = s.key === "open" ? esc(o.boardWhat) + " " + C.fmtShort(o.window.to) : (s.key === "closed" ? "Closed this season" : "Not open yet");
-    var last = o.lastGrade && o.lastGrade === state.grade ? '<span class="last">Last year</span>' : "";
-    var nx = up ? '<span class="nx"><em>Next · by ' + esc(C.fmtShort(up.by, up.est)) + "</em> " + esc(up.t) + "</span>" : '<span class="nx"><em>Next</em> Check the organizer\'s page</span>';
-    var note = !eligible(o) ? " · Not for Grade " + state.grade : "";
-    return '<div class="rw' + (selected ? " sel" : "") + (FEATURES.season ? " has-add" : "") + '" data-id="' + o.id + '"' + (!eligible(o) ? ' style="opacity:.6"' : "") + ">" +
-      '<span class="tk ' + s.key + '">' + esc(o.tk) + "</span>" +
-      '<span class="nm"><a href="/l/' + o.id + '" data-nav>' + esc(o.name) + "</a>" + last + "<small>" + esc(orgShort(o)) + " · " + esc(o.costShort.split(" · ")[0]) + esc(note) + "</small></span>" +
-      nx + '<span class="win" aria-hidden="true"><span class="seg">' + seg(o) + '</span><span class="wl">' + wl + "</span></span>" + dy + addButton(o) + "</div>";
-  }
-  function renderBoard() {
-    var types = D.TYPES.filter(function (t) { return L.some(function (o) { return o.type === t[0]; }); });
-    $("#filters").innerHTML = [["all", "All"]].concat(types).concat([["free", "Free"]]).map(function (t) {
-      return '<button type="button" class="chip" data-f="' + t[0] + '" aria-pressed="' + (state.filter === t[0]) + '">' + esc(t[1]) + "</button>";
-    }).join("");
-    var list = L.filter(function (o) {
-      if (state.filter === "free" ? !o.free : (state.filter !== "all" && o.type !== state.filter)) return false;
-      return state.allGrades || eligible(o);
-    });
-    var forGrade = L.filter(eligible).length;
-    $("#scope").innerHTML = state.grade
-      ? (state.allGrades ? "Showing all " + L.length + " listings. " : "Showing " + forGrade + " of " + L.length + " for Grade " + state.grade + ". ") +
-        '<button type="button" class="linkbtn" data-all>' + (state.allGrades ? "Only Grade " + state.grade : "Show all grades") + "</button>"
-      : "Showing all " + L.length + ". Pick your grade above to see only what you can enter.";
-    var cur = parseRoute(location.pathname);
-    var groups = [
-      ["open", "▲ Open now", "closing first at the top"],
-      ["soonexp", "◆ Opening soon", "get ready now"],
-      ["closed", "● Next round", "closed this season, here's when it comes back"]
-    ];
-    var html = groups.map(function (g) {
-      var rows = list.filter(function (o) { return g[0] === "soonexp" ? (o._s.key === "soon" || o._s.key === "expected") : o._s.key === g[0]; });
-      if (!rows.length) return "";
-      return '<div class="grp">' + g[1] + " <i>· " + g[2] + "</i></div>" + rows.map(function (o) { return rowHtml(o, cur.id === o.id); }).join("");
-    }).join("");
-    $("#board").innerHTML = html || '<p class="empty" style="margin:0;border:0">Nothing matches this filter.</p>';
-  }
-
   function aboutHtml() {
     return '<div class="about">' +
-      '<section aria-labelledby="whyH"><h2 id="whyH">Why this exists</h2><p>When I applied to business school, grades were nearly all that mattered. That has changed. Programs like Ivey, Rotman, Queen\'s and Waterloo now look closely at what you\'ve done outside class.</p><p>The opportunities exist, but the dates are scattered and the important steps are buried. This site puts them in one place, for the students who are where I was.</p></section>' +
-      '<section aria-labelledby="checkH"><h2 id="checkH">How we check facts</h2><p>Every fact here is quoted from the organizer\'s own page. Open any listing and tap "See the receipts" to read the exact sentences and where they came from.</p><p>A script re-reads those pages to catch changes. Dates marked ~ are our estimates from past years, and "do by" dates are our advice.</p></section>' +
-      '<section aria-labelledby="privH"><h2 id="privH">Your privacy</h2><p>No accounts, no email, no tracking cookies. Your grade, your season and your ticks are saved only in your own browser.</p><p>Messages and calendar files are made on your device; nothing about you is sent to us.</p></section>' +
-      '</div><footer class="foot"><p>Grades mean your grade in the ' + esc(D.SEASON) + ' school year. For next year\'s rounds, we list the grades that will still be eligible when they open.</p><p>Always confirm details with the organizer before you apply. Opening Bell is independent and isn\'t affiliated with any organizer listed.</p></footer>';
+      '<section aria-labelledby="whyH"><h2 class="h2" id="whyH">Why this exists</h2><p>When I applied to business school, grades were nearly all that mattered. That has changed. Programs like Ivey, Rotman, Queen’s and Waterloo now look closely at what you’ve done outside class.</p><p>The opportunities exist, but the dates are scattered and the important steps are buried. This site puts them in one place, for the students who are where I was.</p></section>' +
+      '<section aria-labelledby="checkH"><h2 class="h2" id="checkH">How we check facts</h2><p>Every fact here is quoted from the organizer’s own page. Each listing ends with the exact sentences and where they came from.</p><p>A script re-reads those pages to catch changes. Dates marked ~ are our estimates from past years, and “by” dates on steps are our advice.</p></section>' +
+      '<section aria-labelledby="privH"><h2 class="h2" id="privH">Your privacy</h2><p>No accounts, no email, no tracking cookies. Your grade, your list and your ticks are saved only in your own browser.</p><p>Messages and calendar files are made on your device. Nothing about you is sent to us.</p></section>' +
+      '<p class="fine">Grades mean your grade in the ' + esc(D.SEASON) + " school year. For next year’s rounds, we list the grades that will still be eligible when they open. Always confirm details with the organizer before you apply. Opening Bell is independent and isn’t affiliated with any organizer listed. Last checked " + esc(C.fmt(D.CHECKED)) + ".</p></div>";
   }
 
-  /* ---------- Details sheet ---------- */
-  function sheetHtml(o) {
-    var s = o._s, gr = C.gradeRow(o, state.grade, s), on = picked(o.id);
-    var rows = (gr ? [gr] : []).concat(o.can);
-    var can = rows.map(function (c) { return '<div class="c"><span class="ck ' + c.k + '" aria-hidden="true">' + ICON[c.k] + '</span><div><b>' + esc(c.t) + "</b>" + (c.s ? "<small>" + esc(c.s) + "</small>" : "") + "</div></div>"; }).join("");
-    var steps = o.steps.map(function (st, i) {
-      var past = C.endOf(st.by) < NOW, done = !!state.done[key(o, st)];
-      return '<li class="' + (past || done ? "past" : "") + '"><span class="n">' + (done ? "✓" : i + 1) + "</span><div><b>" + esc(st.t) + "</b>" +
-        '<div class="meta">' + whoChip(o, st) + dueLabel(o, st) + "</div>" + (st.note ? '<span class="note">' + esc(st.note) + "</span>" : "") +
-        '</div><div class="go">' + askButton(o, st, true) + openButton(st) + "</div></li>";
-    }).join("");
-    var kd = o.dates.map(function (x) {
-      var past = C.endOf(x.d) < NOW;
-      return '<li class="' + (past ? "past" : "") + '"><time>' + esc(x.show || C.fmt(x.d, x.est)) + "</time><span>" + esc(x.t) + (x.est ? '<span class="est">est.</span>' : "") + "</span></li>";
-    }).join("");
-    var status = '<span class="pill ' + s.key + '">' + esc(s.pill) + '</span><span class="lab' + (s.urgent ? " u" : "") + '">' + esc(s.text) + "</span>" +
-      (o.lastGrade && o.lastGrade === state.grade ? '<span class="last">Last year you can</span>' : "");
-    return '<div class="grab" aria-hidden="true"></div>' +
-      '<div class="sh-head"><div class="sh-top"><span class="tk ' + s.key + '">' + esc(o.tk) + '</span><button type="button" class="x" data-close aria-label="Close">✕</button></div>' +
-      '<h2 id="shTitle" tabindex="-1">' + esc(o.name) + '</h2><p class="org">' + esc(o.org) + " · " + esc(D.TYPE_LABEL[o.type]) + '</p><div class="status">' + status + "</div></div>" +
-      '<div class="sh-body">' +
-        '<div class="sec-h"><span>Can I do this?</span><span>' + (state.grade ? "For Grade " + state.grade : "Pick your grade on the home page") + "</span></div><div class=\"can\">" + can + "</div>" +
-        '<div class="sec-h"><span>How you get in</span><span>' + o.steps.length + " steps</span></div><ol class=\"steps\">" + steps + "</ol>" +
-        '<div class="sec-h"><span>Worth it because</span></div><p class="why">' + esc(o.why) + "</p>" +
-        '<details class="more"><summary>Cost, format and key dates</summary><dl class="facts">' +
-          "<dt>Cost</dt><dd>" + esc(o.cost) + (o.aid ? '<span class="aid">' + esc(o.aid) + "</span>" : "") + "</dd>" +
-          "<dt>Format</dt><dd>" + esc(o.format) + "</dd><dt>Where</dt><dd>" + esc(o.where) + "</dd><dt>To enter</dt><dd>" + esc(o.entry) + "</dd></dl>" +
-          '<ol class="kd">' + kd + '</ol><p class="calrow"><button type="button" class="linkbtn" data-cal="' + o.id + '">Download these dates to your calendar</button></p></details>' +
-        '<div class="rcpt"><b>✓ Every fact here is quoted from the organizer</b> · checked ' + esc(C.fmt(D.CHECKED)) +
-          '<details data-receipts="' + o.id + '"><summary>See the receipts</summary><div class="rc-list">Loading…</div></details>' +
-          (REPORT_EMAIL ? '<p style="margin:8px 0 0"><a href="mailto:' + esc(REPORT_EMAIL) + "?subject=" + encodeURIComponent("Mistake on " + o.name) + '">Report a mistake</a></p>' : "") + "</div>" +
-      "</div>" +
-      '<div class="sh-bar">' +
-        (FEATURES.season
-          ? '<button type="button" class="btn grow ' + (on ? "mint" : "gold") + '" data-pick="' + o.id + '" aria-pressed="' + on + '">' + (on ? "✓ In my season" : "+ Add to my season") + "</button>"
-          : '<button type="button" class="btn gold grow" data-cal="' + o.id + '">+ Add to my calendar</button>') +
-        '<button type="button" class="btn" data-share="' + o.id + '">Share</button></div>';
-  }
-
-  /* ---------- The Ask ---------- */
-  function askHtml(o, a) {
-    var st = o.steps.filter(function (s) { return s.ask === a.id; })[0], done = !!state.done[key(o, st)];
-    var third = a.to === "friends"
-      ? '<a class="btn" data-asksms href="#">Text</a>'
-      : '<a class="btn" data-askmail href="#">Email</a>';
-    return '<div class="grab" aria-hidden="true"></div>' +
-      '<div class="sh-head"><div class="sh-top"><a class="back" href="/l/' + o.id + '" data-nav>← ' + esc(o.short) + '</a><button type="button" class="x" data-close aria-label="Close">✕</button></div>' +
-      '<p class="kicker">The Ask · ' + esc(o.name) + '</p><h2 id="shTitle" tabindex="-1">' + esc(a.title) + "</h2>" +
-      '<div class="status"><span class="act ' + askChipClass(a) + '">To: ' + esc(ASK_TO[a.to]) + "</span>" + dueLabel(o, st) + "</div></div>" +
-      '<div class="sh-body">' +
-        '<div class="sec-h"><label for="askMsg">Your message</label><span>Edit anything</span></div>' +
-        '<p class="fillnote">Fill in the parts in [square brackets] before you send it.</p>' +
-        '<textarea id="askMsg" class="msg" rows="13" spellcheck="true">' + esc(a.msg) + "</textarea>" +
-        '<div class="hint"><span class="ck warn" aria-hidden="true">!</span><span>' + esc(a.hint) + "</span></div>" +
-        '<button type="button" class="donebox" data-done="' + key(o, st) + '" aria-pressed="' + done + '"><span class="box" aria-hidden="true">' + (done ? "✓" : "") + "</span><span><b>" + (done ? "Done" : "Mark as done") + "</b><small>" +
-          (a.to === "friends" ? "Tick it once your team is set." : "Tick it once they say yes.") + "</small></span></button>" +
-      "</div>" +
-      '<div class="sh-bar"><button type="button" class="btn" data-askcopy>Copy</button><button type="button" class="btn gold grow" data-askshare>Share</button>' + third + "</div>";
-  }
-  function askContext() {
-    var r = parseRoute(location.pathname); if (r.name !== "ask") return null;
-    var o = BY[r.id]; return { o: o, a: o.asks[r.ask], text: ($("#askMsg") || {}).value || o.asks[r.ask].msg };
-  }
-
-  /* ---------- My Season ---------- */
-  function seasonPageHtml() {
-    return '<header class="hero sm"><canvas class="sky" aria-hidden="true"></canvas><div class="hero-in wrap">' + navHtml(true) +
-      '<h1>Your season</h1><p class="sea-sub" id="seaSub"></p></div></header><main id="main" class="wrap season"><div id="seasonBox"></div></main>';
-  }
-  function todoHtml(o, s) {
-    var k = key(o, s), done = !!state.done[k], late = !done && C.endOf(s.by) < NOW;
-    return '<li class="todo' + (done ? " is-done" : "") + (late ? " late" : "") + '"><button type="button" class="box" data-done="' + k + '" aria-pressed="' + done + '" aria-label="' + (done ? "Mark not done: " : "Mark done: ") + esc(s.t) + '">' + (done ? "✓" : "") + "</button>" +
-      "<div><b>" + esc(s.t) + '</b><div class="meta"><a class="lab tklink" href="/l/' + o.id + '" data-nav>' + esc(o.tk) + "</a>" + dueLabel(o, s) + (late ? '<span class="lab latel">Overdue</span>' : "") + "</div></div>" +
-      '<div class="go">' + (done ? "" : askButton(o, s, true) + openButton(s)) + "</div></li>";
-  }
-  function renderSeason() {
-    var box = $("#seasonBox"), sub = $("#seaSub");
-    var picks = state.picks.map(function (id) { return BY[id]; });
-    if (!picks.length) {
-      sub.textContent = state.grade ? "Grade " + state.grade : "";
-      var sugg = L.filter(function (o) { return eligible(o) && o._s.key === "open"; }).slice(0, 4);
-      box.innerHTML = '<section class="sea-empty"><h2>Pick what you want to do</h2><p>Add competitions and programs to your season. You\'ll get one week-by-week plan with every step, who to ask and what to say.</p>' +
-        (sugg.length ? '<ul class="sugg">' + sugg.map(function (o) {
-          return '<li><span class="tk ' + o._s.key + '">' + esc(o.tk) + '</span><div><a href="/l/' + o.id + '" data-nav>' + esc(o.name) + "</a><small>" + esc(o._s.text) + "</small></div>" + addButton(o) + "</li>";
-        }).join("") + "</ul>" : "") + '<p><a class="btn" href="/" data-nav>Browse the Board</a></p></section>';
-      return;
-    }
-    var all = [];
-    picks.forEach(function (o) { o.steps.forEach(function (s) { all.push({ o: o, s: s, d: C.parse(s.by) }); }); });
-    all.sort(function (a, b) { return a.d - b.d; });
-    var mineAll = all.filter(function (x) { return mine(x.s); });
-    var doneN = mineAll.filter(function (x) { return state.done[key(x.o, x.s)]; }).length;
-    sub.textContent = (state.grade ? "Grade " + state.grade + " · " : "") + picks.length + (picks.length === 1 ? " pick" : " picks") + " · " + doneN + " of " + mineAll.length + " moves done";
-    var weekEnd = new Date(NOW); weekEnd.setDate(weekEnd.getDate() + 7);
-    var open = mineAll.filter(function (x) { return !state.done[key(x.o, x.s)]; });
-    var thisWeek = open.filter(function (x) { return C.endOf(x.s.by) <= weekEnd && !C.isMonth(x.s.by); });
-    var head = thisWeek.length ? "This week · " + C.fmtShort(C.iso(NOW)) + "–" + C.fmtShort(C.iso(weekEnd)) : "Nothing due this week · next up";
-    var weekList = thisWeek.length ? thisWeek : open.slice(0, 2);
-    var later = all.filter(function (x) { return weekList.indexOf(x) < 0 && C.endOf(x.s.by) >= NOW && !state.done[key(x.o, x.s)]; });
-    var trail = "", lastMon = "";
-    later.forEach(function (x) {
-      var d = x.d, mon = C.MON[d.getMonth()] + (d.getMonth() === 0 ? " " + d.getFullYear() : "");
-      if (mon !== lastMon) { trail += '<div class="mon">' + esc(mon) + "</div>"; lastMon = mon; }
-      trail += '<a class="stop' + (x.s.est ? " est" : "") + (mine(x.s) ? "" : " info") + '" href="/l/' + x.o.id + '" data-nav><span class="d">' + esc(C.fmtShort(x.s.by, x.s.est)) + " · " + esc(x.o.tk) +
-        (x.s.official ? " · official" : "") + "</span>" + esc(x.s.t) + (mine(x.s) ? "" : " <i>(" + esc(x.s.who === "school" ? "your school" : x.s.who) + ")</i>") + "</a>";
+  /* ---------- Coming up: steps from your list, otherwise deadlines and openings for your grade ---------- */
+  function comingItems(mineOnly) {
+    const items = [];
+    const src = mineOnly ? state.picks.map(id => BY[id]) : L.filter(o => eligible(o) && o._s.key !== "closed");
+    src.forEach(o => {
+      if (picked(o.id)) {
+        o.steps.forEach(s => {
+          if ((mine(s) || s.official) && C.endOf(s.by) >= NOW) items.push({ o, d: C.parse(s.by), t: s.t, step: true, month: C.isMonth(s.by), est: !!s.est, done: !!state.done[key(o, s)] });
+        });
+      } else if (o._s.key === "open") items.push({ o, d: C.parse(o.window.to), t: o.dates.filter(e => e.k === "deadline" && e.d === o.window.to).map(e => e.t)[0] || o.boardWhat, step: false, month: false });
+      else if (o._s.key === "soon") items.push({ o, d: C.parse(o.window.from), t: "Applications open", step: false, month: false });
+      else if (o.next) items.push({ o, d: C.parse(o.next.d), t: o._s.text, step: false, month: C.isMonth(o.next.d), est: !!o.next.est });
     });
-    var doneList = all.filter(function (x) { return state.done[key(x.o, x.s)]; });
-    var prog = mineAll.map(function (x) { return '<i class="' + (state.done[key(x.o, x.s)] ? "f" : "") + '"></i>'; }).join("");
-    box.innerHTML =
-      '<div class="sea-sum"><div class="prog" aria-hidden="true">' + prog + '</div><div class="picks">' + picks.map(function (o) {
-        return '<a class="tk ' + o._s.key + '" href="/l/' + o.id + '" data-nav title="' + esc(o.name) + '">' + esc(o.tk) + "</a>";
-      }).join("") + '<a class="tk addmore" href="/" data-nav aria-label="Add more listings">+</a></div></div>' +
-      '<section class="wk" aria-labelledby="wkH"><div class="wk-h"><span id="wkH">' + esc(head) + "</span><span>" + weekList.length + (weekList.length === 1 ? " move" : " moves") + '</span></div><ul class="todos">' +
-        (weekList.length ? weekList.map(function (x) { return todoHtml(x.o, x.s); }).join("") : '<li class="todo"><span></span><div><b>Every step is done. Nice work.</b></div><span></span></li>') + "</ul></section>" +
-      (trail ? '<section aria-labelledby="upH"><div class="sec"><h2 id="upH">Coming up</h2><span class="lab">Tap any stop for details</span></div><div class="trail-mini">' + trail + "</div></section>" : "") +
-      (doneList.length ? '<details class="more donelist"><summary>Done (' + doneList.length + ')</summary><ul class="todos">' + doneList.map(function (x) { return todoHtml(x.o, x.s); }).join("") + "</ul></details>" : "") +
-      '<section class="sea-acts"><button type="button" class="btn gold" data-subscribe>+ Add to my phone\'s calendar</button>' +
-        '<p class="small">Every step and deadline, in the calendar you already use. It updates itself if a date changes. No account needed.</p>' +
-        '<button type="button" class="btn" data-sendparent>Send to a parent</button>' +
-        '<p class="small">They get a page with what\'s coming up, what it costs and where they can help. <a href="' + esc(parentPath()) + '" data-nav>Preview it</a></p></section>';
+    return items.sort((a, b) => a.d - b.d);
+  }
+  function comingList(items) {
+    if (!items.length) return '<p class="empty">Nothing coming up.</p>';
+    return '<ul class="up">' + items.map(x => {
+      const dd = x.month ? '<span class="dd">' + (x.est ? "~" : "") + C.MON[x.d.getMonth()] + "<small>" + x.d.getFullYear() + "</small></span>"
+        : '<span class="dd">' + x.d.getDate() + "<small>" + WD[x.d.getDay()] + (x.d.getMonth() !== NOW.getMonth() ? " " + C.MON[x.d.getMonth()] : "") + "</small></span>";
+      return '<li><a href="/l/' + x.o.id + '" data-nav' + (x.done ? ' class="done"' : "") + ">" + dd + '<span class="tx">' + (x.step ? '<span class="dot" aria-hidden="true"></span>' : "") + esc(x.t) +
+        "<small>" + esc(x.o.name) + (x.step ? (x.done ? ", done" : ", on your list") : "") + "</small></span></a></li>";
+    }).join("") + "</ul>";
   }
 
-  /* ---------- Calendar subscription ---------- */
-  function feedUrl(ids, forParent) { return location.origin + "/api/calendar?l=" + ids.join(",") + (forParent ? "&for=parent" : ""); }
-  function subscribeHtml(ids, forParent) {
-    var https = feedUrl(ids, forParent), webcal = https.replace(/^https?:/, "webcal:");
-    var tks = ids.map(function (id) { return BY[id].tk; }).join(", ");
-    return '<div class="grab" aria-hidden="true"></div>' +
-      '<div class="sh-head"><div class="sh-top"><p class="kicker" style="margin:0">' + (forParent ? "Your calendar" : "Your phone's calendar") + '</p><button type="button" class="x" data-close aria-label="Close">✕</button></div>' +
-      '<h2 id="shTitle" tabindex="-1">' + (forParent ? "Add these dates to your calendar" : "Add your season to your calendar") + "</h2>" +
-      '<p class="org">Every step and deadline for ' + esc(tks) + ". When a date changes, it changes in your calendar too.</p></div>" +
-      '<div class="sh-body"><div class="sec-h"><span>Pick your calendar</span></div><div class="opts">' +
-        '<a class="opt" href="' + esc(webcal) + '"><b>iPhone, iPad or Mac</b><small>Apple Calendar asks you to subscribe.</small></a>' +
-        '<a class="opt" href="https://calendar.google.com/calendar/render?cid=' + encodeURIComponent(webcal) + '" target="_blank" rel="noopener"><b>Google Calendar</b><small>Opens Google Calendar. On a phone, you may need to finish on a computer.</small></a>' +
-        '<a class="opt" href="https://outlook.live.com/calendar/0/addfromweb?url=' + encodeURIComponent(https) + '&amp;name=' + encodeURIComponent("Opening Bell") + '" target="_blank" rel="noopener"><b>Outlook</b><small>Opens Outlook on the web.</small></a>' +
-        '<button type="button" class="opt" data-copyfeed="' + esc(https) + '"><b>Copy the calendar link</b><small>For any other app: add a calendar "from URL" and paste it.</small></button></div>' +
-        '<div class="hint"><span class="ck warn" aria-hidden="true">!</span><span>Calendar apps check for changes on their own schedule, usually within a day. Each step has a reminder the day before, but some apps ignore reminders in subscribed calendars. If you don\'t get alerts, check this calendar\'s notification settings in your app.</span></div>' +
-        (forParent ? "" : '<p class="small" style="margin-top:12px">Ticks you make on Opening Bell stay on this device, so the calendar shows every step. <button type="button" class="linkbtn" data-calseason>Download a one-time file instead</button> (it won\'t update).</p>') +
-      '</div><div class="sh-bar"><button type="button" class="btn grow" data-close>Done</button></div>';
+  /* ---------- Calendar ---------- */
+  function calendarHtml() {
+    const has = state.picks.length > 0, mineOnly = state.calMine == null ? has : (state.calMine && has);
+    const items = comingItems(mineOnly);
+    const base = new Date(NOW.getFullYear(), NOW.getMonth() + state.calOffset, 1), y = base.getFullYear(), m = base.getMonth();
+    const first = new Date(y, m, 1), days = new Date(y, m + 1, 0).getDate();
+    let g = ["S", "M", "T", "W", "T", "F", "S"].map(x => '<span class="wd" aria-hidden="true">' + x + "</span>").join("");
+    for (let i = 0; i < first.getDay(); i++) g += "<span></span>";
+    for (let dn = 1; dn <= days; dn++) {
+      const d = new Date(y, m, dn), k = C.iso(d), its = items.filter(x => !x.month && C.iso(x.d) === k);
+      const cls = ["c"]; if (d < NOW) cls.push("past"); if (k === C.iso(NOW)) cls.push("today");
+      g += '<span class="' + cls.join(" ") + '"><span>' + dn + "</span>" + (its.length ? '<i class="' + (its.some(x => x.step) ? "" : "k") + '"></i>' : "") + "</span>";
+    }
+    const inMonth = items.filter(x => x.d.getFullYear() === y && x.d.getMonth() === m);
+    const seg = has ? '<div class="seg" role="group" aria-label="Show"><button type="button" data-calmine="1" aria-pressed="' + mineOnly + '">My list</button><button type="button" data-calmine="0" aria-pressed="' + !mineOnly + '">' +
+      (state.grade ? "Everything for Grade " + state.grade : "Everything") + "</button></div>" : "";
+    return '<h1 class="lg">Calendar</h1>' + seg +
+      '<div class="mh"><span>' + MONTH[m] + " " + y + '</span><span class="nav"><button type="button" data-calmonth="-1" aria-label="Previous month"' + (state.calOffset <= 0 ? " disabled" : "") + ">" + I.left +
+      '</button><button type="button" data-calmonth="1" aria-label="Next month"' + (state.calOffset >= 11 ? " disabled" : "") + ">" + I.right + "</button></span></div>" +
+      '<div class="cg">' + g + "</div>" + '<p class="fine">' + (mineOnly ? "Green dots are steps on your list, including closing dates." : "Dots mark closing dates. Add listings to your list to see every step.") + "</p>" +
+      '<h2 class="h2">In ' + MONTH[m] + "</h2>" + comingList(inMonth) +
+      (state.calOffset === 0 && items.some(x => x.d.getMonth() !== m || x.d.getFullYear() !== y) ? '<h2 class="h2">After that</h2>' + comingList(items.filter(x => !(x.d.getFullYear() === y && x.d.getMonth() === m)).slice(0, 6)) : "") +
+      (state.picks.length ? '<p class="more"><button type="button" class="linkbtn" data-subscribe>Add my list to my phone’s calendar</button></p>' : "");
+  }
+
+  /* ---------- Listing: reads like a stock page ---------- */
+  function roundPath(p, r) {
+    let d = "M" + p[0][0] + "," + p[0][1];
+    for (let i = 1; i < p.length - 1; i++) {
+      const [x0, y0] = p[i - 1], [x1, y1] = p[i], [x2, y2] = p[i + 1], l1 = Math.hypot(x1 - x0, y1 - y0), l2 = Math.hypot(x2 - x1, y2 - y1);
+      if (l1 < 0.01 || l2 < 0.01) { d += " L" + x1 + "," + y1; continue; }
+      const rr = Math.min(r, l1 / 2, l2 / 2);
+      d += " L" + (x1 - (x1 - x0) / l1 * rr) + "," + (y1 - (y1 - y0) / l1 * rr) + " Q" + x1 + "," + y1 + " " + (x1 + (x2 - x1) / l2 * rr) + "," + (y1 + (y2 - y1) / l2 * rr);
+    }
+    const l = p[p.length - 1];
+    return d + " L" + l[0] + "," + l[1];
+  }
+  /* Your plan as a chart: it climbs one level for each step, from today to the last one */
+  function planChart(o) {
+    const steps = o.steps.filter(s => C.endOf(s.by) >= NOW).sort((a, b) => C.parse(a.by) - C.parse(b.by));
+    if (!steps.length) return "";
+    const W = isDesk() ? 640 : Math.min(600, Math.max(280, document.documentElement.clientWidth - 32)), H = W > 500 ? 220 : 184;
+    const padL = 6, padR = 18, top = 32, bottom = H - 30, N = steps.length;
+    const start = addDays(NOW, -4), lastD = C.parse(steps[N - 1].by), end = addDays(lastD, Math.max(3, Math.round(C.days(start, lastD) * 0.05)));
+    const x = d => +(padL + (W - padL - padR) * ((d - start) / (end - start))).toFixed(1), y = k => +(bottom - (bottom - top) * (k / N)).toFixed(1);
+    const pts = [[x(NOW), y(0)]];
+    steps.forEach((s, i) => { const sx = x(C.parse(s.by)); pts.push([sx, y(i)], [sx, y(i + 1)]); });
+    const label = steps.map(s => s.t + ", " + dayText(s)).join("; ");
+    let svg = '<svg class="chart" viewBox="0 0 ' + W + " " + H + '" role="img" aria-label="Plan: ' + esc(label) + '">';
+    for (let mm = new Date(start.getFullYear(), start.getMonth() + 1, 1); mm <= end; mm = new Date(mm.getFullYear(), mm.getMonth() + 1, 1)) {
+      const cx = x(mm); if (cx - x(NOW) < 34 && cx - x(NOW) > -4) continue;
+      svg += '<line class="grid" x1="' + cx + '" y1="' + (top - 18) + '" x2="' + cx + '" y2="' + bottom + '"/><text x="' + (cx + 4) + '" y="' + (H - 8) + '">' + C.MON[mm.getMonth()] + "</text>";
+    }
+    svg += '<line class="grid" x1="' + padL + '" y1="' + bottom + '" x2="' + (W - padR) + '" y2="' + bottom + '"/>';
+    svg += '<line class="past" x1="' + x(start) + '" y1="' + y(0) + '" x2="' + x(NOW) + '" y2="' + y(0) + '"/>';
+    svg += '<line class="today" x1="' + x(NOW) + '" y1="' + (top - 18) + '" x2="' + x(NOW) + '" y2="' + bottom + '"/><text class="k" x="' + (x(NOW) + 5) + '" y="' + (H - 8) + '">Today</text>';
+    svg += '<path class="plan" d="' + roundPath(pts, 7) + '"/>';
+    steps.forEach((s, i) => {
+      const cx = x(C.parse(s.by)), cy = y(i + 1), done = !!state.done[key(o, s)], f = done || i === N - 1;
+      svg += '<circle class="dot' + (f ? " f" : "") + '" cx="' + cx + '" cy="' + cy + '" r="10"/><text class="num' + (f ? " f" : "") + '" x="' + cx + '" y="' + (cy + 4) + '" text-anchor="middle">' + (done ? "✓" : o.steps.indexOf(s) + 1) + "</text>";
+    });
+    const ls = steps[N - 1];
+    svg += '<text class="k" x="' + (x(C.parse(ls.by)) - 16) + '" y="' + (y(N) + 4) + '" text-anchor="end">' + (ls.official ? "Closes " : "") + esc(C.fmtShort(ls.by, ls.est)) + "</text>";
+    return svg + "</svg>";
+  }
+  function stepsHtml(o) {
+    return '<ol class="steps">' + o.steps.map((st, i) => {
+      const k = key(o, st), done = !!state.done[k], m = mine(st), late = !done && m && C.endOf(st.by) < NOW;
+      const box = m ? '<button type="button" class="ck" data-done="' + k + '" aria-pressed="' + done + '" aria-label="' + (done ? "Mark not done: " : "Mark done: ") + esc(st.t) + '">' + (done ? I.check : '<span aria-hidden="true">' + (i + 1) + "</span>") + "</button>"
+        : '<span class="ckn" aria-hidden="true">' + (i + 1) + "</span>";
+      const who = !m && WHO[st.who] ? WHO[st.who] + ". " : "";
+      const when = st.official ? "Closing date: " + dayText(st) : "By " + dayText(st);
+      const go = done ? "" : (st.ask && o.asks[st.ask] ? '<a class="btn sm" href="/l/' + o.id + "/ask/" + st.ask + '" data-nav>' + (o.asks[st.ask].to === "friends" ? "Invite your team" : "Write the message") + "</a>" : "") +
+        (st.href ? '<a class="btn sm sec" href="' + esc(st.href) + '" target="_blank" rel="noopener">Open ' + esc(domain(st.href)) + "</a>" : "");
+      return '<li class="' + (done ? "done" : "") + '">' + box + "<div><b>" + esc(st.t) + '</b><span class="by' + (st.official ? " off" : "") + (late ? " late" : "") + '">' + esc(who + when) + (late ? ". Overdue" : "") + "</span>" +
+        (st.note ? '<span class="note">' + esc(st.note) + "</span>" : "") + (go ? '<span class="go">' + go + "</span>" : "") + "</div></li>";
+    }).join("") + "</ol>";
+  }
+  function listingHtml(o) {
+    const s = o._s, b = bigStatus(o), pk = picked(o.id), gr = C.gradeRow(o, state.grade, s);
+    const nextS = C.upcoming(o, NOW, state.done).filter(mine)[0];
+    let primary = "";
+    if (pk && nextS && nextS.ask && o.asks[nextS.ask]) primary = '<a class="btn green" href="/l/' + o.id + "/ask/" + nextS.ask + '" data-nav>' + ASK_ACT[o.asks[nextS.ask].to] + "</a>";
+    else if (pk && nextS && nextS.href) primary = '<a class="btn green" href="' + esc(nextS.href) + '" target="_blank" rel="noopener">Open ' + esc(domain(nextS.href)) + "</a>";
+    const listBtn = '<button type="button" class="btn ' + (pk ? "sec" : "green") + '" data-pick="' + o.id + '" aria-pressed="' + pk + '">' + (pk ? I.listOn + "On my list" : I.list + "Add to my list") + "</button>";
+    const overdue = pk ? o.steps.filter(st => mine(st) && !state.done[key(o, st)] && C.endOf(st.by) < NOW).length : 0;
+    const chart = planChart(o);
+    const can = (gr ? [gr] : []).concat(o.can);
+    const kd = o.dates.map(x => '<li class="' + (C.endOf(x.d) < NOW ? "past" : "") + '"><time>' + esc(x.show || C.fmtShort(x.d, x.est)) + "</time><span>" + esc(x.t) + (x.est ? '<span class="est">estimate</span>' : "") + "</span></li>").join("");
+    return '<div class="lbar"><button type="button" data-back aria-label="Back">' + I.back + '</button><button type="button" data-share="' + o.id + '" aria-label="Share ' + esc(o.name) + '">' + I.share + "</button></div>" +
+      '<p class="lt">' + esc(o.tk) + '</p><h1 class="ln">' + esc(o.name) + '</h1><p class="lorg">' + esc(D.TYPE_LABEL[o.type]) + " by " + esc(o.org) + "</p>" +
+      '<p class="big">' + esc(b.big) + '</p><p class="chg ' + b.cls + '">' + esc(b.line) + "</p>" +
+      (o.lastGrade && o.lastGrade === state.grade ? '<p class="lastyr">Grade ' + state.grade + " is the last year you can enter.</p>" : "") +
+      (chart ? '<div class="chead"><b>' + (pk ? "Your plan" : "The plan") + "</b>" + (pk ? (overdue ? '<span class="r">' + C.plural(overdue, "step") + " overdue</span>" : "<span>On track</span>") : "") + "</div>" + chart : "") +
+      '<div class="acts">' + primary + listBtn + "</div>" +
+      '<h2 class="h2">Before you start</h2><ul class="can">' + can.map(c => '<li><span class="m ' + c.k + '" aria-hidden="true">' + MARK[c.k] + "</span><div><b>" + esc(c.t) + "</b>" + (c.s ? "<small>" + esc(c.s) + "</small>" : "") + "</div></li>").join("") + "</ul>" +
+      '<h2 class="h2">How to get in</h2>' + stepsHtml(o) +
+      '<h2 class="h2">Key facts</h2><dl class="facts"><div><dt>Cost</dt><dd>' + esc(o.cost) + (o.aid ? '<span class="aid">' + esc(o.aid) + "</span>" : "") + "</dd></div>" +
+        "<div><dt>To enter</dt><dd>" + esc(o.entry) + "</dd></div><div><dt>Format</dt><dd>" + esc(o.format) + "</dd></div><div><dt>Where</dt><dd>" + esc(o.where) + "</dd></div><div><dt>Grades</dt><dd>" + esc(o.gradeNote) + "</dd></div></dl>" +
+      '<h2 class="h2">Key dates</h2><ol class="kd">' + kd + '</ol><p class="more"><button type="button" class="linkbtn" data-cal="' + o.id + '">Download these dates for your calendar</button></p>' +
+      '<h2 class="h2">Why it’s worth it</h2><p class="why">' + esc(o.why) + "</p>" +
+      '<h2 class="h2">Where these facts come from</h2><div id="rc-' + o.id + '" class="rc"><p class="fine">Loading the organizer’s own words…</p></div>' +
+      '<p class="fine">Checked ' + esc(C.fmt(D.CHECKED)) + ". Always confirm with the organizer before you apply." +
+      (REPORT_EMAIL ? ' <a class="u" href="mailto:' + esc(REPORT_EMAIL) + "?subject=" + encodeURIComponent("Mistake on " + o.name) + '">Report a mistake</a>' : "") + "</p>";
+  }
+
+  /* ---------- Receipts: the organizer's exact words behind each fact ---------- */
+  let receiptsCache = null;
+  function loadReceipts(id) {
+    function paint(all) {
+      const box = $("#rc-" + id); if (!box) return;
+      const list = (all && all[id]) || [];
+      box.innerHTML = list.length ? '<ul class="src">' + list.map(r => "<li>“" + esc(r.quote) + '”<a href="' + esc(r.url) + '" target="_blank" rel="noopener">' +
+        esc(r.url.replace(/^https?:\/\/(www\.)?/, "").replace(/\/$/, "")) + (r.manual ? ", checked by hand" : "") + "</a></li>").join("") + "</ul>" : '<p class="fine">No sources found.</p>';
+    }
+    if (receiptsCache) return paint(receiptsCache);
+    fetch("/data/receipts.json").then(r => r.json()).then(j => { receiptsCache = j; paint(j); })
+      .catch(() => { const box = $("#rc-" + id); if (box) box.innerHTML = '<p class="fine">Couldn’t load the sources. Check your connection and try again.</p>'; });
+  }
+
+  /* ---------- My list ---------- */
+  function todoHtml(o, s) {
+    const k = key(o, s), done = !!state.done[k], late = !done && C.endOf(s.by) < NOW;
+    return '<li class="' + (done ? "done" : "") + '"><button type="button" class="ck" data-done="' + k + '" aria-pressed="' + done + '" aria-label="' + (done ? "Mark not done: " : "Mark done: ") + esc(s.t) + '">' + (done ? I.check : "") + "</button>" +
+      "<div><b>" + esc(s.t) + '</b><span class="by' + (late ? " late" : "") + '"><a href="/l/' + o.id + '" data-nav>' + esc(o.tk) + "</a>. " + (s.official ? "Closing date: " : "By ") + esc(dayText(s)) + (late ? ". Overdue" : "") + "</span>" +
+      (done ? "" : '<span class="go">' + (s.ask && o.asks[s.ask] ? '<a class="btn sm" href="/l/' + o.id + "/ask/" + s.ask + '" data-nav>' + (o.asks[s.ask].to === "friends" ? "Invite your team" : "Write the message") + "</a>" : "") +
+        (s.href ? '<a class="btn sm sec" href="' + esc(s.href) + '" target="_blank" rel="noopener">Open ' + esc(domain(s.href)) + "</a>" : "") + "</span>") + "</div></li>";
+  }
+  function seasonHtml() {
+    const picks = state.picks.map(id => BY[id]);
+    if (!picks.length) {
+      const sugg = L.filter(o => eligible(o) && o._s.key === "open").slice(0, 4);
+      return '<h1 class="lg">My list</h1><p class="lede">Add competitions and programs to your list. You’ll get one plan with every step, who to ask and what to say.</p>' +
+        (sugg.length ? '<h2 class="h2">Open now' + (state.grade ? " for Grade " + state.grade : "") + '</h2><ul class="list">' + sugg.map(o => rowHtml(o, null)).join("") + "</ul>" : "") +
+        '<p class="more"><a href="/" data-nav>See every listing</a></p>';
+    }
+    const all = [];
+    picks.forEach(o => o.steps.forEach(s => all.push({ o, s, d: C.parse(s.by) })));
+    all.sort((a, b) => a.d - b.d);
+    const mineAll = all.filter(x => mine(x.s)), doneN = mineAll.filter(x => state.done[key(x.o, x.s)]).length;
+    const weekEnd = addDays(NOW, 7);
+    const open = mineAll.filter(x => !state.done[key(x.o, x.s)] && !(C.endOf(x.s.by) < NOW && x.o._s.key === "closed"));
+    const thisWeek = open.filter(x => C.endOf(x.s.by) <= weekEnd && !C.isMonth(x.s.by));
+    const later = open.filter(x => thisWeek.indexOf(x) < 0);
+    const doneList = mineAll.filter(x => state.done[key(x.o, x.s)]);
+    const pct = mineAll.length ? Math.round(doneN / mineAll.length * 100) : 0;
+    return '<h1 class="lg">My list</h1>' +
+      '<p class="sum"><b>' + doneN + " of " + mineAll.length + "</b> steps done" + (state.grade ? ", Grade " + state.grade : "") + "</p>" +
+      '<div class="bar" role="progressbar" aria-valuenow="' + pct + '" aria-valuemin="0" aria-valuemax="100" aria-label="Steps done"><i style="width:' + pct + '%"></i></div>' +
+      '<ul class="list">' + picks.map(o => rowHtml(o, null)).join("") + "</ul>" +
+      '<h2 class="h2">' + (thisWeek.length ? "This week" : "Nothing due this week") + "</h2>" +
+      (thisWeek.length ? '<ol class="steps">' + thisWeek.map(x => todoHtml(x.o, x.s)).join("") + "</ol>" : '<p class="empty">Your next step is below.</p>') +
+      (later.length ? '<h2 class="h2">Later</h2><ol class="steps">' + later.map(x => todoHtml(x.o, x.s)).join("") + "</ol>" : "") +
+      (doneList.length ? '<details class="donelist"><summary>Done (' + doneList.length + ')</summary><ol class="steps">' + doneList.map(x => todoHtml(x.o, x.s)).join("") + "</ol></details>" : "") +
+      '<div class="sea-acts"><button type="button" class="btn green" data-subscribe>Add my list to my phone’s calendar</button>' +
+      "<p>Every step and closing date, in the calendar you already use. It updates itself if a date changes. No account needed.</p>" +
+      '<button type="button" class="btn sec" data-sendparent>Send to a parent</button>' +
+      '<p>They get a page with what’s coming up, what it costs and where they can help. <a class="u" href="' + esc(parentPath()) + '" data-nav>Preview it</a></p></div>';
   }
 
   /* ---------- Parent view: /parent?l=shad,diamond&g=11 ---------- */
   function parentPicks() {
-    var q = new URLSearchParams(location.search);
-    return { ids: (q.get("l") || "").split(",").filter(function (id) { return BY[id]; }).slice(0, 20), grade: Number(q.get("g")) || null };
+    const q = new URLSearchParams(location.search);
+    return { ids: (q.get("l") || "").split(",").filter(id => BY[id]).slice(0, 20), grade: Number(q.get("g")) || null };
   }
   function parentPath() { return "/parent?l=" + state.picks.join(",") + (state.grade ? "&g=" + state.grade : ""); }
-  function parentPageHtml() {
-    var p = parentPicks(), picks = p.ids.map(function (id) { return BY[id]; });
-    var head = '<header class="hero sm"><canvas class="sky" aria-hidden="true"></canvas><div class="hero-in wrap">' +
-      '<nav class="nav" aria-label="Main"><a class="logo" href="/" data-nav><canvas class="bell" width="14" height="12" aria-hidden="true"></canvas>Opening Bell</a><div class="nav-r"><a class="navchip" href="/" data-nav>See the Board</a></div></nav>' +
-      '<h1>Your teen\'s season</h1><p class="sea-sub">' + (p.grade ? "Grade " + p.grade + " · " : "") + picks.length + (picks.length === 1 ? " pick" : " picks") + " · shared from Opening Bell</p></div></header>";
-    if (!picks.length) return head + '<main id="main" class="wrap season"><section class="sea-empty"><h2>Nothing to show yet</h2><p>This link doesn\'t include any listings. Ask your teen to send it again from My Season.</p></section></main>';
-    var items = [];
-    picks.forEach(function (o) { o.steps.forEach(function (s) { if ((mine(s) || s.official) && C.endOf(s.by) >= NOW) items.push({ o: o, s: s, d: C.parse(s.by) }); }); });
-    items.sort(function (a, b) { return a.d - b.d; });
-    var coming = items.slice(0, 7).map(function (x) {
-      return '<li><time>' + esc(C.fmtShort(x.s.by, x.s.est)) + '</time><span><a class="lab tklink" href="/l/' + x.o.id + '" data-nav>' + esc(x.o.tk) + "</a> " + esc(x.s.t) +
-        (x.s.official ? ' <span class="lab offl">Official deadline</span>' : "") + "</span></li>";
-    }).join("");
-    var help = [];
-    picks.forEach(function (o) { o.parent.forEach(function (h) { help.push('<div class="help"><b>' + esc(h.t) + '</b><span>' + esc(h.s) + '</span><a class="src" href="/l/' + o.id + '" data-nav>✓ ' + esc(o.short) + " · quoted from " + esc(o.src.name) + "</a></div>"); }); });
-    var costs = picks.map(function (o) { return "<dt>" + esc(o.tk) + "</dt><dd>" + esc(o.costShort) + (o.aid ? '<span class="aid">' + esc(o.aid) + "</span>" : "") + "</dd>"; }).join("");
-    var what = picks.map(function (o) { return '<li><a href="/l/' + o.id + '" data-nav><b>' + esc(o.name) + "</b></a><span>" + esc(o.why) + "</span></li>"; }).join("");
-    return head + '<main id="main" class="wrap season parent">' +
-      '<section aria-labelledby="pcH"><div class="sec"><h2 id="pcH">Coming up</h2><span class="lab">As of ' + esc(C.fmtShort(C.iso(NOW))) + '</span></div><ol class="plist">' + (coming || "<li><span>Nothing coming up right now.</span></li>") + "</ol></section>" +
-      '<section aria-labelledby="phH"><div class="sec"><h2 id="phH">Where you can help</h2></div>' + help.join("") + "</section>" +
-      '<section aria-labelledby="pcoH"><div class="sec"><h2 id="pcoH">Costs at a glance</h2></div><dl class="costs">' + costs + "</dl></section>" +
-      '<section class="sea-acts"><button type="button" class="btn gold" data-subscribe-parent>+ Add these dates to my calendar</button><p class="small">It updates itself if a date changes. No account needed.</p></section>' +
-      '<section aria-labelledby="pwH"><div class="sec"><h2 id="pwH">What each one is</h2></div><ul class="whatlist">' + what + "</ul></section>" +
-      '<p class="small" style="margin-top:22px">No account. Nothing is tracked. Your teen chose what to share. Every fact on Opening Bell is quoted from the organizer, and each listing shows its sources.</p></main>';
+  function parentHtml() {
+    const p = parentPicks(), picks = p.ids.map(id => BY[id]);
+    const head = '<h1 class="lg">Your teen’s season</h1><p class="lede">' + (p.grade ? "Grade " + p.grade + ". " : "") + C.plural(picks.length, "pick") + ", shared from Opening Bell.</p>";
+    if (!picks.length) return head + '<p class="empty">This link doesn’t include any listings. Ask your teen to send it again from My list.</p>';
+    const items = [];
+    picks.forEach(o => o.steps.forEach(s => { if ((mine(s) || s.official) && C.endOf(s.by) >= NOW) items.push({ o, s, d: C.parse(s.by) }); }));
+    items.sort((a, b) => a.d - b.d);
+    const coming = items.slice(0, 7).map(x => '<li><a href="/l/' + x.o.id + '" data-nav><span class="dd">' + (C.isMonth(x.s.by) ? (x.s.est ? "~" : "") + C.MON[x.d.getMonth()] : x.d.getDate()) + "<small>" +
+      (C.isMonth(x.s.by) ? x.d.getFullYear() : WD[x.d.getDay()] + " " + C.MON[x.d.getMonth()]) + '</small></span><span class="tx">' + esc(x.s.t) + "<small>" + esc(x.o.name) + (x.s.official ? ", closing date" : "") + "</small></span></a></li>").join("");
+    const help = [];
+    picks.forEach(o => o.parent.forEach(h => help.push('<li><b>' + esc(h.t) + "</b><small>" + esc(h.s) + ' <a class="u" href="/l/' + o.id + '" data-nav>' + esc(o.short) + ", from " + esc(o.src.name) + "</a></small></li>")));
+    const costs = picks.map(o => "<div><dt>" + esc(o.name) + "</dt><dd>" + esc(o.costShort) + (o.aid ? '<span class="aid">' + esc(o.aid) + "</span>" : "") + "</dd></div>").join("");
+    const what = picks.map(o => '<li><a class="r" href="/l/' + o.id + '" data-nav><span class="r-l"><span class="tk">' + esc(o.name) + '</span><span class="nm wrap">' + esc(o.why) + "</span></span>" + pill(o) + "</a></li>").join("");
+    return head +
+      '<h2 class="h2">Coming up</h2><ul class="up">' + (coming || '<li><span class="tx">Nothing coming up right now.</span></li>') + "</ul>" +
+      '<h2 class="h2">Where you can help</h2><ul class="can help">' + help.join("") + "</ul>" +
+      '<h2 class="h2">Costs at a glance</h2><dl class="facts">' + costs + "</dl>" +
+      '<div class="sea-acts"><button type="button" class="btn green" data-subscribe-parent>Add these dates to my calendar</button><p>It updates itself if a date changes. No account needed.</p></div>' +
+      '<h2 class="h2">What each one is</h2><ul class="list">' + what + "</ul>" +
+      '<p class="fine">No account. Nothing is tracked. Your teen chose what to share. Every fact on Opening Bell is quoted from the organizer, and each listing shows its sources.</p>';
   }
 
-  /* ---------- Receipts ---------- */
-  var receiptsCache = null;
-  function loadReceipts(id, box) {
-    function paint(all) {
-      var list = (all && all[id]) || [];
-      box.innerHTML = list.length ? list.map(function (r) {
-        return '<p class="q">"' + esc(r.quote) + '"<a href="' + esc(r.url) + '" target="_blank" rel="noopener">' + esc(r.url.replace(/^https:\/\/(www\.)?/, "")) + (r.manual ? " · checked by hand" : "") + "</a></p>";
-      }).join("") : "<p>No receipts found.</p>";
-    }
-    if (receiptsCache) return paint(receiptsCache);
-    fetch("/data/receipts.json").then(function (r) { return r.json(); }).then(function (j) { receiptsCache = j; paint(j); })
-      .catch(function () { box.textContent = "Couldn't load the receipts. Check your connection and try again."; });
+  /* ---------- Sheets: the message writer, calendar options and the grade picker ---------- */
+  function askSheet(o, a) {
+    const st = o.steps.filter(s => s.ask === a.id)[0], done = !!state.done[key(o, st)];
+    const third = a.to === "friends" ? '<a class="btn sec" data-asksms href="#">Text</a>' : '<a class="btn sec" data-askmail href="#">Email</a>';
+    return '<div class="grab" aria-hidden="true"></div><div class="sh-head"><div class="sh-top"><p class="sh-k">' + esc(o.name) + '</p><button type="button" class="x" data-close aria-label="Close">' + I.close + "</button></div>" +
+      '<h2 id="shTitle" tabindex="-1">' + esc(a.title) + '</h2><p class="sh-sub">To: ' + esc(ASK_TO[a.to] || a.to) + ". " + (st.official ? "Closing date: " : "By ") + esc(dayText(st)) + ".</p></div>" +
+      '<div class="sh-body"><label class="lab" for="askMsg">Your message. Fill in the parts in [square brackets], and change anything you like.</label>' +
+      '<textarea id="askMsg" class="msg" rows="12" spellcheck="true">' + esc(a.msg) + "</textarea>" +
+      '<p class="hint">' + esc(a.hint) + "</p>" +
+      '<button type="button" class="donebox" data-done="' + key(o, st) + '" aria-pressed="' + done + '"><span class="box" aria-hidden="true">' + (done ? I.check : "") + "</span><span><b>" + (done ? "Done" : "Mark as done") + "</b><small>" +
+        (a.to === "friends" ? "Tick it once your team is set." : "Tick it once they say yes.") + "</small></span></button></div>" +
+      '<div class="sh-bar"><button type="button" class="btn sec" data-askcopy>Copy</button>' + third + '<button type="button" class="btn green" data-askshare>Share</button></div>';
   }
-
-  /* ---------- Panel ---------- */
-  function openPanel(html, o) {
-    var panel = $("#panel"), scrim = $("#scrim"), wasOpen = !panel.hidden;
+  function feedUrl(ids, forParent) { return location.origin + "/api/calendar?l=" + ids.join(",") + (forParent ? "&for=parent" : ""); }
+  function subscribeSheet(ids, forParent) {
+    const https = feedUrl(ids, forParent), webcal = https.replace(/^https?:/, "webcal:");
+    const names = ids.map(id => BY[id].short).join(", ");
+    return '<div class="grab" aria-hidden="true"></div><div class="sh-head"><div class="sh-top"><p class="sh-k">' + (forParent ? "Your calendar" : "Your phone’s calendar") + '</p><button type="button" class="x" data-close aria-label="Close">' + I.close + "</button></div>" +
+      '<h2 id="shTitle" tabindex="-1">' + (forParent ? "Add these dates to your calendar" : "Add your list to your calendar") + '</h2><p class="sh-sub">Every step and closing date for ' + esc(names) + ". When a date changes, it changes in your calendar too.</p></div>" +
+      '<div class="sh-body"><div class="opts">' +
+        '<a class="opt" href="' + esc(webcal) + '"><b>iPhone, iPad or Mac</b><small>Apple Calendar asks you to subscribe.</small></a>' +
+        '<a class="opt" href="https://calendar.google.com/calendar/render?cid=' + encodeURIComponent(webcal) + '" target="_blank" rel="noopener"><b>Google Calendar</b><small>Opens Google Calendar. On a phone, you may need to finish on a computer.</small></a>' +
+        '<a class="opt" href="https://outlook.live.com/calendar/0/addfromweb?url=' + encodeURIComponent(https) + "&amp;name=" + encodeURIComponent("Opening Bell") + '" target="_blank" rel="noopener"><b>Outlook</b><small>Opens Outlook on the web.</small></a>' +
+        '<button type="button" class="opt" data-copyfeed="' + esc(https) + '"><b>Copy the calendar link</b><small>For any other app: add a calendar “from URL” and paste it.</small></button></div>' +
+        '<p class="hint">Calendar apps check for changes on their own schedule, usually within a day. Each step has a reminder the day before, but some apps ignore reminders in subscribed calendars. If you don’t get alerts, check this calendar’s notification settings in your app.</p>' +
+        (forParent ? "" : '<p class="fine">Ticks you make on Opening Bell stay on this device, so the calendar shows every step. <button type="button" class="linkbtn" data-calseason>Download a one-time file instead</button> (it won’t update).</p>') +
+      '</div><div class="sh-bar"><button type="button" class="btn sec" data-close>Done</button></div>';
+  }
+  function gradeSheet() {
+    return '<div class="grab" aria-hidden="true"></div><div class="sh-head"><div class="sh-top"><p class="sh-k">Your grade</p><button type="button" class="x" data-close aria-label="Close">' + I.close + "</button></div>" +
+      '<h2 id="shTitle" tabindex="-1">What grade are you in?</h2><p class="sh-sub">Your grade in the ' + esc(D.SEASON) + " school year. You’ll see only what you can enter.</p></div>" +
+      '<div class="sh-body">' + gradeButtons() + (state.grade ? '<p class="more"><button type="button" class="linkbtn" data-g="0">Show every grade</button></p>' : "") + "</div>";
+  }
+  function openSheet(html, routed) {
+    const panel = $("#panel"), wasOpen = !panel.hidden;
+    if (!wasOpen && !routed) lastFocus = document.activeElement;
     panel.innerHTML = html;
-    panel.setAttribute("role", "dialog");
-    panel.setAttribute("aria-modal", isPhone() ? "true" : "false");
-    panel.setAttribute("aria-labelledby", "shTitle");
-    panel.hidden = false; scrim.hidden = false;
-    document.body.classList.add("panel-open");
-    if (isPhone()) document.documentElement.classList.add("lock");
-    if (!wasOpen) {
-      panel.classList.add("enter");
-      requestAnimationFrame(function () { requestAnimationFrame(function () { panel.classList.remove("enter"); }); });
-    }
-    document.querySelectorAll(".rw.sel").forEach(function (r) { r.classList.remove("sel"); });
-    if (o) { var row = document.querySelector('.rw[data-id="' + o.id + '"]'); if (row) row.classList.add("sel"); }
-    var t = $("#shTitle"); if (t) t.focus({ preventScroll: true });
+    panel.setAttribute("role", "dialog"); panel.setAttribute("aria-modal", "true"); panel.setAttribute("aria-labelledby", "shTitle");
+    panel.hidden = false; $("#scrim").hidden = false;
+    document.documentElement.classList.add("lock");
+    sheetOpen = routed ? "routed" : "plain";
+    if (!wasOpen) { panel.classList.add("enter"); requestAnimationFrame(() => requestAnimationFrame(() => panel.classList.remove("enter"))); }
+    const t = $("#shTitle"); if (t) t.focus({ preventScroll: true });
   }
-  function closePanelNow() {
-    var panel = $("#panel"); if (panel.hidden) return;
+  function closeSheetNow() {
+    const panel = $("#panel"); if (panel.hidden) return;
     panel.hidden = true; $("#scrim").hidden = true; panel.innerHTML = "";
-    document.body.classList.remove("panel-open");
     document.documentElement.classList.remove("lock");
-    document.querySelectorAll(".rw.sel").forEach(function (r) { r.classList.remove("sel"); });
+    sheetOpen = false;
     if (lastFocus && document.contains(lastFocus)) lastFocus.focus({ preventScroll: true });
   }
-  /* Closing goes back to the page underneath: back through history if we came from it, otherwise replace */
-  function closePanel() { if (depth > baseDepth) history.go(baseDepth - depth); else go(basePath, true); }
+  function closeSheet() {
+    if (sheetOpen !== "routed") { closeSheetNow(); return; }
+    const r = parseRoute(location.pathname);
+    if (depth > 0 && history.state && history.state.d > 0) history.back(); else go("/l/" + r.id, true);
+  }
+  function askContext() {
+    const r = parseRoute(location.pathname); if (r.name !== "ask") return null;
+    const o = BY[r.id]; return { o, a: o.asks[r.ask], text: ($("#askMsg") || {}).value || o.asks[r.ask].msg };
+  }
 
   /* ---------- Actions ---------- */
-  document.addEventListener("click", function (e) {
-    var t, ctx;
-    if (e.target.closest("[data-close]") || e.target.id === "scrim") { closePanel(); return; }
+  document.addEventListener("click", e => {
+    let t, ctx;
+    if (e.target.closest("[data-close]") || e.target.id === "scrim") { closeSheet(); return; }
+    if (e.target.closest("[data-back]")) { if (depth > 0) history.back(); else go("/", true); return; }
+    if (e.target.closest("[data-theme-toggle]")) { setTheme(document.documentElement.dataset.theme === "light" ? "dark" : "light"); return; }
+    if (e.target.closest("[data-grade-open]")) { openSheet(gradeSheet(), false); return; }
+    if ((t = e.target.closest("[data-g]"))) { setGrade(Number(t.dataset.g)); return; }
+    if ((t = e.target.closest("[data-f]"))) { state.filter = t.dataset.f; refresh(); return; }
+    if (e.target.closest("[data-all]")) { state.allGrades = !state.allGrades; refresh(); return; }
+    if ((t = e.target.closest("[data-calmine]"))) { state.calMine = t.dataset.calmine === "1"; refresh(); return; }
+    if ((t = e.target.closest("[data-calmonth]"))) { state.calOffset = Math.max(0, Math.min(11, state.calOffset + Number(t.dataset.calmonth))); refresh(); return; }
     if ((t = e.target.closest("[data-pick]"))) { e.preventDefault(); togglePick(t.dataset.pick); return; }
     if ((t = e.target.closest("[data-done]"))) { toggleDone(t.dataset.done); return; }
     if ((t = e.target.closest("[data-share]"))) { share(BY[t.dataset.share]); return; }
     if ((t = e.target.closest("[data-cal]"))) { downloadIcs([BY[t.dataset.cal]], BY[t.dataset.cal].short, "opening-bell-" + t.dataset.cal); return; }
-    if (e.target.closest("[data-subscribe]")) { if (state.picks.length) openPanel(subscribeHtml(state.picks, false), null); return; }
-    if (e.target.closest("[data-subscribe-parent]")) { var pp = parentPicks(); if (pp.ids.length) openPanel(subscribeHtml(pp.ids, true), null); return; }
+    if (e.target.closest("[data-subscribe]")) { if (state.picks.length) openSheet(subscribeSheet(state.picks, false), false); return; }
+    if (e.target.closest("[data-subscribe-parent]")) { const pp = parentPicks(); if (pp.ids.length) openSheet(subscribeSheet(pp.ids, true), false); return; }
     if ((t = e.target.closest("[data-copyfeed]"))) { copy(t.dataset.copyfeed, "Calendar link copied. In your calendar app, add a calendar from URL and paste it."); return; }
     if (e.target.closest("[data-sendparent]")) { sendToParent(); return; }
-    if (e.target.closest("[data-calseason]")) { downloadIcs(state.picks.map(function (id) { return BY[id]; }), "your season", "opening-bell-season"); return; }
+    if (e.target.closest("[data-calseason]")) { downloadIcs(state.picks.map(id => BY[id]), "your list", "opening-bell-list"); return; }
     if (e.target.closest("[data-askcopy]") && (ctx = askContext())) { copy(ctx.text, "Message copied. Paste it into an email or text."); return; }
     if (e.target.closest("[data-askshare]") && (ctx = askContext())) {
-      if (navigator.share) navigator.share({ text: ctx.text }).catch(function () {});
+      if (navigator.share) navigator.share({ text: ctx.text }).catch(() => {});
       else copy(ctx.text, "Message copied. Paste it into an email or text.");
       return;
     }
     if (e.target.closest("[data-askmail]") && (ctx = askContext())) { e.preventDefault(); location.href = "mailto:?subject=" + encodeURIComponent(ctx.a.subject) + "&body=" + encodeURIComponent(ctx.text); return; }
     if (e.target.closest("[data-asksms]") && (ctx = askContext())) { e.preventDefault(); location.href = "sms:?&body=" + encodeURIComponent(ctx.text); return; }
   });
-  document.addEventListener("toggle", function (e) {
-    var d = e.target;
-    if (d.matches && d.matches("details[data-receipts]") && d.open) loadReceipts(d.dataset.receipts, $(".rc-list", d));
-  }, true);
-  document.addEventListener("keydown", function (e) { if (e.key === "Escape" && !$("#panel").hidden) closePanel(); });
+  document.addEventListener("keydown", e => { if (e.key === "Escape" && !$("#panel").hidden) closeSheet(); });
+  /* Charts are drawn for the screen width, so redraw a listing when it changes a lot */
+  let lastW = document.documentElement.clientWidth, resizeTimer;
+  window.addEventListener("resize", () => {
+    clearTimeout(resizeTimer);
+    resizeTimer = setTimeout(() => {
+      const w = document.documentElement.clientWidth;
+      if (Math.abs(w - lastW) > 40 && /^l:/.test(page || "")) { lastW = w; refresh(); }
+    }, 200);
+  });
 
   function sendToParent() {
-    var url = location.origin + parentPath();
-    var data = { title: "My Opening Bell season", text: "Here's my season on Opening Bell: what's coming up, what it costs and where you can help.", url: url };
-    if (navigator.share) { navigator.share(data).catch(function () {}); return; }
+    const url = location.origin + parentPath();
+    const data = { title: "My Opening Bell list", text: "Here’s my list on Opening Bell: what’s coming up, what it costs and where you can help.", url };
+    if (navigator.share) { navigator.share(data).catch(() => {}); return; }
     copy(url, "Link copied. Send it to a parent by text or email.");
   }
   function share(o) {
-    var data = { title: o.name + " · Opening Bell", text: o.name + ": " + o._s.text, url: o.link };
-    if (navigator.share) { navigator.share(data).catch(function () {}); return; }
+    const data = { title: o.name + " · Opening Bell", text: o.name + ": " + bigStatus(o).big, url: o.link };
+    if (navigator.share) { navigator.share(data).catch(() => {}); return; }
     copy(o.link, "Link copied. Paste it anywhere to share " + o.short + ".");
   }
   function copy(text, msg) {
     function fallback() {
-      var ta = document.createElement("textarea"); ta.value = text; ta.setAttribute("readonly", ""); ta.style.position = "fixed"; ta.style.opacity = "0";
+      const ta = document.createElement("textarea"); ta.value = text; ta.setAttribute("readonly", ""); ta.style.position = "fixed"; ta.style.opacity = "0";
       document.body.appendChild(ta); ta.select();
-      var ok = false; try { ok = document.execCommand("copy"); } catch (err) {}
-      ta.remove(); toast(ok ? msg : "Couldn't copy. Select the text and copy it yourself.");
+      let ok = false; try { ok = document.execCommand("copy"); } catch (err) {}
+      ta.remove(); toast(ok ? msg : "Couldn’t copy. Select the text and copy it yourself.");
     }
-    if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(text).then(function () { toast(msg); }, fallback);
+    if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(text).then(() => toast(msg), fallback);
     else fallback();
   }
   function downloadIcs(list, label, file) {
     if (!list.length) return;
     try {
-      var blob = new Blob([C.ics(list, { name: "Opening Bell" + (list.length === 1 ? ": " + list[0].short : "") })], { type: "text/calendar;charset=utf-8" });
-      var url = URL.createObjectURL(blob), a = document.createElement("a");
+      const blob = new Blob([C.ics(list, { name: "Opening Bell" + (list.length === 1 ? ": " + list[0].short : "") })], { type: "text/calendar;charset=utf-8" });
+      const url = URL.createObjectURL(blob), a = document.createElement("a");
       a.href = url; a.download = file + ".ics";
       document.body.appendChild(a); a.click(); a.remove();
-      setTimeout(function () { URL.revokeObjectURL(url); }, 4000);
-      toast("Calendar file downloaded. Open it to add " + label + "'s steps and deadlines.");
-    } catch (err) { toast("Couldn't create the calendar file in this browser."); }
+      setTimeout(() => URL.revokeObjectURL(url), 4000);
+      toast("Calendar file downloaded. Open it to add " + label + "’s steps and closing dates.");
+    } catch (err) { toast("Couldn’t create the calendar file in this browser."); }
   }
 
-  render();
+  render(false);
 })();

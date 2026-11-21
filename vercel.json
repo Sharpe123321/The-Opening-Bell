@@ -1,8 +1,24 @@
 {
   "rewrites": [
-    { "source": "/l/:path*", "destination": "/index.html" },
-    { "source": "/season", "destination": "/index.html" },
-    { "source": "/parent", "destination": "/index.html" },
-    { "source": "/trail", "destination": "/index.html" }
+    {
+      "source": "/l/:path*",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/season",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/parent",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/trail",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/calendar",
+      "destination": "/index.html"
+    }
   ]
 }

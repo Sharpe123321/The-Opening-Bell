@@ -46,7 +46,7 @@
         steps: [
           { id: "reference", by: "2026-11-27", t: "Ask a teacher to be your reference", who: "teacher", ask: "reference" },
           { id: "open", by: "2026-12-04", t: "Open the free application and read every question", who: "you", href: "https://www.shad.ca/apply" },
-          { id: "draft", by: "2026-12-18", t: "Finish a full draft before winter break", who: "you", note: "Write about something you actually built, organized or fixed. Specific beats impressive." },
+          { id: "draft", by: "2026-12-18", t: "Finish a full draft of your application", who: "you", note: "Write about something you actually built, organized or fixed. Specific beats impressive." },
           { id: "submit", by: "2027-01-06", t: "Submit by 11:59 pm ET", who: "you", official: true }
         ],
         asks: {
@@ -174,7 +174,7 @@
         steps: [
           { id: "register", by: "2026-12-04", t: "Register to unlock the free mini-course", who: "you", href: "https://blueoceancompetition.org/compete/" },
           { id: "team", by: "2026-12-11", t: "Decide: enter alone, or invite friends", who: "friends", ask: "team" },
-          { id: "course", by: "2027-01-08", t: "Finish the mini-course over winter break", who: "you" },
+          { id: "course", by: "2027-01-08", t: "Finish the free mini-course", who: "you" },
           { id: "record", by: "2027-02-12", t: "Script and record your 5-minute pitch", who: "you", note: "Use their pitch template. Judges score your idea against the blue ocean method." },
           { id: "submit", by: "2027-02-21", t: "Upload to YouTube and submit by midnight your time", who: "you", official: true }
         ],
