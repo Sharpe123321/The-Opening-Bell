@@ -1,4 +1,4 @@
-/* Opening Bell: a watchlist of business competitions and programs for Ontario high school students.
+/* Afterbell: a watchlist of business competitions and programs for Ontario high school students.
  * Each listing has a ticker and a "days left" tag, and its page reads like a stock page, with a chart
  * of your plan. No framework and no build step. Every listing fact comes from data/listings.js and
  * every date and wording rule from lib/core.js.
@@ -150,10 +150,10 @@
     document.title = titleFor(r);
   }
   function titleFor(r) {
-    if (r.name === "listing") return BY[r.id].name + " · Opening Bell";
-    if (r.name === "ask") return BY[r.id].asks[r.ask].title + " · Opening Bell";
-    return { season: "My list · Opening Bell", parent: "Your teen's season · Opening Bell", calendar: "Calendar · Opening Bell" }[r.name] ||
-      "Opening Bell · Business competitions for Ontario high school students";
+    if (r.name === "listing") return BY[r.id].name + " · Afterbell";
+    if (r.name === "ask") return BY[r.id].asks[r.ask].title + " · Afterbell";
+    return { season: "My list · Afterbell", parent: "Your teen's season · Afterbell", calendar: "Calendar · Afterbell" }[r.name] ||
+      "Afterbell · What to do after the bell";
   }
   function paint(r) {
     const app = $("#app");
@@ -209,7 +209,7 @@
   function header(nav, withGrade) {
     const n = state.picks.length;
     const link = (k, href, label) => '<a href="' + href + '" data-nav' + (nav === k ? ' aria-current="page"' : "") + ">" + label + "</a>";
-    return '<header class="hd"><a class="word" href="/" data-nav>Opening Bell</a>' +
+    return '<header class="hd"><a class="word" href="/" data-nav>Afterbell</a>' +
       (nav ? '<nav class="dlinks" aria-label="Main">' + link("home", "/", "Home") + link("cal", "/calendar", "Calendar") + link("list", "/season", "My list" + (n ? ' <span class="count">' + n + "</span>" : "")) + "</nav>" : "") +
       '<div class="hd-r">' + (withGrade === false ? '<a class="chip" href="/" data-nav>See all listings</a>'
         : '<button type="button" class="chip" data-grade-open aria-haspopup="dialog">' + (state.grade ? "Grade " + state.grade : "Your grade") + I.down + "</button>") +
@@ -283,7 +283,7 @@
   }
   function nextUpHtml() {
     if (!state.grade && !state.picks.length) {
-      return '<section class="gprompt" aria-labelledby="gpH"><h2 id="gpH">What grade are you in?</h2><p>You’ll see what you can enter this school year, with every deadline and the first thing to do.</p>' + gradeButtons() + "</section>";
+      return '<p class="tagline">What to do after the bell.</p><p class="lede">Business competitions and programs for Ontario high school students, with every deadline and the steps to get in.</p><section class="gprompt" aria-labelledby="gpH"><h2 id="gpH">What grade are you in?</h2><p>You’ll see what you can enter this school year, with every deadline and the first thing to do.</p>' + gradeButtons() + "</section>";
     }
     const all = moves(), mineMode = state.picks.length > 0;
     const head = '<h2 class="h2" id="nxH">' + (mineMode ? "Next up" : "A good first step") + "</h2>";
@@ -305,7 +305,7 @@
       '<section aria-labelledby="whyH"><h2 class="h2" id="whyH">Why this exists</h2><p>When I applied to business school, grades were nearly all that mattered. That has changed. Programs like Ivey, Rotman, Queen’s and Waterloo now look closely at what you’ve done outside class.</p><p>The opportunities exist, but the dates are scattered and the important steps are buried. This site puts them in one place, for the students who are where I was.</p></section>' +
       '<section aria-labelledby="checkH"><h2 class="h2" id="checkH">How we check facts</h2><p>Every fact here is quoted from the organizer’s own page. Each listing ends with the exact sentences and where they came from.</p><p>A script re-reads those pages to catch changes. Dates marked ~ are our estimates from past years, and “by” dates on steps are our advice.</p></section>' +
       '<section aria-labelledby="privH"><h2 class="h2" id="privH">Your privacy</h2><p>No accounts, no email, no tracking cookies. Your grade, your list and your ticks are saved only in your own browser.</p><p>Messages and calendar files are made on your device. Nothing about you is sent to us.</p></section>' +
-      '<p class="fine">Grades mean your grade in the ' + esc(D.SEASON) + " school year. For next year’s rounds, we list the grades that will still be eligible when they open. Always confirm details with the organizer before you apply. Opening Bell is independent and isn’t affiliated with any organizer listed. Last checked " + esc(C.fmt(D.CHECKED)) + ".</p></div>";
+      '<p class="fine">Grades mean your grade in the ' + esc(D.SEASON) + " school year. For next year’s rounds, we list the grades that will still be eligible when they open. Always confirm details with the organizer before you apply. Afterbell is independent and isn’t affiliated with any organizer listed. Last checked " + esc(C.fmt(D.CHECKED)) + ".</p></div>";
   }
 
   /* ---------- Coming up: steps from your list, otherwise deadlines and openings for your grade ---------- */
@@ -501,7 +501,7 @@
   function parentPath() { return "/parent?l=" + state.picks.join(",") + (state.grade ? "&g=" + state.grade : ""); }
   function parentHtml() {
     const p = parentPicks(), picks = p.ids.map(id => BY[id]);
-    const head = '<h1 class="lg">Your teen’s season</h1><p class="lede">' + (p.grade ? "Grade " + p.grade + ". " : "") + C.plural(picks.length, "pick") + ", shared from Opening Bell.</p>";
+    const head = '<h1 class="lg">Your teen’s season</h1><p class="lede">' + (p.grade ? "Grade " + p.grade + ". " : "") + C.plural(picks.length, "pick") + ", shared from Afterbell.</p>";
     if (!picks.length) return head + '<p class="empty">This link doesn’t include any listings. Ask your teen to send it again from My list.</p>';
     const items = [];
     picks.forEach(o => o.steps.forEach(s => { if ((mine(s) || s.official) && C.endOf(s.by) >= NOW) items.push({ o, s, d: C.parse(s.by) }); }));
@@ -518,7 +518,7 @@
       '<h2 class="h2">Costs at a glance</h2><dl class="facts">' + costs + "</dl>" +
       '<div class="sea-acts"><button type="button" class="btn green" data-subscribe-parent>Add these dates to my calendar</button><p>It updates itself if a date changes. No account needed.</p></div>' +
       '<h2 class="h2">What each one is</h2><ul class="list">' + what + "</ul>" +
-      '<p class="fine">No account. Nothing is tracked. Your teen chose what to share. Every fact on Opening Bell is quoted from the organizer, and each listing shows its sources.</p>';
+      '<p class="fine">No account. Nothing is tracked. Your teen chose what to share. Every fact on Afterbell is quoted from the organizer, and each listing shows its sources.</p>';
   }
 
   /* ---------- Sheets: the message writer, calendar options and the grade picker ---------- */
@@ -543,10 +543,10 @@
       '<div class="sh-body"><div class="opts">' +
         '<a class="opt" href="' + esc(webcal) + '"><b>iPhone, iPad or Mac</b><small>Apple Calendar asks you to subscribe.</small></a>' +
         '<a class="opt" href="https://calendar.google.com/calendar/render?cid=' + encodeURIComponent(webcal) + '" target="_blank" rel="noopener"><b>Google Calendar</b><small>Opens Google Calendar. On a phone, you may need to finish on a computer.</small></a>' +
-        '<a class="opt" href="https://outlook.live.com/calendar/0/addfromweb?url=' + encodeURIComponent(https) + "&amp;name=" + encodeURIComponent("Opening Bell") + '" target="_blank" rel="noopener"><b>Outlook</b><small>Opens Outlook on the web.</small></a>' +
+        '<a class="opt" href="https://outlook.live.com/calendar/0/addfromweb?url=' + encodeURIComponent(https) + "&amp;name=" + encodeURIComponent("Afterbell") + '" target="_blank" rel="noopener"><b>Outlook</b><small>Opens Outlook on the web.</small></a>' +
         '<button type="button" class="opt" data-copyfeed="' + esc(https) + '"><b>Copy the calendar link</b><small>For any other app: add a calendar “from URL” and paste it.</small></button></div>' +
         '<p class="hint">Calendar apps check for changes on their own schedule, usually within a day. Each step has a reminder the day before, but some apps ignore reminders in subscribed calendars. If you don’t get alerts, check this calendar’s notification settings in your app.</p>' +
-        (forParent ? "" : '<p class="fine">Ticks you make on Opening Bell stay on this device, so the calendar shows every step. <button type="button" class="linkbtn" data-calseason>Download a one-time file instead</button> (it won’t update).</p>') +
+        (forParent ? "" : '<p class="fine">Ticks you make on Afterbell stay on this device, so the calendar shows every step. <button type="button" class="linkbtn" data-calseason>Download a one-time file instead</button> (it won’t update).</p>') +
       '</div><div class="sh-bar"><button type="button" class="btn sec" data-close>Done</button></div>';
   }
   function gradeSheet() {
@@ -597,12 +597,12 @@
     if ((t = e.target.closest("[data-pick]"))) { e.preventDefault(); togglePick(t.dataset.pick); return; }
     if ((t = e.target.closest("[data-done]"))) { toggleDone(t.dataset.done); return; }
     if ((t = e.target.closest("[data-share]"))) { share(BY[t.dataset.share]); return; }
-    if ((t = e.target.closest("[data-cal]"))) { downloadIcs([BY[t.dataset.cal]], BY[t.dataset.cal].short, "opening-bell-" + t.dataset.cal); return; }
+    if ((t = e.target.closest("[data-cal]"))) { downloadIcs([BY[t.dataset.cal]], BY[t.dataset.cal].short, "afterbell-" + t.dataset.cal); return; }
     if (e.target.closest("[data-subscribe]")) { if (state.picks.length) openSheet(subscribeSheet(state.picks, false), false); return; }
     if (e.target.closest("[data-subscribe-parent]")) { const pp = parentPicks(); if (pp.ids.length) openSheet(subscribeSheet(pp.ids, true), false); return; }
     if ((t = e.target.closest("[data-copyfeed]"))) { copy(t.dataset.copyfeed, "Calendar link copied. In your calendar app, add a calendar from URL and paste it."); return; }
     if (e.target.closest("[data-sendparent]")) { sendToParent(); return; }
-    if (e.target.closest("[data-calseason]")) { downloadIcs(state.picks.map(id => BY[id]), "your list", "opening-bell-list"); return; }
+    if (e.target.closest("[data-calseason]")) { downloadIcs(state.picks.map(id => BY[id]), "your list", "afterbell-list"); return; }
     if (e.target.closest("[data-askcopy]") && (ctx = askContext())) { copy(ctx.text, "Message copied. Paste it into an email or text."); return; }
     if (e.target.closest("[data-askshare]") && (ctx = askContext())) {
       if (navigator.share) navigator.share({ text: ctx.text }).catch(() => {});
@@ -625,12 +625,12 @@
 
   function sendToParent() {
     const url = location.origin + parentPath();
-    const data = { title: "My Opening Bell list", text: "Here’s my list on Opening Bell: what’s coming up, what it costs and where you can help.", url };
+    const data = { title: "My Afterbell list", text: "Here’s my list on Afterbell: what’s coming up, what it costs and where you can help.", url };
     if (navigator.share) { navigator.share(data).catch(() => {}); return; }
     copy(url, "Link copied. Send it to a parent by text or email.");
   }
   function share(o) {
-    const data = { title: o.name + " · Opening Bell", text: o.name + ": " + bigStatus(o).big, url: o.link };
+    const data = { title: o.name + " · Afterbell", text: o.name + ": " + bigStatus(o).big, url: o.link };
     if (navigator.share) { navigator.share(data).catch(() => {}); return; }
     copy(o.link, "Link copied. Paste it anywhere to share " + o.short + ".");
   }
@@ -647,7 +647,7 @@
   function downloadIcs(list, label, file) {
     if (!list.length) return;
     try {
-      const blob = new Blob([C.ics(list, { name: "Opening Bell" + (list.length === 1 ? ": " + list[0].short : "") })], { type: "text/calendar;charset=utf-8" });
+      const blob = new Blob([C.ics(list, { name: "Afterbell" + (list.length === 1 ? ": " + list[0].short : "") })], { type: "text/calendar;charset=utf-8" });
       const url = URL.createObjectURL(blob), a = document.createElement("a");
       a.href = url; a.download = file + ".ics";
       document.body.appendChild(a); a.click(); a.remove();

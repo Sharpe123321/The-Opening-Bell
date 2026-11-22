@@ -18,15 +18,15 @@ module.exports = (req, res) => {
   if (!ids.length) {
     res.statusCode = 400;
     res.setHeader("Content-Type", "text/plain; charset=utf-8");
-    return res.end("This calendar link doesn't include any Opening Bell listings.");
+    return res.end("This calendar link doesn't include any Afterbell listings.");
   }
   const forParent = url.searchParams.get("for") === "parent";
   const all = CORE.prepare(DATA, proto + "://" + host);
   const listings = ids.map(id => all.find(o => o.id === id));
-  const body = CORE.ics(listings, { name: forParent ? "Opening Bell · Your teen's season" : "Opening Bell", sequence: SEQUENCE });
+  const body = CORE.ics(listings, { name: forParent ? "Afterbell · Your teen's season" : "Afterbell", sequence: SEQUENCE });
   res.statusCode = 200;
   res.setHeader("Content-Type", "text/calendar; charset=utf-8");
-  res.setHeader("Content-Disposition", 'inline; filename="opening-bell.ics"');
+  res.setHeader("Content-Disposition", 'inline; filename="afterbell.ics"');
   res.setHeader("Cache-Control", "public, max-age=0, s-maxage=3600, stale-while-revalidate=86400");
   res.end(body);
 };

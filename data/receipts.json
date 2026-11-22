@@ -1,5 +1,5 @@
 {
-  "_about": "Every fact shown on Opening Bell needs a receipt: the exact sentence from the organizer's page and its URL. scripts/verify-sources.js re-reads each page and fails if a sentence has changed or disappeared. 'about' is one of: who, how, when, cost, team, why, detail. 'manual': true means a person checked it (for example, a PDF the robot can't read).",
+  "_about": "Every fact shown on Afterbell needs a receipt: the exact sentence from the organizer's page and its URL. scripts/verify-sources.js re-reads each page and fails if a sentence has changed or disappeared. 'about' is one of: who, how, when, cost, team, why, detail. 'manual': true means a person checked it (for example, a PDF the robot can't read).",
   "shad": [
     {
       "about": "who",

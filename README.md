@@ -1,4 +1,6 @@
-# Opening Bell
+# Afterbell
+
+What to do after the bell.
 
 Business competitions and programs for Ontario high school students, with every date checked against the organizer and a plan for when to start.
 
