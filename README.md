@@ -16,10 +16,11 @@ Business competitions and programs for Ontario high school students, with every 
 
 ## Design rules
 
-Two tabs: Explore (every activity as a card, with search and filters) and Saved (the next thing to do for each saved activity). Each activity has its own page at `/l/<id>`. Dark mode is the default and the switch at the top changes it.
+The first screen is a Toronto skyline drawn in code (`lib/skyline.js`): daytime in light mode, evening in dark mode. Below it: how Afterbell works, then Discover (every activity as a card, with search and filters). Saved shows the next thing to do for each saved activity. Each activity has its own page at `/l/<id>`, with a side panel of key facts on a computer. Dark mode is the default and the switch at the top changes it.
 
 - One typeface, Instrument Sans, in sentence case. No small all-caps labels.
-- Each colour means one thing: green is open or yours, orange is 30 days or less, red is 7 days or less or overdue, grey is not open yet.
+- Colours are navy and lake blues with a fresh teal. Each status colour means one thing: teal is open, amber is 30 days or less, red is 7 days or less or overdue, grey is not open yet or closed.
+- Numbers on the page come from the data (for example, the count of verified opportunities). Never round them up.
 - No decorative separators, arrows, or icons that don't do something.
 - Nothing that depends on a school board's calendar, because Ontario boards set their own dates.
 

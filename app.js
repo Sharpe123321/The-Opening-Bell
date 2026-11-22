@@ -86,10 +86,11 @@
   function setTheme(t) {
     document.documentElement.dataset.theme = t;
     store.set("theme", t);
-    const m = $('meta[name="theme-color"]'); if (m) m.content = t === "light" ? "#ffffff" : "#000000";
+    const m = $('meta[name="theme-color"]'); if (m) m.content = t === "light" ? "#F5F8FC" : "#0A1324";
     const had = document.activeElement && document.activeElement.matches("[data-theme-toggle]");
     $$("[data-theme-toggle]").forEach(b => { b.outerHTML = themeButton(); });
     if (had) { const b = $$("[data-theme-toggle]").filter(x => x.offsetParent !== null)[0]; if (b) b.focus(); }
+    drawHero();
   }
 
   /* ---------- Status words ---------- */
@@ -162,8 +163,20 @@
     if (r.name === "parent") { app.innerHTML = header(null, false) + '<main id="main" class="main">' + parentHtml() + "</main>"; return; }
     if (r.name === "listing" || r.name === "ask") { app.innerHTML = frame(listingHtml(BY[r.id]), null); loadReceipts(r.id); return; }
     if (r.name === "saved") { app.innerHTML = frame(savedHtml(), "saved"); return; }
-    app.innerHTML = frame(exploreHtml(), "explore");
+    app.innerHTML = frame(exploreHtml(), "explore", "explore");
+    drawHero();
   }
+  /* The skyline behind the first screen: daytime in light mode, evening in dark mode */
+  function drawHero() {
+    const cv = $("canvas.hero-sky"); if (!cv || !window.drawSkyline) return;
+    const wide = window.matchMedia("(min-width: 900px)").matches, h = cv.clientHeight;
+    window.drawSkyline(cv, { night: document.documentElement.dataset.theme !== "light", band: wide ? Math.min(h * 0.74, 600) : Math.min(300, h * 0.42), focus: wide ? 0.8 : 0.76 });
+  }
+  let heroW = 0, heroTimer;
+  window.addEventListener("resize", () => {
+    clearTimeout(heroTimer);
+    heroTimer = setTimeout(() => { const cv = $("canvas.hero-sky"); if (cv && cv.clientWidth !== heroW) { heroW = cv.clientWidth; drawHero(); } }, 150);
+  });
   /* A save, a tick or a filter changed: repaint, keep the scroll position and focus */
   function refresh() {
     const y = window.scrollY, f = document.activeElement;
@@ -207,10 +220,10 @@
   }
 
   /* ---------- Frame: header, then the page, then two tabs on a phone ---------- */
-  function header(nav, withGrade) {
+  function header(nav, withGrade, over) {
     const n = state.picks.length;
     const link = (k, href, label) => '<a href="' + href + '" data-nav' + (nav === k ? ' aria-current="page"' : "") + ">" + label + "</a>";
-    return '<header class="hd"><a class="word" href="/" data-nav>Afterbell</a>' +
+    return '<header class="hd' + (over ? " over" : "") + '"><a class="word" href="/" data-nav>Afterbell</a>' +
       (withGrade === false ? "" : '<nav class="dlinks" aria-label="Main">' + link("explore", "/", "Explore") + link("saved", "/season", "Saved" + (n ? ' <span class="count">' + n + "</span>" : "")) + "</nav>") +
       '<div class="hd-r">' + (withGrade === false ? '<a class="chip" href="/" data-nav>See all activities</a>'
         : '<button type="button" class="chip" data-grade-open aria-haspopup="dialog">' + (state.grade ? "Grade " + state.grade : "Your grade") + I.down + "</button>") +
@@ -222,7 +235,7 @@
     return '<nav class="tabbar" aria-label="Main">' + t("explore", "/", I.explore, "Explore") +
       t("saved", "/season", (nav === "saved" ? I.listOn : I.list) + (n ? '<span class="badge">' + n + "</span>" : ""), "Saved") + "</nav>";
   }
-  function frame(main, nav) { return header(nav, true) + '<main id="main" class="main">' + main + "</main>" + tabbar(nav); }
+  function frame(main, nav, cls) { return header(nav, true, cls === "explore") + '<main id="main" class="main' + (cls ? " " + cls : "") + '">' + main + "</main>" + tabbar(nav); }
 
   /* ---------- Activity cards ---------- */
   function cardHtml(o, extra) {
@@ -248,7 +261,7 @@
     let html = "";
     [["Open now", o => o._s.key === "open"], ["Opening later", o => o._s.key === "soon" || o._s.key === "expected"], ["Closed for this school year", o => o._s.key === "closed"]].forEach(g => {
       const rows = list.filter(g[1]);
-      if (rows.length) html += '<h2 class="h2">' + g[0] + '</h2><ul class="cards">' + rows.map(o => cardHtml(o)).join("") + "</ul>";
+      if (rows.length) html += '<h3 class="h3 grp">' + g[0] + '</h3><ul class="cards">' + rows.map(o => cardHtml(o)).join("") + "</ul>";
     });
     if (!list.length) html += '<p class="empty">Nothing matches' + (state.query ? " “" + esc(state.query) + "”" : " this filter") + ".</p>";
     const forGrade = L.filter(eligible).length;
@@ -263,12 +276,27 @@
       '<button type="button" data-g="' + g + '" aria-pressed="' + (state.grade === g) + '">' + g + "</button>").join("") + "</div>";
   }
   function exploreHtml() {
-    const first = !state.grade && !state.picks.length;
-    return (first ? '<p class="tagline">What to do after the bell.</p><p class="lede">Business competitions and programs for Ontario high school students, with every deadline and the steps to get in.</p>' +
-        '<section class="gprompt" aria-labelledby="gpH"><h2 id="gpH">What grade are you in?</h2><p>You’ll see only what you can enter this school year.</p>' + gradeButtons() + "</section>" : "") +
-      '<div class="search"><label class="sr" for="q">Search activities</label>' + I.explore + '<input id="q" type="search" placeholder="Search competitions and programs" autocomplete="off" value="' + esc(state.query) + '"></div>' +
+    const n = L.length, open = L.filter(o => o._s.key === "open").length, forGrade = L.filter(eligible).length;
+    const sh = BY.shad, dm = BY.diamond, ref = sh.steps.filter(s => s.ask === "reference")[0];
+    const hero = '<section class="hero" aria-labelledby="heroH"><canvas class="hero-sky" aria-hidden="true"></canvas><div class="hero-in">' +
+      '<h1 id="heroH">What to do <span>after the bell.</span></h1>' +
+      '<p class="hero-sub">Discover business competitions and programs for Ontario high school students. Every deadline is checked against the organizer, and every listing shows exactly how to get in.</p>' +
+      '<form class="hero-search" role="search" data-search><label class="sr" for="q">Search activities</label>' + I.explore +
+        '<input id="q" type="search" placeholder="Search activities, like “pitch”" autocomplete="off" value="' + esc(state.query) + '"><button type="submit" class="btn">Search</button></form>' +
+      '<div class="hero-grade" role="group" aria-label="Your grade"><span>I’m in grade</span>' + [9, 10, 11, 12].map(g => '<button type="button" data-g="' + g + '" aria-pressed="' + (state.grade === g) + '">' + g + "</button>").join("") + "</div>" +
+      '<p class="hero-note"><button type="button" class="linkbtn" data-scroll="discover">Browse ' + n + " verified opportunities</button>, " + open + " open right now. Free, with no account.</p></div></section>";
+    const how = '<section class="how wrap" aria-labelledby="howH"><h2 class="h2" id="howH">How Afterbell works</h2><ol class="how-steps">' +
+      '<li><span class="hn">1</span><h3>Find what fits you</h3><p>Pick your grade, then narrow it down to competitions, programs or free ones. Every listing says what it is in plain words.</p>' +
+        '<div class="mini" aria-hidden="true"><div class="card">' + tile(dm) + '<span class="c-b"><span class="c-t">' + esc(dm.name) + '</span><span class="tags"><span class="tag s ' + status(dm).cls + '">' + esc(status(dm).short) + '</span><span class="tag">' + esc(teamTag(dm)) + "</span></span></span></div></div></li>" +
+      '<li><span class="hn">2</span><h3>Know exactly how to get in</h3><p>Each listing has the steps in order, who to ask and what to say. For most, we’ll even write the message for you to send.</p>' +
+        '<div class="mini" aria-hidden="true"><div class="mini-step"><span class="ck"></span><span><b>' + esc(ref.t) + '</b><span class="btn sm">Write the message for me</span></span></div></div></li>' +
+      '<li><span class="hn">3</span><h3>Never miss a deadline</h3><p>Save what you’re doing and add every date to your phone’s calendar. It updates itself if a date changes.</p>' +
+        '<div class="mini" aria-hidden="true"><div class="mini-cal"><small>' + esc(dayText(ref)) + '</small><b>' + esc(sh.short + ": " + ref.t) + "</b><small>All day, with a reminder the day before</small></div></div></li></ol></section>";
+    const discover = '<section class="discover wrap" id="discover" aria-labelledby="discH"><div class="disc-head"><h2 class="h2" id="discH">Discover opportunities</h2>' +
+      '<p class="disc-sub">' + (state.grade && !state.allGrades ? forGrade + " verified opportunities for Grade " + state.grade + ", closing soonest first." : n + " verified opportunities, closing soonest first.") + "</p></div>" +
       '<div class="fchips" role="group" aria-label="Show">' + FILTERS.map(f => '<button type="button" class="fchip" data-f="' + f[0] + '" aria-pressed="' + (state.filter === f[0]) + '">' + f[1] + (f[0] === "saved" && state.picks.length ? " (" + state.picks.length + ")" : "") + "</button>").join("") + "</div>" +
-      '<div id="results">' + listHtml() + "</div>" + aboutHtml();
+      '<div id="results">' + listHtml() + "</div></section>";
+    return hero + how + discover + '<div class="wrap">' + aboutHtml() + "</div>";
   }
   function aboutHtml() {
     return '<div class="about">' +
@@ -306,22 +334,22 @@
     const st = status(o), pk = picked(o.id), gr = C.gradeRow(o, state.grade, o._s), url = officialUrl(o);
     const can = (gr ? [gr] : []).concat(o.can);
     const kd = o.dates.map(x => '<li class="' + (C.endOf(x.d) < NOW ? "past" : "") + '"><time>' + esc(x.show || C.fmtShort(x.d, x.est)) + "</time><span>" + esc(x.t) + (x.est ? '<span class="est">estimate</span>' : "") + "</span></li>").join("");
-    return '<div class="lbar"><button type="button" data-back aria-label="Back">' + I.back + '<span>Back</span></button><button type="button" data-share="' + o.id + '" aria-label="Share ' + esc(o.name) + '">' + I.share + "</button></div>" +
+    return '<div class="lpage"><div class="lhead"><div class="lbar"><button type="button" data-back aria-label="Back">' + I.back + '<span>Back</span></button><button type="button" data-share="' + o.id + '" aria-label="Share ' + esc(o.name) + '">' + I.share + "</button></div>" +
       '<h1 class="ln">' + esc(o.name) + '</h1><p class="lorg">' + esc(D.TYPE_LABEL[o.type]) + " by " + esc(o.org) + "</p>" +
       '<p class="stat ' + st.cls + '">' + esc(st.line) + "</p>" +
       (o.lastGrade && o.lastGrade === state.grade ? '<p class="lastyr">Grade ' + state.grade + " is the last year you can enter.</p>" : "") +
-      '<p class="what">' + esc(o.what) + ".</p>" +
-      factsHtml(o) +
+      '<p class="what">' + esc(o.what) + ".</p></div>" +
+      '<aside class="lside" aria-label="Key facts">' + factsHtml(o) +
       '<div class="acts"><a class="btn green" href="' + esc(url) + '" target="_blank" rel="noopener">Go to ' + esc(domain(url)) + "</a>" +
-      '<button type="button" class="btn sec" data-pick="' + o.id + '" aria-pressed="' + pk + '">' + (pk ? I.listOn + "Saved" : I.list + "Save") + "</button></div>" +
-      '<h2 class="h2">How to apply</h2>' + stepsHtml(o) +
+      '<button type="button" class="btn sec" data-pick="' + o.id + '" aria-pressed="' + pk + '">' + (pk ? I.listOn + "Saved" : I.list + "Save") + "</button></div></aside>" +
+      '<div class="lbody"><h2 class="h2">How to apply</h2>' + stepsHtml(o) +
       '<h2 class="h2">Who can apply</h2><ul class="can">' + can.map(c => '<li><span class="m ' + c.k + '" aria-hidden="true">' + MARK[c.k] + "</span><div><b>" + esc(c.t) + "</b>" + (c.s ? "<small>" + esc(c.s) + "</small>" : "") + "</div></li>").join("") + "</ul>" +
       '<h2 class="h2">About</h2><p class="why">' + esc(o.why) + '</p><p class="why">' + esc(o.format) + "</p>" +
       '<h2 class="h2">What it costs</h2><p class="why">' + esc(o.cost) + "</p>" + (o.aid ? '<p class="why sub">' + esc(o.aid) + "</p>" : "") +
       '<h2 class="h2">Important dates</h2><ol class="kd">' + kd + '</ol><p class="more"><button type="button" class="linkbtn" data-cal="' + o.id + '">Download these dates for your calendar</button></p>' +
       '<h2 class="h2">Where these facts come from</h2><div id="rc-' + o.id + '" class="rc"><p class="fine">Loading the organizer’s own words…</p></div>' +
       '<p class="fine">Checked ' + esc(C.fmt(D.CHECKED)) + ". Always confirm with the organizer before you apply." +
-      (REPORT_EMAIL ? ' <a class="u" href="mailto:' + esc(REPORT_EMAIL) + "?subject=" + encodeURIComponent("Mistake on " + o.name) + '">Report a mistake</a>' : "") + "</p>";
+      (REPORT_EMAIL ? ' <a class="u" href="mailto:' + esc(REPORT_EMAIL) + "?subject=" + encodeURIComponent("Mistake on " + o.name) + '">Report a mistake</a>' : "") + "</p></div></div>";
   }
 
   /* ---------- Receipts: the organizer's exact words behind each fact ---------- */
@@ -413,7 +441,7 @@
   function askSheet(o, a) {
     const st = o.steps.filter(s => s.ask === a.id)[0], done = !!state.done[key(o, st)];
     const third = a.to === "friends" ? '<a class="btn sec" data-asksms href="#">Text</a>' : '<a class="btn sec" data-askmail href="#">Email</a>';
-    return '<div class="grab" aria-hidden="true"></div><div class="sh-head"><div class="sh-top"><p class="sh-k">' + esc(o.name) + '</p><button type="button" class="x" data-close aria-label="Close">' + I.close + "</button></div>" +
+    return '<div class="grab" aria-hidden="true"></div><div class="sh-head"><div class="sh-top"><p class="sh-k">' + esc(o.name) + '</p><button type="button" class="xb" data-close aria-label="Close">' + I.close + "</button></div>" +
       '<h2 id="shTitle" tabindex="-1">' + esc(a.title) + '</h2><p class="sh-sub">To: ' + esc(ASK_TO[a.to] || a.to) + ". " + (st.official ? "Closing date: " : "By ") + esc(dayText(st)) + ".</p></div>" +
       '<div class="sh-body"><label class="lab" for="askMsg">Your message. Fill in the parts in [square brackets], and change anything you like.</label>' +
       '<textarea id="askMsg" class="msg" rows="12" spellcheck="true">' + esc(a.msg) + "</textarea>" +
@@ -426,7 +454,7 @@
   function subscribeSheet(ids, forParent) {
     const https = feedUrl(ids, forParent), webcal = https.replace(/^https?:/, "webcal:");
     const names = ids.map(id => BY[id].short).join(", ");
-    return '<div class="grab" aria-hidden="true"></div><div class="sh-head"><div class="sh-top"><p class="sh-k">' + (forParent ? "Your calendar" : "Your phone’s calendar") + '</p><button type="button" class="x" data-close aria-label="Close">' + I.close + "</button></div>" +
+    return '<div class="grab" aria-hidden="true"></div><div class="sh-head"><div class="sh-top"><p class="sh-k">' + (forParent ? "Your calendar" : "Your phone’s calendar") + '</p><button type="button" class="xb" data-close aria-label="Close">' + I.close + "</button></div>" +
       '<h2 id="shTitle" tabindex="-1">' + (forParent ? "Add these dates to your calendar" : "Add your dates to your calendar") + '</h2><p class="sh-sub">Every step and closing date for ' + esc(names) + ". When a date changes, it changes in your calendar too.</p></div>" +
       '<div class="sh-body"><div class="opts">' +
         '<a class="opt" href="' + esc(webcal) + '"><b>iPhone, iPad or Mac</b><small>Apple Calendar asks you to subscribe.</small></a>' +
@@ -438,7 +466,7 @@
       '</div><div class="sh-bar"><button type="button" class="btn sec" data-close>Done</button></div>';
   }
   function gradeSheet() {
-    return '<div class="grab" aria-hidden="true"></div><div class="sh-head"><div class="sh-top"><p class="sh-k">Your grade</p><button type="button" class="x" data-close aria-label="Close">' + I.close + "</button></div>" +
+    return '<div class="grab" aria-hidden="true"></div><div class="sh-head"><div class="sh-top"><p class="sh-k">Your grade</p><button type="button" class="xb" data-close aria-label="Close">' + I.close + "</button></div>" +
       '<h2 id="shTitle" tabindex="-1">What grade are you in?</h2><p class="sh-sub">Your grade in the ' + esc(D.SEASON) + " school year. You’ll see only what you can enter.</p></div>" +
       '<div class="sh-body">' + gradeButtons() + (state.grade ? '<p class="more"><button type="button" class="linkbtn" data-g="0">Show every grade</button></p>' : "") + "</div>";
   }
@@ -476,12 +504,18 @@
     state.query = e.target.value;
     const box = $("#results"); if (box) box.innerHTML = listHtml();
   });
+  document.addEventListener("submit", e => {
+    if (!e.target.matches("[data-search]")) return;
+    e.preventDefault();
+    const d = $("#discover"); if (d) d.scrollIntoView({ behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth" });
+  });
   document.addEventListener("click", e => {
     let t, ctx;
     if (e.target.closest("[data-close]") || e.target.id === "scrim") { closeSheet(); return; }
     if (e.target.closest("[data-back]")) { if (depth > 0) history.back(); else go("/", true); return; }
     if (e.target.closest("[data-theme-toggle]")) { setTheme(document.documentElement.dataset.theme === "light" ? "dark" : "light"); return; }
     if (e.target.closest("[data-grade-open]")) { openSheet(gradeSheet(), false); return; }
+    if ((t = e.target.closest("[data-scroll]"))) { const d = $("#" + t.dataset.scroll); if (d) d.scrollIntoView({ behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth" }); return; }
     if ((t = e.target.closest("[data-g]"))) { setGrade(Number(t.dataset.g)); return; }
     if ((t = e.target.closest("[data-f]"))) { state.filter = t.dataset.f; refresh(); return; }
     if (e.target.closest("[data-all]")) { state.allGrades = !state.allGrades; refresh(); return; }
