@@ -23,6 +23,7 @@ The first screen is a Toronto skyline drawn in code (`lib/skyline.js`): daytime 
 - Numbers on the page come from the data (for example, the count of verified opportunities). Never round them up.
 - No decorative separators, arrows, or icons that don't do something.
 - Nothing that depends on a school board's calendar, because Ontario boards set their own dates.
+- Motion is one system: one easing (`--ease`) and one short rise (`--rise`) for everything. The sky lags behind the city as you scroll, the header frosts over once content slides under it, and each section rises in once, the first time it comes into view. Only `opacity` and transforms are animated. The browser's own scrolling is never taken over, and all of it switches off when the device asks for reduced motion. Repaints (a filter, a save) and the Back button never replay animations.
 
 ## Privacy
 

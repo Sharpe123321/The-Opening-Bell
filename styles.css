@@ -4,11 +4,13 @@
 :root{--bg:#0A1324;--surface:#111C33;--line:#1F2C47;--text:#EAF0F8;--sub:#95A4BA;--fill:#16233D;--fill2:#1F2E4C;
   --primary:#33C7B5;--on-primary:#04201D;--soft:rgba(51,199,181,.16);--ink:#72E2D4;
   --amber:#FFB067;--amber-soft:rgba(255,176,103,.16);--red:#FF7D7D;--red-soft:rgba(255,125,125,.16);
-  --hero-text:#FFFFFF;--hero-sub:#D2DCEA;--glass:rgba(10,19,36,.55);--glass-line:rgba(255,255,255,.16);--scrim:rgba(3,8,18,.66);color-scheme:dark}
+  --hero-text:#FFFFFF;--hero-sub:#D2DCEA;--glass:rgba(10,19,36,.55);--glass-line:rgba(255,255,255,.16);--scrim:rgba(3,8,18,.66);--hd-bg:rgba(10,19,36,.8);color-scheme:dark;
+  /* Motion: every animation uses this one easing and this one rise, so the site moves as one thing */
+  --ease:cubic-bezier(.2,.7,.2,1);--rise:14px}
 :root[data-theme="light"]{--bg:#F5F8FC;--surface:#FFFFFF;--line:#E1E8F0;--text:#0F1D33;--sub:#56677D;--fill:#EDF2F8;--fill2:#E2E9F2;
   --primary:#0E7C74;--on-primary:#FFFFFF;--soft:#DDF2EF;--ink:#0B5F59;
   --amber:#9A4D06;--amber-soft:#FCEBD9;--red:#B42323;--red-soft:#FBE3E3;
-  --hero-text:#0F1D33;--hero-sub:#24384F;--glass:rgba(255,255,255,.72);--glass-line:rgba(15,29,51,.10);--scrim:rgba(15,29,51,.35);color-scheme:light}
+  --hero-text:#0F1D33;--hero-sub:#24384F;--glass:rgba(255,255,255,.72);--glass-line:rgba(15,29,51,.10);--scrim:rgba(15,29,51,.35);--hd-bg:rgba(245,248,252,.82);color-scheme:light}
 *{box-sizing:border-box}
 html{-webkit-text-size-adjust:100%;background:var(--bg)}
 body{margin:0;background:var(--bg);color:var(--text);font:16px/1.45 "Instrument Sans",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;font-variant-numeric:tabular-nums;-webkit-font-smoothing:antialiased}
@@ -25,8 +27,12 @@ p,h1,h2,h3,dl,dd{margin:0}
 html.lock,html.lock body{overflow:hidden}
 
 /* Header */
-.hd{position:sticky;top:0;z-index:20;display:flex;align-items:center;gap:10px;padding:12px 16px;padding-top:max(12px,env(safe-area-inset-top));background:var(--bg);border-bottom:1px solid var(--line)}
-.hd.over{position:absolute;left:0;right:0;background:transparent;border-bottom-color:transparent;color:var(--hero-text)}
+.hd{position:sticky;top:0;z-index:20;display:flex;align-items:center;gap:10px;padding:12px 16px;padding-top:max(12px,env(safe-area-inset-top));background:var(--hd-bg);border-bottom:1px solid var(--line);
+  -webkit-backdrop-filter:blur(14px) saturate(1.3);backdrop-filter:blur(14px) saturate(1.3);
+  transition:background-color .3s var(--ease),border-color .3s var(--ease),color .3s var(--ease),-webkit-backdrop-filter .3s var(--ease),backdrop-filter .3s var(--ease)}
+/* On Explore the header sits clear over the skyline, then frosts over once the page slides under it */
+.hd.over{position:fixed;left:0;right:0}
+.hd.over:not(.solid){background:transparent;border-bottom-color:transparent;color:var(--hero-text);-webkit-backdrop-filter:blur(0);backdrop-filter:blur(0)}
 .word{font-weight:700;font-size:21px;letter-spacing:-.01em;margin-right:auto;white-space:nowrap}
 .dlinks{display:none}
 .hd-r{display:flex;align-items:center;gap:8px}
@@ -35,7 +41,8 @@ html.lock,html.lock body{overflow:hidden}
 a.chip{padding:7px 12px}
 .iconbtn{display:grid;place-items:center;width:36px;height:36px;border:0;padding:0;border-radius:999px;background:var(--fill);cursor:pointer}
 .iconbtn .ic{width:19px;height:19px}
-.hd.over .chip,.hd.over .iconbtn{background:var(--glass);box-shadow:inset 0 0 0 1px var(--glass-line);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px)}
+.chip,.iconbtn{transition:background-color .3s var(--ease),box-shadow .3s var(--ease)}
+.hd.over:not(.solid) .chip,.hd.over:not(.solid) .iconbtn{background:var(--glass);box-shadow:inset 0 0 0 1px var(--glass-line);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px)}
 
 /* Page */
 .main{max-width:1100px;margin:0 auto;padding:6px 16px 112px}
@@ -62,6 +69,9 @@ a.chip{padding:7px 12px}
 /* First screen: the skyline */
 .hero{position:relative;overflow:hidden;color:var(--hero-text);background:var(--bg)}
 .hero-sky{position:absolute;inset:0;width:100%;height:100%;display:block}
+.hero-sky.front{top:auto} /* only as tall as the city, pinned to the bottom; its height is set when it's drawn */
+/* The lake fades into the page, so the skyline and the content below read as one surface */
+.hero::after{content:"";position:absolute;left:0;right:0;bottom:-1px;height:clamp(20px,5vw,72px);background:linear-gradient(to bottom,transparent,var(--bg));pointer-events:none}
 .hero-in{position:relative;z-index:1;max-width:1180px;margin:0 auto;padding:88px 16px 330px}
 .hero h1{font-size:42px;font-weight:700;line-height:1.04;letter-spacing:-.02em;max-width:640px}
 .hero h1 span{display:block}
@@ -98,6 +108,7 @@ a.chip{padding:7px 12px}
 .mini-cal b{display:block;margin:2px 0;font-weight:600;line-height:1.35}
 
 /* Discover */
+.discover{scroll-margin-top:24px}
 .discover .h2{margin-top:44px;margin-bottom:4px}
 .disc-sub{color:var(--sub)}
 .fchips{display:flex;gap:8px;overflow-x:auto;scrollbar-width:none;margin:16px -16px 0;padding:0 16px 2px}
@@ -230,7 +241,7 @@ a.card:hover{box-shadow:inset 0 0 0 1.5px var(--primary)}
 
 /* Sheets */
 .scrim{position:fixed;inset:0;z-index:40;background:var(--scrim)}
-.panel{position:fixed;left:0;right:0;bottom:0;z-index:41;display:flex;flex-direction:column;max-height:90vh;max-height:90dvh;background:var(--surface);border-radius:20px 20px 0 0;box-shadow:0 -1px 0 var(--line);transition:transform .22s ease,opacity .22s ease}
+.panel{position:fixed;left:0;right:0;bottom:0;z-index:41;display:flex;flex-direction:column;max-height:90vh;max-height:90dvh;background:var(--surface);border-radius:20px 20px 0 0;box-shadow:0 -1px 0 var(--line);transition:transform .3s var(--ease),opacity .3s var(--ease)}
 .panel.enter{transform:translateY(28px);opacity:0}
 .panel[hidden],.scrim[hidden]{display:none}
 .grab{width:38px;height:5px;margin:8px auto 2px;border-radius:3px;background:var(--fill2)}
@@ -275,9 +286,10 @@ a.card:hover{box-shadow:inset 0 0 0 1.5px var(--primary)}
   .word{font-size:23px;margin-right:18px}
   .dlinks{display:flex;gap:4px;margin-right:auto}
   .dlinks a{display:inline-flex;align-items:center;gap:6px;padding:8px 12px;border-radius:10px;color:var(--sub);font-weight:600;font-size:15px}
-  .hd.over .dlinks a{color:var(--hero-sub)}
+  .dlinks a{transition:color .3s var(--ease),background-color .3s var(--ease)}
+  .hd.over:not(.solid) .dlinks a{color:var(--hero-sub)}
   .dlinks a[aria-current="page"]{background:var(--fill);color:var(--text)}
-  .hd.over .dlinks a[aria-current="page"]{background:var(--glass);color:var(--hero-text)}
+  .hd.over:not(.solid) .dlinks a[aria-current="page"]{background:var(--glass);color:var(--hero-text)}
   .count{display:inline-grid;place-items:center;min-width:20px;height:20px;padding:0 6px;border-radius:10px;background:var(--primary);color:var(--on-primary);font-size:12px;font-weight:700}
   .tabbar{display:none}
   .main{padding:28px 32px 80px}
@@ -305,4 +317,25 @@ a.card:hover{box-shadow:inset 0 0 0 1.5px var(--primary)}
   .toast{bottom:28px}
 }
 @media (min-width:1100px){.cards{grid-template-columns:repeat(3,minmax(0,1fr))}}
-@media (prefers-reduced-motion:reduce){.panel,.card{transition:none}}
+
+/* Motion. Sections rise into place once, the first time they come into view (app.js adds .rv, then .in) */
+.rv{opacity:0;translate:0 var(--rise)}
+.rv.in{opacity:1;translate:none;transition:opacity .6s var(--ease),translate .6s var(--ease)}
+/* Opening a page: the sky fades in, the city rises behind the headline, then the words follow in order */
+@keyframes rise{from{opacity:0;translate:0 var(--rise)}}
+@keyframes skyin{from{opacity:0}}
+@keyframes cityin{from{translate:0 28px}}
+.hero.intro .hero-sky.back{animation:skyin .7s var(--ease) both}
+.hero.intro .hero-sky.front{animation:cityin 1s var(--ease) .1s both}
+.hero.intro .hero-in>*{animation:rise .7s var(--ease) both}
+.hero.intro .hero-in>:nth-child(2){animation-delay:.08s}
+.hero.intro .hero-in>:nth-child(3){animation-delay:.16s}
+.hero.intro .hero-in>:nth-child(4){animation-delay:.24s}
+.hero.intro .hero-in>:nth-child(5){animation-delay:.32s}
+@media (prefers-reduced-motion:no-preference){.hero-sky.back{will-change:transform}}
+@media (prefers-reduced-motion:reduce){
+  .panel,.card,.hd,.chip,.iconbtn,.dlinks a,.rv.in{transition:none}
+  .rv{opacity:1;translate:none}
+  .hero.intro *{animation:none}
+}
+@media print{.rv{opacity:1;translate:none}.hd.over{position:absolute}}

@@ -148,6 +148,7 @@
       page = pk;
       paint(r);
       window.scrollTo(0, restore ? (scrollMem[location.pathname + location.search] || 0) : 0);
+      motion(restore ? "quiet" : "enter");
     }
     if (r.name === "ask") { const o = BY[r.id]; openSheet(askSheet(o, o.asks[r.ask]), true); }
     else closeSheetNow();
@@ -168,15 +169,67 @@
   }
   /* The skyline behind the first screen: daytime in light mode, evening in dark mode */
   function drawHero() {
-    const cv = $("canvas.hero-sky"); if (!cv || !window.drawSkyline) return;
+    const cv = $("canvas.hero-sky.back"), city = $("canvas.hero-sky.front"); if (!cv || !window.drawSkyline) return;
     const wide = window.matchMedia("(min-width: 900px)").matches, h = cv.clientHeight;
-    window.drawSkyline(cv, { night: document.documentElement.dataset.theme !== "light", band: wide ? Math.min(h * 0.74, 600) : Math.min(300, h * 0.42), focus: wide ? 0.8 : 0.76 });
+    const opts = { night: document.documentElement.dataset.theme !== "light", band: wide ? Math.min(h * 0.74, 600) : Math.min(300, h * 0.42), focus: wide ? 0.8 : 0.76 };
+    window.drawSkyline(cv, Object.assign({ layer: city ? "back" : "all" }, opts));
+    if (city) window.drawSkyline(city, Object.assign({ layer: "front", boxH: h }, opts));
   }
   let heroW = 0, heroTimer;
   window.addEventListener("resize", () => {
     clearTimeout(heroTimer);
-    heroTimer = setTimeout(() => { const cv = $("canvas.hero-sky"); if (cv && cv.clientWidth !== heroW) { heroW = cv.clientWidth; drawHero(); } }, 150);
+    heroTimer = setTimeout(() => { const cv = $("canvas.hero-sky"); if (cv && cv.clientWidth !== heroW) { heroW = cv.clientWidth; drawHero(); } bindScroll(); }, 150);
   });
+
+  /* ---------- Motion: one easing and one short rise, used everywhere ----------
+   * The browser does the scrolling; nothing here takes it over. As you scroll, the sky (with the
+   * moon or sun, the clouds and the far haze) falls behind the city, which moves with the page, the
+   * header frosts over once anything slides under it, and each section rises into place the first
+   * time it comes into view. Everything is skipped when the device asks for less motion. */
+  const lessMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+  const REVEAL = [".how > .h2", ".how-steps > li", ".disc-head", ".fchips", "#results > .grp", "#results > .cards > li", "#results > .scope", "#results > .empty",
+    ".about > section", ".about > .fine", ".lhead", ".lside", ".lbody > :not(.desc)", ".desc > section",
+    ".main:not(.explore) > :not(.lpage):not(.cards)", ".main:not(.explore) > .cards > li"].join(",");
+  const SKY_LAG = 0.35; /* the sky holds back this share of the scroll, so it feels far behind the city */
+  let io = null, hero = null, heroH = 0, sky = [], hd = null, ticking = false;
+  function motion(mode) { /* "enter": a new page, so what's on screen rises in; "quiet": a repaint, so it just appears */
+    if (io) { io.disconnect(); io = null; }
+    bindScroll();
+    if (lessMotion.matches || !("IntersectionObserver" in window)) return;
+    const vh = window.innerHeight;
+    const els = $$(REVEAL, $("#main")).filter(el => { if (mode !== "quiet") return true; const r = el.getBoundingClientRect(); return r.top >= vh || r.bottom <= 0; });
+    if (mode === "enter" && hero) { /* the city's rise ends last, so the opening is over when it ends */
+      const h = hero; h.classList.add("intro");
+      h.addEventListener("animationend", function end(e) { if (!e.target.classList.contains("front")) return; h.removeEventListener("animationend", end); h.classList.remove("intro"); });
+    }
+    els.forEach(el => el.classList.add("rv"));
+    io = new IntersectionObserver(entries => {
+      let n = 0;
+      entries.forEach(en => {
+        if (!en.isIntersecting) return;
+        const el = en.target;
+        io.unobserve(el);
+        el.style.transitionDelay = Math.min(n++, 5) * 70 + "ms"; /* things arriving together go in reading order */
+        el.classList.add("in");
+        el.addEventListener("transitionend", function done(e) { if (e.target !== el || e.propertyName !== "translate") return; el.removeEventListener("transitionend", done); el.style.transitionDelay = ""; el.classList.remove("rv", "in"); });
+      });
+    }, { rootMargin: "0px 0px -6% 0px" });
+    els.forEach(el => io.observe(el));
+  }
+  function bindScroll() {
+    hero = $(".hero"); hd = $(".hd.over");
+    sky = hero ? [[$(".hero-sky.back", hero), SKY_LAG]].filter(x => x[0]) : [];
+    heroH = hero ? hero.offsetHeight : 0;
+    onFrame();
+  }
+  function onFrame() {
+    ticking = false;
+    const y = Math.max(0, window.scrollY);
+    if (hd) hd.classList.toggle("solid", y > 8);
+    if (!hero || lessMotion.matches || y > heroH + 40) return;
+    sky.forEach(([el, k]) => { el.style.transform = "translate3d(0," + (y * k).toFixed(1) + "px,0)"; });
+  }
+  window.addEventListener("scroll", () => { if (!ticking) { ticking = true; requestAnimationFrame(onFrame); } }, { passive: true });
   /* A save, a tick or a filter changed: repaint, keep the scroll position and focus */
   function refresh() {
     const y = window.scrollY, f = document.activeElement;
@@ -188,6 +241,7 @@
     }
     paint(parseRoute(location.pathname));
     window.scrollTo(0, y);
+    motion("quiet");
     const el = sel && $$(sel, $("#app")).filter(x => x.offsetParent !== null)[0];
     if (el) el.focus({ preventScroll: true });
     const b = $("#panel [data-done]");
@@ -287,7 +341,7 @@
   function exploreHtml() {
     const n = L.length, open = L.filter(o => o._s.key === "open").length, forGrade = L.filter(eligible).length;
     const sh = BY.shad, dm = BY.diamond, ref = sh.steps.filter(s => s.ask === "reference")[0];
-    const hero = '<section class="hero" aria-labelledby="heroH"><canvas class="hero-sky" aria-hidden="true"></canvas><div class="hero-in">' +
+    const hero = '<section class="hero" aria-labelledby="heroH"><canvas class="hero-sky back" aria-hidden="true"></canvas><canvas class="hero-sky front" aria-hidden="true"></canvas><div class="hero-in">' +
       '<h1 id="heroH">What to do <span>after the bell.</span></h1>' +
       '<p class="hero-sub">Discover business competitions and programs for Ontario high school students. Every deadline is checked against the organizer, and every listing shows exactly how to get in.</p>' +
       '<form class="hero-search" role="search" data-search><label class="sr" for="q">Search activities</label>' + I.explore +
@@ -525,7 +579,7 @@
   document.addEventListener("submit", e => {
     if (!e.target.matches("[data-search]")) return;
     e.preventDefault();
-    const d = $("#discover"); if (d) d.scrollIntoView({ behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth" });
+    const d = $("#discover"); if (d) d.scrollIntoView({ behavior: lessMotion.matches ? "auto" : "smooth" });
   });
   document.addEventListener("click", e => {
     let t, ctx;
@@ -533,7 +587,7 @@
     if (e.target.closest("[data-back]")) { if (depth > 0) history.back(); else go("/", true); return; }
     if (e.target.closest("[data-theme-toggle]")) { setTheme(document.documentElement.dataset.theme === "light" ? "dark" : "light"); return; }
     if (e.target.closest("[data-grade-open]")) { openSheet(gradeSheet(), false); return; }
-    if ((t = e.target.closest("[data-scroll]"))) { const d = $("#" + t.dataset.scroll); if (d) d.scrollIntoView({ behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth" }); return; }
+    if ((t = e.target.closest("[data-scroll]"))) { const d = $("#" + t.dataset.scroll); if (d) d.scrollIntoView({ behavior: lessMotion.matches ? "auto" : "smooth" }); return; }
     if ((t = e.target.closest("[data-g]"))) { setGrade(Number(t.dataset.g)); return; }
     if ((t = e.target.closest("[data-f]"))) { state.filter = t.dataset.f; refresh(); return; }
     if (e.target.closest("[data-all]")) { state.allGrades = !state.allGrades; refresh(); return; }
