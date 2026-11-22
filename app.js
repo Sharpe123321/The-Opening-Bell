@@ -246,6 +246,15 @@
       '<span class="tags"><span class="tag s ' + st.cls + '">' + esc(st.short) + '</span><span class="tag">' + esc(costTag(o)) + "</span>" + (team ? '<span class="tag">' + esc(team) + "</span>" : "") +
       (ok ? "" : '<span class="tag">Not for Grade ' + state.grade + "</span>") + "</span></span></a></li>";
   }
+  // Search looks at the name, organizer, type and description, so "scholarship" or "investing" finds the right ones.
+  const searchCache = {};
+  function searchText(o) {
+    if (!searchCache[o.id]) {
+      const a = o.about ? [o.about.is].concat(o.about.do, o.about.why).map(x => x.t) : [];
+      searchCache[o.id] = [o.name, o.org, o.what, o.short, D.TYPE_LABEL[o.type]].concat(a).join(" ").toLowerCase();
+    }
+    return searchCache[o.id];
+  }
   function matches(o) {
     const f = state.filter;
     if (f === "comp" && !COMPETITIONS.includes(o.type)) return false;
@@ -253,7 +262,7 @@
     if (f === "free" && !o.free) return false;
     if (f === "saved" && !picked(o.id)) return false;
     const q = state.query.trim().toLowerCase();
-    if (q && ![o.name, o.org, o.what, o.short, D.TYPE_LABEL[o.type]].join(" ").toLowerCase().includes(q)) return false;
+    if (q && !searchText(o).includes(q)) return false;
     return state.allGrades || eligible(o);
   }
   function listHtml() {
@@ -300,7 +309,6 @@
   }
   function aboutHtml() {
     return '<div class="about">' +
-      '<section aria-labelledby="whyH"><h2 class="h2" id="whyH">Why this exists</h2><p>When I applied to business school, grades were nearly all that mattered. That has changed. Programs like Ivey, Rotman, Queen’s and Waterloo now look closely at what you’ve done outside class.</p><p>The opportunities exist, but the dates are scattered and the important steps are buried. This site puts them in one place, for the students who are where I was.</p></section>' +
       '<section aria-labelledby="checkH"><h2 class="h2" id="checkH">How we check facts</h2><p>Every fact here is quoted from the organizer’s own page. Each activity’s page ends with the exact sentences and where they came from.</p><p>A script re-reads those pages to catch changes. Dates marked ~ are our estimates from past years, and “by” dates on steps are our advice.</p></section>' +
       '<section aria-labelledby="privH"><h2 class="h2" id="privH">Your privacy</h2><p>No accounts, no email, no tracking cookies. Your grade, your saves and your ticks are kept only in your own browser.</p><p>Messages and calendar files are made on your device. Nothing about you is sent to us.</p></section>' +
       '<p class="fine">Grades mean your grade in the ' + esc(D.SEASON) + " school year. For next year’s rounds, we list the grades that will still be eligible when they open. Always confirm details with the organizer before you apply. Afterbell is independent and isn’t affiliated with any organizer listed. Last checked " + esc(C.fmt(D.CHECKED)) + ".</p></div>";
@@ -330,6 +338,14 @@
     const box = (k, v, sub, wide) => '<div' + (wide ? ' class="wide"' : "") + "><dt>" + k + "</dt><dd><b>" + esc(v) + "</b>" + (sub ? "<small>" + esc(sub) + "</small>" : "") + "</dd></div>";
     return '<dl class="facts">' + box(when.k, when.v, when.sub) + box("Cost", cost[0], cost.slice(1).join(". ")) + box("Who", o.gradeNote) + box("Where", o.where) + box("How you enter", o.entry, "", true) + "</dl>";
   }
+  // Every description line is a sentence, so each ends with a full stop.
+  const sentence = t => t + (/[.!?]$/.test(t) ? "" : ".");
+  function descHtml(o) {
+    const a = o.about; if (!a) return "";
+    const pts = xs => '<ul class="pts">' + xs.map(x => "<li>" + esc(sentence(x.t)) + "</li>").join("") + "</ul>";
+    return '<div class="desc"><section><h2 class="h2">What you’ll do</h2>' + pts(a.do) + "</section>" +
+      '<section><h2 class="h2">Why it’s worth it</h2>' + pts(a.why) + "</section></div>";
+  }
   function listingHtml(o) {
     const st = status(o), pk = picked(o.id), gr = C.gradeRow(o, state.grade, o._s), url = officialUrl(o);
     const can = (gr ? [gr] : []).concat(o.can);
@@ -338,16 +354,17 @@
       '<h1 class="ln">' + esc(o.name) + '</h1><p class="lorg">' + esc(D.TYPE_LABEL[o.type]) + " by " + esc(o.org) + "</p>" +
       '<p class="stat ' + st.cls + '">' + esc(st.line) + "</p>" +
       (o.lastGrade && o.lastGrade === state.grade ? '<p class="lastyr">Grade ' + state.grade + " is the last year you can enter.</p>" : "") +
-      '<p class="what">' + esc(o.what) + ".</p></div>" +
+      '<p class="intro">' + esc(o.about ? o.about.is.t : sentence(o.what)) + "</p></div>" +
       '<aside class="lside" aria-label="Key facts">' + factsHtml(o) +
       '<div class="acts"><a class="btn green" href="' + esc(url) + '" target="_blank" rel="noopener">Go to ' + esc(domain(url)) + "</a>" +
       '<button type="button" class="btn sec" data-pick="' + o.id + '" aria-pressed="' + pk + '">' + (pk ? I.listOn + "Saved" : I.list + "Save") + "</button></div></aside>" +
-      '<div class="lbody"><h2 class="h2">How to apply</h2>' + stepsHtml(o) +
+      '<div class="lbody">' + descHtml(o) + '<h2 class="h2">How to apply</h2>' + stepsHtml(o) +
       '<h2 class="h2">Who can apply</h2><ul class="can">' + can.map(c => '<li><span class="m ' + c.k + '" aria-hidden="true">' + MARK[c.k] + "</span><div><b>" + esc(c.t) + "</b>" + (c.s ? "<small>" + esc(c.s) + "</small>" : "") + "</div></li>").join("") + "</ul>" +
-      '<h2 class="h2">About</h2><p class="why">' + esc(o.why) + '</p><p class="why">' + esc(o.format) + "</p>" +
       '<h2 class="h2">What it costs</h2><p class="why">' + esc(o.cost) + "</p>" + (o.aid ? '<p class="why sub">' + esc(o.aid) + "</p>" : "") +
       '<h2 class="h2">Important dates</h2><ol class="kd">' + kd + '</ol><p class="more"><button type="button" class="linkbtn" data-cal="' + o.id + '">Download these dates for your calendar</button></p>' +
-      '<h2 class="h2">Where these facts come from</h2><div id="rc-' + o.id + '" class="rc"><p class="fine">Loading the organizer’s own words…</p></div>' +
+      '<h2 class="h2">Where these facts come from</h2><p class="why sub">Each fact on this page comes from the organizer’s own website.</p>' +
+      '<details class="rcd"><summary><span class="sh">Show</span><span class="hi">Hide</span> their exact words<span class="rcn"></span></summary>' +
+      '<div id="rc-' + o.id + '" class="rc"><p class="fine">Loading the organizer’s own words…</p></div></details>' +
       '<p class="fine">Checked ' + esc(C.fmt(D.CHECKED)) + ". Always confirm with the organizer before you apply." +
       (REPORT_EMAIL ? ' <a class="u" href="mailto:' + esc(REPORT_EMAIL) + "?subject=" + encodeURIComponent("Mistake on " + o.name) + '">Report a mistake</a>' : "") + "</p></div></div>";
   }
@@ -358,6 +375,7 @@
     function paintR(all) {
       const box = $("#rc-" + id); if (!box) return;
       const list = (all && all[id]) || [];
+      const n = $(".rcd .rcn"); if (n) n.textContent = list.length ? " (" + list.length + ")" : "";
       box.innerHTML = list.length ? '<ul class="src">' + list.map(r => "<li>“" + esc(r.quote) + '”<a href="' + esc(r.url) + '" target="_blank" rel="noopener">' +
         esc(r.url.replace(/^https?:\/\/(www\.)?/, "").replace(/\/$/, "")) + (r.manual ? ", checked by hand" : "") + "</a></li>").join("") + "</ul>" : '<p class="fine">No sources found.</p>';
     }

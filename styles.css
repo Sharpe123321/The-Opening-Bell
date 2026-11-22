@@ -143,7 +143,10 @@ a.card:hover{box-shadow:inset 0 0 0 1.5px var(--primary)}
 .stat{margin-top:12px;font-weight:600;font-size:17px;color:var(--ink)}
 .stat.o{color:var(--amber)}.stat.r{color:var(--red)}.stat.n,.stat.x{color:var(--sub)}
 .lastyr{margin-top:4px;color:var(--amber);font-weight:600;font-size:15px}
-.what{margin-top:10px;font-size:17px;line-height:1.45}
+.intro{margin-top:12px;font-size:17px;line-height:1.55}
+.pts{list-style:none;margin:0;padding:0}
+.pts li{position:relative;padding:6px 0 6px 20px;line-height:1.5}
+.pts li::before{content:"";position:absolute;left:3px;top:15px;width:6px;height:6px;border-radius:50%;background:var(--primary)}
 .lside{margin-top:16px}
 .facts{display:grid;grid-template-columns:1fr 1fr;gap:8px}
 .facts>div{padding:12px;border-radius:14px;background:var(--surface);box-shadow:inset 0 0 0 1px var(--line)}
@@ -187,6 +190,12 @@ a.card:hover{box-shadow:inset 0 0 0 1.5px var(--primary)}
 .kd time{font-weight:600}
 .kd li.past{color:var(--sub)}
 .kd .est{margin-left:8px;color:var(--sub);font-size:13.5px}
+.rcd{margin-top:4px}
+.rcd summary{display:inline-block;padding:8px 0;cursor:pointer;color:var(--ink);font-weight:600;list-style:none}
+.rcd summary::-webkit-details-marker{display:none}
+.rcd summary:focus-visible{outline:2px solid var(--primary);outline-offset:3px;border-radius:4px}
+.rcd .hi,.rcd[open] .sh{display:none}
+.rcd[open] .hi{display:inline}
 .src{list-style:none;margin:0;padding:0}
 .src li{padding:10px 0;border-bottom:1px solid var(--line);line-height:1.5}
 .src li:last-child{border-bottom:0}

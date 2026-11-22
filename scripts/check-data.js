@@ -18,6 +18,11 @@ const errors = [];
 const err = (o, msg) => errors.push(`${o.id || "?"}: ${msg}`);
 const isDate = s => /^\d{4}-\d{2}(-\d{2})?$/.test(s) && !isNaN(new Date(s.length === 7 ? s + "-01" : s));
 const day = s => new Date(s.length === 7 ? s + "-15" : s);
+// Same normalizing as verify-sources.js, so a quote matches whatever quote marks or dashes it uses.
+const norm = s => String(s).toLowerCase().replace(/[‘’‛′]/g, "'").replace(/[“”″]/g, '"').replace(/[‐-―−]/g, "-").replace(/\s+/g, " ").trim();
+const words = s => String(s || "").split(/\s+/).filter(Boolean).length;
+// Descriptions stay short so students actually read them.
+const ABOUT_LIMIT = { is: 45, line: 22, total: 135 };
 
 // Team sizes must only come from team:{min,max} via {team}. Hard-coded numbers drift.
 const TEAM_NUMBERS = /(?<!grades?\s)(\d+\s*[–-]\s*\d+|up to (\d+|two|three|four|five|six))\s+(teammates|students|members|people|friends|others)\b|team of \d|teams? of (two|three|four|five|six)/i;
@@ -31,7 +36,7 @@ for (const o of DATA.LISTINGS) {
   if (!/^[A-Z]{2,5}$/.test(o.tk || "")) err(o, "ticker must be 2–5 capital letters");
   if (tks.has(o.tk)) err(o, "duplicate ticker");
   tks.add(o.tk);
-  for (const f of ["short", "name", "org", "type", "cost", "costShort", "format", "where", "why", "gradeNote"]) {
+  for (const f of ["short", "name", "org", "type", "what", "cost", "costShort", "where", "gradeNote"]) {
     if (!o[f] || typeof o[f] !== "string") err(o, `missing ${f}`);
   }
   if (!TYPES.has(o.type)) err(o, `unknown type ${o.type}`);
@@ -102,8 +107,28 @@ for (const o of DATA.LISTINGS) {
   for (const c of o.can || []) if (!CAN_K.has(c.k) || !c.t) err(o, `can row invalid: ${JSON.stringify(c)}`);
   if (!Array.isArray(o.parent) || !o.parent.length) err(o, "parent needs at least one item");
 
+  // Description: what it is, what you'll do, why it's worth it. Short, and every line rests on the organizer's words.
+  const ab = o.about, aboutLines = [];
+  if (!ab || !ab.is || !Array.isArray(ab.do) || !Array.isArray(ab.why)) err(o, "needs about: { is, do, why }");
+  else {
+    if (ab.do.length < 2 || ab.do.length > 3) err(o, "about.do needs 2–3 lines");
+    if (ab.why.length < 2 || ab.why.length > 3) err(o, "about.why needs 2–3 lines");
+    const all = [ab.is].concat(ab.do, ab.why);
+    const rcq = (RECEIPTS[o.id] || []).map(r => norm(r.quote));
+    for (const x of all) {
+      if (!x || typeof x.t !== "string" || !x.t.trim()) { err(o, "every about line needs text (t)"); continue; }
+      aboutLines.push(x.t);
+      if (x !== ab.is && words(x.t) > ABOUT_LIMIT.line) err(o, `about line is ${words(x.t)} words, limit ${ABOUT_LIMIT.line}: "${x.t}"`);
+      if (!Array.isArray(x.q) || !x.q.length) err(o, `about line has no organizer quote (q): "${x.t}"`);
+      for (const q of x.q || []) if (!rcq.some(r => r.includes(norm(q)))) err(o, `about quote isn't in receipts.json: "${q}"`);
+    }
+    if (words(ab.is.t) > ABOUT_LIMIT.is) err(o, `about.is is ${words(ab.is.t)} words, limit ${ABOUT_LIMIT.is}`);
+    const total = aboutLines.reduce((n, t) => n + words(t), 0);
+    if (total > ABOUT_LIMIT.total) err(o, `description is ${total} words, limit ${ABOUT_LIMIT.total}`);
+  }
+
   // Hard-coded team numbers anywhere in free text
-  const texts = [o.cost, o.costShort, o.format, o.where, o.why, o.gradeNote, o.entry || "", o.aid || "",
+  const texts = [o.what, o.cost, o.costShort, o.where, o.gradeNote, o.entry || "", o.aid || "", ...aboutLines,
     ...(o.can || []).flatMap(c => [c.t, c.s]), ...steps.flatMap(s => [s.t, s.note || ""]),
     ...(o.dates || []).map(d => d.t), ...(o.parent || []).flatMap(p => [p.t, p.s]),
     ...Object.values(o.asks || {}).flatMap(a => [a.title, a.hint, a.msg])];
