@@ -30,7 +30,7 @@
     },
     LISTINGS: [
       {
-        id: "shad", tk: "SHAD", short: "Shad", name: "Shad 2027", org: "Shad Canada", type: "summer",
+        id: "shad", tk: "SHAD", short: "Shad", name: "Shad 2027", org: "Shad Canada", type: "summer", what: "A month-long summer program at a Canadian university, or online",
         grades: [10, 11], lastGrade: 11, gradeNote: "Open to students currently in Grade 10 or 11",
         free: false,
         cost: "Free to apply. 2027 program fee: $7,875 live-in or $3,975 virtual. If you get an offer, a $750 deposit secures your spot.",
@@ -70,7 +70,7 @@
         src: { url: "https://www.shad.ca/faqs/", name: "shad.ca", kind: "organizer" }
       },
       {
-        id: "diamond", tk: "DMND", short: "Diamond", name: "Diamond Challenge 2027", org: "Horn Entrepreneurship, University of Delaware", type: "pitch",
+        id: "diamond", tk: "DMND", short: "Diamond", name: "Diamond Challenge 2027", org: "Horn Entrepreneurship, University of Delaware", type: "pitch", what: "Pitch a business idea with a team of 2 to 4",
         grades: [9, 10, 11, 12], gradeNote: "Ages 14–18 on the submission deadline",
         free: false,
         cost: "No entry fee is listed in the official rules. Confirm with the organizer.", costShort: "No entry fee listed",
@@ -114,7 +114,7 @@
         src: { url: "https://diamondchallenge.org/competition/", name: "diamondchallenge.org", kind: "organizer" }
       },
       {
-        id: "deca", tk: "DECA", short: "DECA", name: "DECA Ontario", org: "Ontario DECA", type: "deca",
+        id: "deca", tk: "DECA", short: "DECA", name: "DECA Ontario", org: "Ontario DECA", type: "deca", what: "Business case and test competitions through your school’s DECA chapter",
         grades: [9, 10, 11], gradeNote: "For next season (2027–28). Current members: your chapter advisor handles this season.",
         free: false,
         cost: "$35 USD membership and regionals fee, paid to your chapter advisor. Provincials qualifiers also pay for a required hotel stay.",
@@ -160,7 +160,7 @@
         src: { url: "https://deca.ca/v2/join/", name: "deca.ca", kind: "organizer" }
       },
       {
-        id: "blueocean", tk: "BLUE", short: "Blue Ocean", name: "Blue Ocean Student Entrepreneur Competition 2027", org: "Blue Ocean Student Entrepreneurs", type: "pitch",
+        id: "blueocean", tk: "BLUE", short: "Blue Ocean", name: "Blue Ocean Student Entrepreneur Competition 2027", org: "Blue Ocean Student Entrepreneurs", type: "pitch", what: "Record a 5-minute pitch video for a business idea, fully online",
         grades: [9, 10, 11, 12], gradeNote: "Any high school student",
         free: true, cost: "Free, including the mini-course", costShort: "Free",
         format: "Online. A 5-minute video pitch.", where: "Open worldwide",
@@ -199,7 +199,7 @@
         src: { url: "https://blueoceancompetition.org/compete/", name: "blueoceancompetition.org", kind: "organizer" }
       },
       {
-        id: "euclid", tk: "EUCL", short: "Euclid", name: "Euclid Mathematics Contest", org: "CEMC, University of Waterloo", type: "math",
+        id: "euclid", tk: "EUCL", short: "Euclid", name: "Euclid Mathematics Contest", org: "CEMC, University of Waterloo", type: "math", what: "A math contest written at your school",
         grades: [9, 10, 11, 12], gradeNote: "Written for students in their final year, but younger students are welcome",
         free: false, cost: "$18 per student", costShort: "$18 per student",
         format: "Written contest at your school", where: "Your school, or another local school that lets you join",
@@ -234,7 +234,7 @@
         src: { url: "https://cemc.uwaterloo.ca/contests/how-contests-work", name: "cemc.uwaterloo.ca", kind: "organizer" }
       },
       {
-        id: "ihscc", tk: "IVEY", short: "Ivey Case", name: "Ivey High School Case Competition", org: "Ivey Business School, Western University", type: "case",
+        id: "ihscc", tk: "IVEY", short: "Ivey Case", name: "Ivey High School Case Competition", org: "Ivey Business School, Western University", type: "case", what: "A one-day business case competition in London, Ontario, and other cities",
         grades: [10, 11, 12], gradeNote: "High school students in Grades 10 to 12. No experience required.",
         free: false, cost: "2027 fee not posted yet", costShort: "2027 fee not posted yet",
         format: "One-day, in-person case competition", where: "London, ON (May 1). Also Montreal, Calgary and Vancouver.",
@@ -263,7 +263,7 @@
         src: { url: "https://www.ivey.uwo.ca/high-school-case-competitions/", name: "ivey.uwo.ca", kind: "organizer" }
       },
       {
-        id: "boardroom", tk: "BRDM", short: "Boardroom", name: "The Boardroom", org: "Rotman Commerce, University of Toronto", type: "case",
+        id: "boardroom", tk: "BRDM", short: "Boardroom", name: "The Boardroom", org: "Rotman Commerce, University of Toronto", type: "case", what: "An online case round in spring, then in-person rounds at U of T",
         grades: [9, 10, 11], lastGrade: 11, gradeNote: "Current Grade 9–11 students who are Canadian citizens or permanent residents",
         free: false, cost: "Not listed", costShort: "Not listed",
         format: "Online first round in spring, then in-person rounds in the fall", where: "Online, then University of Toronto (virtual for teams outside the GTA)",
@@ -302,7 +302,7 @@
         src: { url: "https://rotmancommerce.utoronto.ca/future-students/?p=2006", name: "rotmancommerce.utoronto.ca", kind: "organizer" }
       },
       {
-        id: "wharton", tk: "WHRT", short: "Wharton", name: "Wharton Global High School Investment Competition", org: "Wharton Global Youth Program, University of Pennsylvania", type: "invest",
+        id: "wharton", tk: "WHRT", short: "Wharton", name: "Wharton Global High School Investment Competition", org: "Wharton Global Youth Program, University of Pennsylvania", type: "invest", what: "An online investing simulation with a team from your school",
         grades: [9, 10, 11], gradeNote: "This year's Grade 9–11 students can enter next season (2027–28)",
         free: true, cost: "Free. Finalists pay their own travel, or join the finale by video.", costShort: "Free",
         format: "Online portfolio simulation, with a finale in Philadelphia", where: "Open worldwide",
@@ -342,7 +342,7 @@
         src: { url: "https://globalyouth.wharton.upenn.edu/competitions/investment-competition/faq/", name: "globalyouth.wharton.upenn.edu", kind: "organizer" }
       },
       {
-        id: "slp", tk: "SLP", short: "Ivey SLP", name: "Ivey Summer Leadership Program", org: "Ivey Business School, Western University", type: "summer",
+        id: "slp", tk: "SLP", short: "Ivey SLP", name: "Ivey Summer Leadership Program", org: "Ivey Business School, Western University", type: "summer", what: "A five-day business program, living at Ivey in London, Ontario",
         grades: [9, 10, 11], lastGrade: 11, gradeNote: "Open to students currently in Grade 9, 10 or 11",
         free: false, cost: "2027 fee not posted yet", costShort: "2027 fee not posted yet",
         format: "Five-day residential program: case classes, workshops and a capstone project", where: "Ivey Business School, Western University, London, ON",
@@ -369,7 +369,7 @@
         src: { url: "https://www.ivey.uwo.ca/summerleadership/", name: "ivey.uwo.ca", kind: "organizer" }
       },
       {
-        id: "ja", tk: "JA", short: "JA Company", name: "JA Company Program", org: "Junior Achievement (JA Central Ontario, JA South Western Ontario and other regions)", type: "venture",
+        id: "ja", tk: "JA", short: "JA Company", name: "JA Company Program", org: "Junior Achievement (JA Central Ontario, JA South Western Ontario and other regions)", type: "venture", what: "Run a real company with a team, after school from November to April",
         grades: [9, 10, 11], gradeNote: "Open to Grades 9–12, so this year's Grade 9–11 students can join next year",
         free: true, cost: "Free. Each student buys a $5–$30 share in their team's company, and JA helps anyone who can't.", costShort: "Free, plus a $5–$30 share",
         format: "After school, 18 weekly meetings from November to April (about 3 hours a week)", where: "In person across Ontario, with some virtual groups",

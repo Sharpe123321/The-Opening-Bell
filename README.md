@@ -10,17 +10,17 @@ Business competitions and programs for Ontario high school students, with every 
 - `data/listings.js`: every listing, in one file that the page, the checks and the calendar feed all read. Rules for editing it are at the top of the file.
 - `data/receipts.json`: the organizer's exact sentence and link behind every fact.
 - `lib/core.js`: shared logic for dates, statuses, team-size wording, message tokens and calendar files.
-- `vercel.json`: sends page links like `/l/shad`, `/season` and `/calendar` to the page.
+- `vercel.json`: sends page links like `/l/shad` and `/season` to the page. Old `/calendar` and `/trail` links open Saved.
 - `api/calendar.js`: the calendar feed (`/api/calendar?l=shad,diamond`). Calendar apps subscribe to it, so date changes reach everyone's calendar. The link holds only listing ids.
 - `scripts/`: the checks and a local preview server (`node scripts/dev-server.js`, then open http://localhost:4173).
 
 ## Design rules
 
-The site is a watchlist: each listing has a ticker and a "days left" tag, and a listing page reads like a stock page, with a chart of the student's plan. Dark mode is the default and the switch at the top changes it.
+Two tabs: Explore (every activity as a card, with search and filters) and Saved (the next thing to do for each saved activity). Each activity has its own page at `/l/<id>`. Dark mode is the default and the switch at the top changes it.
 
 - One typeface, Instrument Sans, in sentence case. No small all-caps labels.
 - Each colour means one thing: green is open or yours, orange is 30 days or less, red is 7 days or less or overdue, grey is not open yet.
-- No decorative separators, arrows, tickers that scroll, or icons that don't do something.
+- No decorative separators, arrows, or icons that don't do something.
 - Nothing that depends on a school board's calendar, because Ontario boards set their own dates.
 
 ## Privacy
