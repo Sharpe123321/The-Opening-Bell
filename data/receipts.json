@@ -1,5 +1,5 @@
 {
-  "_about": "Every fact shown on After the Bell needs a receipt: the exact sentence from the organizer's page and its URL. scripts/verify-sources.js re-reads each page and fails if a sentence has changed or disappeared. 'about' is one of: who, how, when, cost, team, why, detail. 'manual': true means the weekly robot can't re-read it (a PDF, or a site that blocks automated readers), so it was checked another way on the 'checked' date.",
+  "_about": "Every fact shown on Cluedrop needs a receipt: the exact sentence from the organizer's page and its URL. scripts/verify-sources.js re-reads each page and fails if a sentence has changed or disappeared. 'about' is one of: who, how, when, cost, team, why, detail. 'manual': true means the weekly robot can't re-read it (a PDF, or a site that blocks automated readers), so it was checked another way on the 'checked' date.",
   "shad": [
     {
       "about": "who",

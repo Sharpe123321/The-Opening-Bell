@@ -1,4 +1,4 @@
-/* After the Bell listings for the 2026–27 season.
+/* Cluedrop listings for the 2026–27 season.
  *
  * Rules for this file (enforced by scripts/check-data.js):
  * - Every fact needs a receipt in data/receipts.json: the organizer's exact sentence and link.

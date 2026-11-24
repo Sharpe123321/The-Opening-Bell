@@ -1,4 +1,4 @@
-/* After the Bell: what to do after the bell. Business competitions and programs for Ontario high school students.
+/* Cluedrop: what to do after the bell. Business competitions and programs for Ontario high school students.
  * Two tabs: Explore (every activity as a card) and Saved (what to do next for each one you saved).
  * Each activity has its own page at /l/<id>. No framework and no build step. Every listing fact comes
  * from data/listings.js and every date and wording rule from lib/core.js.
@@ -177,9 +177,9 @@
     document.title = titleFor(r);
   }
   function titleFor(r) {
-    if (r.name === "listing") return BY[r.id].name + " · After the Bell";
-    if (r.name === "ask") return BY[r.id].asks[r.ask].title + " · After the Bell";
-    return { saved: "Saved · After the Bell", parent: "Your teen's season · After the Bell" }[r.name] || "After the Bell · Business competitions and programs for Ontario students";
+    if (r.name === "listing") return BY[r.id].name + " · Cluedrop";
+    if (r.name === "ask") return BY[r.id].asks[r.ask].title + " · Cluedrop";
+    return { saved: "Saved · Cluedrop", parent: "Your teen's season · Cluedrop" }[r.name] || "Cluedrop · Business competitions and programs for Ontario students";
   }
   function paint(r) {
     const app = $("#app");
@@ -299,7 +299,7 @@
   function header(nav, withGrade, over) {
     const n = state.picks.length;
     const link = (k, href, label) => '<a href="' + href + '" data-nav' + (nav === k ? ' aria-current="page"' : "") + ">" + label + "</a>";
-    return '<header class="hd' + (over ? " over" : "") + '"><a class="word" href="/" data-nav>After the Bell</a>' +
+    return '<header class="hd' + (over ? " over" : "") + '"><a class="word" href="/" data-nav>Cluedrop</a>' +
       (withGrade === false ? "" : '<nav class="dlinks" aria-label="Main">' + link("explore", "/", "Explore") + link("saved", "/season", "Saved" + (n ? ' <span class="count">' + n + "</span>" : "")) + "</nav>") +
       '<div class="hd-r">' + (withGrade === false ? '<a class="chip" href="/" data-nav>See all activities</a>'
         : '<button type="button" class="chip" data-grade-open aria-haspopup="dialog">' + (state.grade ? "Grade " + state.grade : "Your grade") + I.down + "</button>") +
@@ -372,7 +372,7 @@
         '<input id="q" type="search" placeholder="Search activities, like “pitch”" autocomplete="off" value="' + esc(state.query) + '"><button type="submit" class="btn">Search</button></form>' +
       '<div class="hero-grade" role="group" aria-label="Your grade"><span>I’m in grade</span>' + [9, 10, 11, 12].map(g => '<button type="button" data-g="' + g + '" aria-pressed="' + (state.grade === g) + '">' + g + "</button>").join("") + "</div>" +
       '<p class="hero-note"><button type="button" class="linkbtn" data-scroll="discover">Browse ' + n + " verified opportunities</button>, " + open + " open right now. Free, with no account.</p></div></section>";
-    const how = '<section class="how wrap" aria-labelledby="howH"><h2 class="h2" id="howH">How After the Bell works</h2><ol class="how-steps">' +
+    const how = '<section class="how wrap" aria-labelledby="howH"><h2 class="h2" id="howH">How Cluedrop works</h2><ol class="how-steps">' +
       '<li><span class="hn">1</span><h3>Find what fits you</h3><p>Pick your grade, then narrow it down to competitions, programs or free ones. Every listing says what it is in plain words.</p>' +
         '<div class="mini" aria-hidden="true"><div class="card">' + tile(dm) + '<span class="c-b"><span class="c-t">' + esc(dm.name) + '</span><span class="tags"><span class="tag s ' + status(dm).cls + '">' + esc(status(dm).short) + '</span><span class="tag">' + esc(teamTag(dm)) + "</span></span></span></div></div></li>" +
       '<li><span class="hn">2</span><h3>Know exactly how to get in</h3><p>Each listing has the steps in order, who to ask and what to say. For most, we’ll even write the message for you to send.</p>' +
@@ -389,7 +389,7 @@
     return '<div class="about">' +
       '<section aria-labelledby="checkH"><h2 class="h2" id="checkH">How we check facts</h2><p>Every fact here is quoted from the organizer’s own page. Each activity’s page ends with the exact sentences and where they came from.</p><p>A script re-reads those pages to catch changes. Every date is the organizer’s own. When they haven’t posted one, we say so instead of guessing. “By” dates on steps are our advice.</p></section>' +
       '<section aria-labelledby="privH"><h2 class="h2" id="privH">Your privacy</h2><p>No accounts, no email, no tracking cookies. Your grade, your saves and your ticks are kept only in your own browser.</p><p>Messages and calendar files are made on your device. Nothing about you is sent to us.</p></section>' +
-      '<p class="fine">Grades mean your grade in the ' + esc(D.SEASON) + " school year. For next year’s rounds, we list the grades that will still be eligible when they open. Always confirm details with the organizer before you apply. After the Bell is independent and isn’t affiliated with any organizer listed. Last checked " + esc(C.fmt(D.CHECKED)) + ".</p></div>";
+      '<p class="fine">Grades mean your grade in the ' + esc(D.SEASON) + " school year. For next year’s rounds, we list the grades that will still be eligible when they open. Always confirm details with the organizer before you apply. Cluedrop is independent and isn’t affiliated with any organizer listed. Last checked " + esc(C.fmt(D.CHECKED)) + ".</p></div>";
   }
 
   /* ---------- An activity's own page ---------- */
@@ -532,7 +532,7 @@
   function parentPath() { return "/parent?l=" + state.picks.join(",") + (state.grade ? "&g=" + state.grade : ""); }
   function parentHtml() {
     const p = parentPicks(), picks = p.ids.map(id => BY[id]);
-    const head = '<h1 class="lg">Your teen’s season</h1><p class="lede">' + (p.grade ? "Grade " + p.grade + ". " : "") + C.plural(picks.length, "activity").replace("activitys", "activities") + ", shared from After the Bell.</p>";
+    const head = '<h1 class="lg">Your teen’s season</h1><p class="lede">' + (p.grade ? "Grade " + p.grade + ". " : "") + C.plural(picks.length, "activity").replace("activitys", "activities") + ", shared from Cluedrop.</p>";
     if (!picks.length) return head + '<p class="empty">This link doesn’t include any activities. Ask your teen to send it again from Saved.</p>';
     const items = [];
     picks.forEach(o => o.steps.forEach(s => { if ((mine(s) || s.official) && C.endOf(s.by) >= NOW) items.push({ o, s, d: C.parse(s.by) }); }));
@@ -548,7 +548,7 @@
       '<h2 class="h2">Costs at a glance</h2><dl class="facts">' + costs + "</dl>" +
       '<div class="sea-acts"><button type="button" class="btn green" data-subscribe-parent>Add these dates to my calendar</button><p>It updates itself if a date changes. No account needed.</p></div>' +
       '<h2 class="h2">What each one is</h2><ul class="cards">' + picks.map(o => cardHtml(o)).join("") + "</ul>" +
-      '<p class="fine">No account. Nothing is tracked. Your teen chose what to share. Every fact on After the Bell is quoted from the organizer, and each activity’s page shows its sources.</p>';
+      '<p class="fine">No account. Nothing is tracked. Your teen chose what to share. Every fact on Cluedrop is quoted from the organizer, and each activity’s page shows its sources.</p>';
   }
 
   /* ---------- Sheets: the message writer, calendar options and the grade picker ---------- */
@@ -573,10 +573,10 @@
       '<div class="sh-body"><div class="opts">' +
         '<a class="opt" href="' + esc(webcal) + '"><b>iPhone, iPad or Mac</b><small>Apple Calendar asks you to subscribe.</small></a>' +
         '<a class="opt" href="https://calendar.google.com/calendar/render?cid=' + encodeURIComponent(webcal) + '" target="_blank" rel="noopener"><b>Google Calendar</b><small>Opens Google Calendar. On a phone, you may need to finish on a computer.</small></a>' +
-        '<a class="opt" href="https://outlook.live.com/calendar/0/addfromweb?url=' + encodeURIComponent(https) + "&amp;name=" + encodeURIComponent("After the Bell") + '" target="_blank" rel="noopener"><b>Outlook</b><small>Opens Outlook on the web.</small></a>' +
+        '<a class="opt" href="https://outlook.live.com/calendar/0/addfromweb?url=' + encodeURIComponent(https) + "&amp;name=" + encodeURIComponent("Cluedrop") + '" target="_blank" rel="noopener"><b>Outlook</b><small>Opens Outlook on the web.</small></a>' +
         '<button type="button" class="opt" data-copyfeed="' + esc(https) + '"><b>Copy the calendar link</b><small>For any other app: add a calendar “from URL” and paste it.</small></button></div>' +
         '<p class="hint">Calendar apps check for changes on their own schedule, usually within a day. Each step has a reminder the day before, but some apps ignore reminders in subscribed calendars. If you don’t get alerts, check this calendar’s notification settings in your app.</p>' +
-        (forParent ? "" : '<p class="fine">Ticks you make on After the Bell stay on this device, so the calendar shows every step. <button type="button" class="linkbtn" data-calseason>Download a one-time file instead</button> (it won’t update).</p>') +
+        (forParent ? "" : '<p class="fine">Ticks you make on Cluedrop stay on this device, so the calendar shows every step. <button type="button" class="linkbtn" data-calseason>Download a one-time file instead</button> (it won’t update).</p>') +
       '</div><div class="sh-bar"><button type="button" class="btn sec" data-close>Done</button></div>';
   }
   function gradeSheet() {
@@ -636,12 +636,12 @@
     if ((t = e.target.closest("[data-pick]"))) { e.preventDefault(); togglePick(t.dataset.pick); return; }
     if ((t = e.target.closest("[data-done]"))) { toggleDone(t.dataset.done); return; }
     if ((t = e.target.closest("[data-share]"))) { share(BY[t.dataset.share]); return; }
-    if ((t = e.target.closest("[data-cal]"))) { downloadIcs([BY[t.dataset.cal]], BY[t.dataset.cal].short, "after-the-bell-" + t.dataset.cal); return; }
+    if ((t = e.target.closest("[data-cal]"))) { downloadIcs([BY[t.dataset.cal]], BY[t.dataset.cal].short, "cluedrop-" + t.dataset.cal); return; }
     if (e.target.closest("[data-subscribe]")) { if (state.picks.length) openSheet(subscribeSheet(state.picks, false), false); return; }
     if (e.target.closest("[data-subscribe-parent]")) { const pp = parentPicks(); if (pp.ids.length) openSheet(subscribeSheet(pp.ids, true), false); return; }
     if ((t = e.target.closest("[data-copyfeed]"))) { copy(t.dataset.copyfeed, "Calendar link copied. In your calendar app, add a calendar from URL and paste it."); return; }
     if (e.target.closest("[data-sendparent]")) { sendToParent(); return; }
-    if (e.target.closest("[data-calseason]")) { downloadIcs(state.picks.map(id => BY[id]), "your saved activities", "after-the-bell-saved"); return; }
+    if (e.target.closest("[data-calseason]")) { downloadIcs(state.picks.map(id => BY[id]), "your saved activities", "cluedrop-saved"); return; }
     if (e.target.closest("[data-askcopy]") && (ctx = askContext())) { copy(ctx.text, "Message copied. Paste it into an email or text."); return; }
     if (e.target.closest("[data-askshare]") && (ctx = askContext())) {
       if (navigator.share) navigator.share({ text: ctx.text }).catch(() => {});
@@ -655,12 +655,12 @@
 
   function sendToParent() {
     const url = location.origin + parentPath();
-    const data = { title: "My After the Bell list", text: "Here’s what I’m doing on After the Bell: what’s coming up, what it costs and where you can help.", url };
+    const data = { title: "My Cluedrop list", text: "Here’s what I’m doing on Cluedrop: what’s coming up, what it costs and where you can help.", url };
     if (navigator.share) { navigator.share(data).catch(() => {}); return; }
     copy(url, "Link copied. Send it to a parent by text or email.");
   }
   function share(o) {
-    const data = { title: o.name + " · After the Bell", text: o.name + ": " + status(o).line, url: o.link };
+    const data = { title: o.name + " · Cluedrop", text: o.name + ": " + status(o).line, url: o.link };
     if (navigator.share) { navigator.share(data).catch(() => {}); return; }
     copy(o.link, "Link copied. Paste it anywhere to share " + o.short + ".");
   }
@@ -677,7 +677,7 @@
   function downloadIcs(list, label, file) {
     if (!list.length) return;
     try {
-      const blob = new Blob([C.ics(list, { name: "After the Bell" + (list.length === 1 ? ": " + list[0].short : "") })], { type: "text/calendar;charset=utf-8" });
+      const blob = new Blob([C.ics(list, { name: "Cluedrop" + (list.length === 1 ? ": " + list[0].short : "") })], { type: "text/calendar;charset=utf-8" });
       const url = URL.createObjectURL(blob), a = document.createElement("a");
       a.href = url; a.download = file + ".ics";
       document.body.appendChild(a); a.click(); a.remove();
