@@ -1,4 +1,4 @@
-/* Cluedrop: what to do after the bell. Business competitions and programs for Ontario high school students.
+/* Cluedrop: get clued in. Business competitions and programs for Ontario high school students.
  * Two tabs: Explore (every activity as a card) and Saved (what to do next for each one you saved).
  * Each activity has its own page at /l/<id>. No framework and no build step. Every listing fact comes
  * from data/listings.js and every date and wording rule from lib/core.js.
@@ -299,7 +299,7 @@
   function header(nav, withGrade, over) {
     const n = state.picks.length;
     const link = (k, href, label) => '<a href="' + href + '" data-nav' + (nav === k ? ' aria-current="page"' : "") + ">" + label + "</a>";
-    return '<header class="hd' + (over ? " over" : "") + '"><a class="word" href="/" data-nav>Cluedrop</a>' +
+    return '<header class="hd' + (over ? " over" : "") + '"><a class="word" href="/" data-nav><img class="mark" src="/icon.svg" alt="" width="26" height="26">Cluedrop</a>' +
       (withGrade === false ? "" : '<nav class="dlinks" aria-label="Main">' + link("explore", "/", "Explore") + link("saved", "/season", "Saved" + (n ? ' <span class="count">' + n + "</span>" : "")) + "</nav>") +
       '<div class="hd-r">' + (withGrade === false ? '<a class="chip" href="/" data-nav>See all activities</a>'
         : '<button type="button" class="chip" data-grade-open aria-haspopup="dialog">' + (state.grade ? "Grade " + state.grade : "Your grade") + I.down + "</button>") +
@@ -366,7 +366,7 @@
     const n = L.length, open = L.filter(o => o._s.key === "open").length, forGrade = L.filter(eligible).length;
     const sh = BY.shad, dm = BY.diamond, ref = sh.steps.filter(s => s.ask === "reference")[0];
     const hero = '<section class="hero" aria-labelledby="heroH"><canvas class="hero-sky back" aria-hidden="true"></canvas><canvas class="hero-sky front" aria-hidden="true"></canvas><div class="hero-in">' +
-      '<h1 id="heroH">What to do <span>after the bell.</span></h1>' +
+      '<h1 id="heroH">Get clued in.</h1>' +
       '<p class="hero-sub">Discover business competitions and programs for Ontario high school students. Every deadline is checked against the organizer, and every listing shows exactly how to get in.</p>' +
       '<form class="hero-search" role="search" data-search><label class="sr" for="q">Search activities</label>' + I.explore +
         '<input id="q" type="search" placeholder="Search activities, like “pitch”" autocomplete="off" value="' + esc(state.query) + '"><button type="submit" class="btn">Search</button></form>' +

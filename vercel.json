@@ -20,5 +20,29 @@
       "source": "/calendar",
       "destination": "/index.html"
     }
+  ],
+  "redirects": [
+    {
+      "source": "/:path((?!api/).*)",
+      "has": [
+        {
+          "type": "host",
+          "value": "afterbell-ca.vercel.app"
+        }
+      ],
+      "destination": "https://cluedrop.vercel.app/:path",
+      "permanent": false
+    },
+    {
+      "source": "/:path((?!api/).*)",
+      "has": [
+        {
+          "type": "host",
+          "value": "opening-bell-two.vercel.app"
+        }
+      ],
+      "destination": "https://cluedrop.vercel.app/:path",
+      "permanent": false
+    }
   ]
 }

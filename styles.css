@@ -33,7 +33,8 @@ html.lock,html.lock body{overflow:hidden}
 /* On Explore the header sits clear over the skyline, then frosts over once the page slides under it */
 .hd.over{position:fixed;left:0;right:0}
 .hd.over:not(.solid){background:transparent;border-bottom-color:transparent;color:var(--hero-text);-webkit-backdrop-filter:blur(0);backdrop-filter:blur(0)}
-.word{font-weight:700;font-size:21px;letter-spacing:-.01em;margin-right:auto;white-space:nowrap}
+.word{display:inline-flex;align-items:center;gap:8px;font-weight:700;font-size:21px;letter-spacing:-.01em;margin-right:auto;white-space:nowrap}
+.word .mark{width:26px;height:26px;border-radius:7px;flex:none}
 .dlinks{display:none}
 .hd-r{display:flex;align-items:center;gap:8px}
 .chip{display:inline-flex;align-items:center;gap:3px;border:0;cursor:pointer;padding:7px 9px 7px 12px;border-radius:999px;background:var(--fill);font-weight:600;font-size:15px;white-space:nowrap}
@@ -283,6 +284,7 @@ a.card:hover{box-shadow:inset 0 0 0 1.5px var(--primary)}
 @media (min-width:900px){
   .hd{gap:18px;padding:14px 32px}
   .word{font-size:23px;margin-right:18px}
+  .word .mark{width:28px;height:28px}
   .dlinks{display:flex;gap:4px;margin-right:auto}
   .dlinks a{display:inline-flex;align-items:center;gap:6px;padding:8px 12px;border-radius:10px;color:var(--sub);font-weight:600;font-size:15px}
   .dlinks a{transition:color .3s var(--ease),background-color .3s var(--ease)}

@@ -11,7 +11,7 @@ const KNOWN = new Set(DATA.LISTINGS.map(o => o.id));
 const SEQUENCE = Math.max(0, Math.round((Date.parse(DATA.CHECKED) - Date.parse("2026-01-01")) / 86400000));
 
 module.exports = (req, res) => {
-  const host = req.headers["x-forwarded-host"] || req.headers.host || "opening-bell-two.vercel.app";
+  const host = req.headers["x-forwarded-host"] || req.headers.host || "cluedrop.vercel.app";
   const proto = req.headers["x-forwarded-proto"] || (/^localhost|^127\./.test(host) ? "http" : "https");
   const url = new URL(req.url, proto + "://" + host);
   const ids = [...new Set((url.searchParams.get("l") || "").split(",").map(s => s.trim()).filter(id => KNOWN.has(id)))].slice(0, 20);
