@@ -27,4 +27,4 @@ http.createServer((req, res) => {
   }
   res.setHeader("Content-Type", TYPES[path.extname(file)] || "application/octet-stream");
   fs.createReadStream(file).pipe(res);
-}).listen(PORT, () => console.log("Afterbell preview on http://localhost:" + PORT));
+}).listen(PORT, () => console.log("After the Bell preview on http://localhost:" + PORT));

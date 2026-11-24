@@ -1,4 +1,4 @@
-# Afterbell
+# After the Bell
 
 What to do after the bell.
 
@@ -16,7 +16,7 @@ Business competitions and programs for Ontario high school students, with every 
 
 ## Design rules
 
-The first screen is a Toronto skyline drawn in code (`lib/skyline.js`): daytime in light mode, evening in dark mode. Below it: how Afterbell works, then Discover (every activity as a card, with search and filters). Saved shows the next thing to do for each saved activity. Each activity has its own page at `/l/<id>`, with a side panel of key facts on a computer. Light mode is the default and the switch at the top changes it.
+The first screen is a Toronto skyline drawn in code (`lib/skyline.js`): daytime in light mode, evening in dark mode. Below it: how After the Bell works, then Discover (every activity as a card, with search and filters). Saved shows the next thing to do for each saved activity. Each activity has its own page at `/l/<id>`, with a side panel of key facts on a computer. Light mode is the default and the switch at the top changes it.
 
 - One typeface, Instrument Sans, in sentence case. No small all-caps labels.
 - Colours are navy and lake blues with a fresh teal. Each status colour means one thing: teal is open, amber is 30 days or less, red is 7 days or less or overdue, grey is not open yet or closed.
