@@ -35,7 +35,7 @@
   const ASK_TO = { teacher: "A teacher", parent: "A parent or other adult", friends: "Your friends", counsellor: "Your counsellor" };
   const WHO = { teacher: "A teacher does this", advisor: "Your advisor does this", parent: "A parent or adult does this", friends: "Your team does this", school: "Your school does this", org: "The organizer does this" };
   const MARK = { ok: "✓", warn: "!", no: "✕" };
-  const COMPETITIONS = ["pitch", "deca", "case", "invest", "math"], PROGRAMS = ["summer", "venture"];
+  const COMPETITIONS = ["pitch", "deca", "case", "invest", "math", "plan", "money", "econ", "essay"], PROGRAMS = ["summer", "venture", "fund", "showcase", "conf"];
   const FILTERS = [["all", "All"], ["comp", "Competitions"], ["prog", "Programs"], ["free", "Free"], ["saved", "Saved"]];
 
   const I = {
@@ -100,11 +100,12 @@
     if (s.key === "open") return { cls: urgency(s.n) || "g", short: s.n === 0 ? "Closes today" : C.plural(s.n, "day") + " left", line: s.n === 0 ? "Open. Closes today." : "Open. Closes in " + C.plural(s.n, "day") + "." };
     if (s.key === "soon") return { cls: "n", short: "Opens " + C.fmtShort(o.window.from), line: "Not open yet. Opens " + C.fmtLong(o.window.from) + "." };
     if (s.key === "closed") return { cls: "x", short: "Closed this year", line: "Closed for this school year. " + s.text + "." };
-    return { cls: "n", short: "Opens " + (o.next.est ? "~" : "") + C.MON[C.parse(o.next.d).getMonth()], line: "Not open yet. " + s.text + "." };
+    return { cls: "n", short: o.next.tba ? "Dates not posted" : "Opens " + (o.next.est ? "~" : "") + C.MON[C.parse(o.next.d).getMonth()], line: "Not open yet. " + s.text + "." };
   }
   function tile(o) {
     const s = o._s;
     if (s.key === "open") { const d = C.parse(o.window.to); return '<span class="tile ' + (urgency(s.n) || "g") + '"><small>' + C.MON[d.getMonth()] + "</small><b>" + d.getDate() + "</b></span>"; }
+    if (s.key !== "soon" && o.next.tba) return '<span class="tile ' + (s.key === "closed" ? "x" : "n") + '"><small>Dates</small><b>TBA</b></span>';
     const d = C.parse(s.key === "soon" ? o.window.from : o.next.d), est = s.key !== "soon" && o.next.est;
     return '<span class="tile ' + (s.key === "closed" ? "x" : "n") + '"><small>' + (s.key === "closed" ? "Back" : "Opens") + "</small><b>" + (est ? "~" : "") + C.MON[d.getMonth()] + "</b></span>";
   }
@@ -387,7 +388,8 @@
     let when;
     if (s.key === "open") { const d = C.parse(o.window.to), x = deadlineEntry(o); when = { k: "Deadline", v: WD[d.getDay()] + ", " + C.fmtShort(o.window.to) + ", " + d.getFullYear(), sub: (x ? x.t : o.boardWhat) }; }
     else if (s.key === "soon") when = { k: "Opens", v: C.fmt(o.window.from), sub: "Closes " + C.fmt(o.window.to) };
-    else when = { k: s.key === "closed" ? "Next round" : "Opens", v: (o.next.est ? "~" : "") + C.fmtLong(o.next.d), sub: o.next.est ? "Our estimate from past years" : "" };
+    else if (o.next.tba) when = { k: "Next round", v: "Dates not posted yet", sub: o.next.note || "" };
+    else when = { k: s.key === "closed" ? "Next round" : "Opens", v: (o.next.est ? "~" : "") + C.fmtLong(o.next.d), sub: o.next.note || (o.next.est ? "Our estimate from past years" : "") };
     const cost = o.costShort.split(" · ");
     const box = (k, v, sub, wide) => '<div' + (wide ? ' class="wide"' : "") + "><dt>" + k + "</dt><dd><b>" + esc(v) + "</b>" + (sub ? "<small>" + esc(sub) + "</small>" : "") + "</dd></div>";
     return '<dl class="facts">' + box(when.k, when.v, when.sub) + box("Cost", cost[0], cost.slice(1).join(". ")) + box("Who", o.gradeNote) + box("Where", o.where) + box("How you enter", o.entry, "", true) + "</dl>";

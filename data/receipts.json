@@ -1,5 +1,5 @@
 {
-  "_about": "Every fact shown on Afterbell needs a receipt: the exact sentence from the organizer's page and its URL. scripts/verify-sources.js re-reads each page and fails if a sentence has changed or disappeared. 'about' is one of: who, how, when, cost, team, why, detail. 'manual': true means a person checked it (for example, a PDF the robot can't read).",
+  "_about": "Every fact shown on Afterbell needs a receipt: the exact sentence from the organizer's page and its URL. scripts/verify-sources.js re-reads each page and fails if a sentence has changed or disappeared. 'about' is one of: who, how, when, cost, team, why, detail. 'manual': true means the weekly robot can't re-read it (a PDF, or a site that blocks automated readers), so it was checked another way on the 'checked' date.",
   "shad": [
     {
       "about": "who",
@@ -876,6 +876,1639 @@
       "about": "detail",
       "url": "https://www.jacentralontario.org/company-program/",
       "quote": "this after-school experience will set you up for life"
+    }
+  ],
+  "summerco": [
+    {
+      "about": "who",
+      "url": "https://www.ontario.ca/page/start-summer-company-students",
+      "quote": "go to high school, college or university"
+    },
+    {
+      "about": "who",
+      "url": "https://www.ontario.ca/page/start-summer-company-students",
+      "quote": "live in Ontario"
+    },
+    {
+      "about": "who",
+      "url": "https://www.ontario.ca/page/start-summer-company-students",
+      "quote": "are a Canadian citizen or permanent resident"
+    },
+    {
+      "about": "who",
+      "url": "https://www.ontario.ca/page/start-summer-company-students",
+      "quote": "are between 15-29 years old"
+    },
+    {
+      "about": "who",
+      "url": "https://www.ontario.ca/page/start-summer-company-students",
+      "quote": "a parent or guardian must sign the agreement for the applicant"
+    },
+    {
+      "about": "who",
+      "url": "https://www.ontario.ca/page/start-summer-company-students",
+      "quote": "are not already running a business"
+    },
+    {
+      "about": "who",
+      "url": "https://www.ontario.ca/page/start-summer-company-students",
+      "quote": "are not working at another job or going to school for more than 12 hours a week during the program"
+    },
+    {
+      "about": "who",
+      "url": "https://www.ontario.ca/page/start-summer-company-students",
+      "quote": "are returning to school after the program ends"
+    },
+    {
+      "about": "how",
+      "url": "https://www.ontario.ca/page/start-summer-company-students",
+      "quote": "You apply through a Ontario Small Business Advisory Centres"
+    },
+    {
+      "about": "how",
+      "url": "https://www.ontario.ca/page/start-summer-company-students",
+      "quote": "Your selected program provider will contact you and will ask you to submit an application, which includes a business plan and cash flow."
+    },
+    {
+      "about": "how",
+      "url": "https://www.ontario.ca/page/start-summer-company-students",
+      "quote": "Your program provider will help you with your application, if required."
+    },
+    {
+      "about": "how",
+      "url": "https://www.ontario.ca/page/summer-company-program-guidelines",
+      "quote": "Apply early - space is limited and the program reaches capacity quickly."
+    },
+    {
+      "about": "when",
+      "url": "https://www.ontario.ca/page/start-summer-company-students",
+      "quote": "The program for 2026 is open through May 15, 2026."
+    },
+    {
+      "about": "when",
+      "url": "https://www.ontario.ca/page/start-summer-company-students",
+      "quote": "Start date: usually May to July."
+    },
+    {
+      "about": "when",
+      "url": "https://www.ontario.ca/page/start-summer-company-students",
+      "quote": "End date: Labour Day (but you can choose to keep running your summer business while in school)."
+    },
+    {
+      "about": "when",
+      "url": "https://www.ontario.ca/page/summer-company-program-guidelines",
+      "quote": "business operations can start no earlier than April 1 and must end by Labour Day"
+    },
+    {
+      "about": "cost",
+      "url": "https://www.ontario.ca/page/start-summer-company-students",
+      "quote": "Maximum award: $3,000"
+    },
+    {
+      "about": "cost",
+      "url": "https://www.ontario.ca/page/start-summer-company-students",
+      "quote": "up to $1,500 up front to help with start-up costs"
+    },
+    {
+      "about": "cost",
+      "url": "https://www.ontario.ca/page/start-summer-company-students",
+      "quote": "up to $1,500 when you successfully complete the program requirements"
+    },
+    {
+      "about": "detail",
+      "url": "https://www.ontario.ca/page/start-summer-company-students",
+      "quote": "start-up money to kick-off a new summer business"
+    },
+    {
+      "about": "detail",
+      "url": "https://www.ontario.ca/page/start-summer-company-students",
+      "quote": "advice and mentorship from local business leaders to help get the business up and running"
+    },
+    {
+      "about": "detail",
+      "url": "https://www.ontario.ca/page/start-summer-company-students",
+      "quote": "a minimum of 280 hours for high school students"
+    },
+    {
+      "about": "detail",
+      "url": "https://www.ontario.ca/page/start-summer-company-students",
+      "quote": "You can choose to start almost any type of business, as long as it:"
+    },
+    {
+      "about": "detail",
+      "url": "https://www.ontario.ca/page/start-summer-company-students",
+      "quote": "is an independent business venture (not a part of an existing or family business)"
+    },
+    {
+      "about": "detail",
+      "url": "https://www.ontario.ca/page/start-summer-company-students",
+      "quote": "operates in Ontario on a full-time basis"
+    },
+    {
+      "about": "detail",
+      "url": "https://www.ontario.ca/page/summer-company-program-guidelines",
+      "quote": "If you don’t successfully complete the program, you will not receive the second payment and you may be asked to reimburse the first payment."
+    },
+    {
+      "about": "why",
+      "url": "https://www.ontario.ca/page/start-summer-company-students",
+      "quote": "Sales, marketing, bookkeeping, customer relationship management and networking are just a few of the highly useful skills you’ll develop."
+    }
+  ],
+  "flc": [
+    {
+      "about": "who",
+      "url": "https://uwaterloo.ca/school-of-accounting-and-finance/node/203",
+      "quote": "The FLC is open to Grade 9, 10, 11 and 12 students enrolled in a Canadian high school (excluding Quebec)."
+    },
+    {
+      "about": "who",
+      "url": "https://uwaterloo.ca/school-of-accounting-and-finance/teachers-and-guidance-counsellors/financial-literacy-competition-flc",
+      "quote": "Students in Grades 9 & 10 compete in the Junior competition and students in Grades 11 & 12 compete in the Senior competition."
+    },
+    {
+      "about": "how",
+      "url": "https://uwaterloo.ca/school-of-accounting-and-finance/teachers-and-guidance-counsellors/financial-literacy-competition-flc",
+      "quote": "Registration is required and students cannot register directly"
+    },
+    {
+      "about": "how",
+      "url": "https://uwaterloo.ca/school-of-accounting-and-finance/teachers-and-guidance-counsellors/financial-literacy-competition-flc",
+      "quote": "Teachers must first register to create a “class” to receive a unique access code that will allow their individual students to register."
+    },
+    {
+      "about": "how",
+      "url": "https://uwaterloo.ca/school-of-accounting-and-finance/node/203",
+      "quote": "Teachers must register their class or club by 12pm ET on the last Friday before the competition period begins."
+    },
+    {
+      "about": "how",
+      "url": "https://uwaterloo.ca/school-of-accounting-and-finance/node/203",
+      "quote": "Students must register by 5pm ET on the day before the competition period begins."
+    },
+    {
+      "about": "how",
+      "url": "https://uwaterloo.ca/school-of-accounting-and-finance/teachers-and-guidance-counsellors/financial-literacy-competition-flc",
+      "quote": "Teachers can choose the day and time that works best for their students"
+    },
+    {
+      "about": "when",
+      "url": "https://uwaterloo.ca/school-of-accounting-and-finance/teachers-and-guidance-counsellors/financial-literacy-competition-flc",
+      "quote": "Our next competition is taking place: December 2nd and 3rd, 2026"
+    },
+    {
+      "about": "when",
+      "url": "https://uwaterloo.ca/school-of-accounting-and-finance/teachers-and-guidance-counsellors/financial-literacy-competition-flc",
+      "quote": "Registration opens: October 14th, 2026"
+    },
+    {
+      "about": "when",
+      "url": "https://uwaterloo.ca/school-of-accounting-and-finance/teachers-and-guidance-counsellors/financial-literacy-competition-flc",
+      "quote": "Registration closes: November 27th, 2026"
+    },
+    {
+      "about": "when",
+      "url": "https://uwaterloo.ca/school-of-accounting-and-finance/teachers-and-guidance-counsellors/financial-literacy-competition-flc",
+      "quote": "Hosted in December and May over a two-day period. Dates are released in October and March each year."
+    },
+    {
+      "about": "detail",
+      "url": "https://uwaterloo.ca/school-of-accounting-and-finance/teachers-and-guidance-counsellors/financial-literacy-competition-flc",
+      "quote": "Students have 65 minutes to complete the competition. The Senior competition includes 60 questions, and the Junior competition includes 50 questions."
+    },
+    {
+      "about": "detail",
+      "url": "https://uwaterloo.ca/school-of-accounting-and-finance/teachers-and-guidance-counsellors/financial-literacy-competition-flc",
+      "quote": "No prior level of knowledge is assumed and questions range from easy to more advanced covering topics in banking, investing, economics, income management and budgeting, accounting, credit, post-secondary financing, home ownership, and fraud and financial safety"
+    },
+    {
+      "about": "detail",
+      "url": "https://uwaterloo.ca/school-of-accounting-and-finance/teachers-and-guidance-counsellors/financial-literacy-competition-flc",
+      "quote": "Students are required to compete from their school under the supervision of a teacher"
+    },
+    {
+      "about": "detail",
+      "url": "https://uwaterloo.ca/school-of-accounting-and-finance/teachers-and-guidance-counsellors/financial-literacy-competition-flc",
+      "quote": "Use our resources to prepare for the competition."
+    },
+    {
+      "about": "detail",
+      "url": "https://uwaterloo.ca/school-of-accounting-and-finance/teachers-and-guidance-counsellors/financial-literacy-competition-flc",
+      "quote": "Use the practice competition to check your understanding before your competition day"
+    },
+    {
+      "about": "why",
+      "url": "https://uwaterloo.ca/school-of-accounting-and-finance/teachers-and-guidance-counsellors/financial-literacy-competition-flc",
+      "quote": "The top performing student (based on individual score) at each level (Junior and Senior) receives $750 towards an RESP for post-secondary education."
+    },
+    {
+      "about": "why",
+      "url": "https://uwaterloo.ca/school-of-accounting-and-finance/teachers-and-guidance-counsellors/financial-literacy-competition-flc",
+      "quote": "The top 10 students (based on individual score) at each grade level receive a $75 e-gift card."
+    },
+    {
+      "about": "why",
+      "url": "https://uwaterloo.ca/school-of-accounting-and-finance/teachers-and-guidance-counsellors/financial-literacy-competition-flc",
+      "quote": "All eligible participants will receive a levelled Certificate of Achievement"
+    },
+    {
+      "about": "why",
+      "url": "https://uwaterloo.ca/school-of-accounting-and-finance/node/203",
+      "quote": "The certificate will recognize four levels of achievement"
+    }
+  ],
+  "wsi": [
+    {
+      "about": "who",
+      "url": "https://innovation.nfte.com/impact-challenges/",
+      "quote": "Are you between the ages of 13 and 24?",
+      "manual": true,
+      "checked": "2026-11-24",
+      "note": "This site blocks automated checks. Read with a web reader on the checked date."
+    },
+    {
+      "about": "who",
+      "url": "https://innovation.nfte.com/impact-challenges/",
+      "quote": "If so, you’re eligible to compete in the WSI Impact League!",
+      "manual": true,
+      "checked": "2026-11-24",
+      "note": "This site blocks automated checks. Read with a web reader on the checked date."
+    },
+    {
+      "about": "who",
+      "url": "https://nfte.com/?p=67845",
+      "quote": "The competition is open to youth worldwide",
+      "manual": true,
+      "checked": "2026-11-24",
+      "note": "This site blocks automated checks. Read with a web reader on the checked date."
+    },
+    {
+      "about": "who",
+      "url": "https://innovation.nfte.com/participation-agreement/",
+      "quote": "participants do not need to be U.S. citizens.",
+      "manual": true,
+      "checked": "2026-11-24",
+      "note": "This site blocks automated checks. Read with a web reader on the checked date."
+    },
+    {
+      "about": "team",
+      "url": "https://innovation.nfte.com/participation-agreement/",
+      "quote": "Any team of one, two, three, or four young people",
+      "manual": true,
+      "checked": "2026-11-24",
+      "note": "This site blocks automated checks. Read with a web reader on the checked date."
+    },
+    {
+      "about": "team",
+      "url": "https://innovation.nfte.com/impact-challenges/",
+      "quote": "Whether you’re going solo or teaming up with friends",
+      "manual": true,
+      "checked": "2026-11-24",
+      "note": "This site blocks automated checks. Read with a web reader on the checked date."
+    },
+    {
+      "about": "how",
+      "url": "https://innovation.nfte.com/participation-agreement/",
+      "quote": "Entries must be submitted via the online entry form",
+      "manual": true,
+      "checked": "2026-11-24",
+      "note": "This site blocks automated checks. Read with a web reader on the checked date."
+    },
+    {
+      "about": "how",
+      "url": "https://innovation.nfte.com/participation-agreement/",
+      "quote": "IF YOU ARE UNDER 18 YEARS OLD, YOU MUST HAVE A PARENT OR LEGAL GUARDIAN",
+      "manual": true,
+      "checked": "2026-11-24",
+      "note": "This site blocks automated checks. Read with a web reader on the checked date."
+    },
+    {
+      "about": "how",
+      "url": "https://innovation.nfte.com/participation-agreement/",
+      "quote": "CAREFULLY READ AND ENTER INTO THIS AGREEMENT ON YOUR BEHALF",
+      "manual": true,
+      "checked": "2026-11-24",
+      "note": "This site blocks automated checks. Read with a web reader on the checked date."
+    },
+    {
+      "about": "when",
+      "url": "https://innovation.nfte.com/participation-agreement/",
+      "quote": "opens at 10:00am Eastern Time (ET) on September 9, 2026",
+      "manual": true,
+      "checked": "2026-11-24",
+      "note": "This site blocks automated checks. Read with a web reader on the checked date."
+    },
+    {
+      "about": "when",
+      "url": "https://innovation.nfte.com/participation-agreement/",
+      "quote": "closes at 11:59pm Eastern Time (ET) on December 13, 2026.",
+      "manual": true,
+      "checked": "2026-11-24",
+      "note": "This site blocks automated checks. Read with a web reader on the checked date."
+    },
+    {
+      "about": "when",
+      "url": "https://innovation.nfte.com/impact-challenges/",
+      "quote": "Just remember to submit your idea by December 13, 2026!",
+      "manual": true,
+      "checked": "2026-11-24",
+      "note": "This site blocks automated checks. Read with a web reader on the checked date."
+    },
+    {
+      "about": "when",
+      "url": "https://innovation.nfte.com/participation-agreement/",
+      "quote": "Late or incomplete entries will not be accepted.",
+      "manual": true,
+      "checked": "2026-11-24",
+      "note": "This site blocks automated checks. Read with a web reader on the checked date."
+    },
+    {
+      "about": "when",
+      "url": "https://innovation.nfte.com/impact-challenges/",
+      "quote": "First Round Judging",
+      "manual": true,
+      "checked": "2026-11-24",
+      "note": "This site blocks automated checks. Read with a web reader on the checked date."
+    },
+    {
+      "about": "when",
+      "url": "https://innovation.nfte.com/impact-challenges/",
+      "quote": "February 8th",
+      "manual": true,
+      "checked": "2026-11-24",
+      "note": "This site blocks automated checks. Read with a web reader on the checked date."
+    },
+    {
+      "about": "when",
+      "url": "https://innovation.nfte.com/impact-challenges/",
+      "quote": "Top 10 finalists announced",
+      "manual": true,
+      "checked": "2026-11-24",
+      "note": "This site blocks automated checks. Read with a web reader on the checked date."
+    },
+    {
+      "about": "when",
+      "url": "https://innovation.nfte.com/participation-agreement/",
+      "quote": "The final round submission period opens at 9:00 am on February 9, 2027",
+      "manual": true,
+      "checked": "2026-11-24",
+      "note": "This site blocks automated checks. Read with a web reader on the checked date."
+    },
+    {
+      "about": "when",
+      "url": "https://innovation.nfte.com/participation-agreement/",
+      "quote": "closes at 11:59 pm Eastern Time (ET) on March 2, 2027.",
+      "manual": true,
+      "checked": "2026-11-24",
+      "note": "This site blocks automated checks. Read with a web reader on the checked date."
+    },
+    {
+      "about": "when",
+      "url": "https://innovation.nfte.com/impact-challenges/",
+      "quote": "April 21st",
+      "manual": true,
+      "checked": "2026-11-24",
+      "note": "This site blocks automated checks. Read with a web reader on the checked date."
+    },
+    {
+      "about": "when",
+      "url": "https://innovation.nfte.com/impact-challenges/",
+      "quote": "Top 3 Winners Announced Live per Challenge Category",
+      "manual": true,
+      "checked": "2026-11-24",
+      "note": "This site blocks automated checks. Read with a web reader on the checked date."
+    },
+    {
+      "about": "cost",
+      "url": "https://innovation.nfte.com/participation-agreement/",
+      "quote": "It’s completely free to participate",
+      "manual": true,
+      "checked": "2026-11-24",
+      "note": "This site blocks automated checks. Read with a web reader on the checked date."
+    },
+    {
+      "about": "cost",
+      "url": "https://nfte.com/?p=67845",
+      "quote": "the free online global innovation challenge",
+      "manual": true,
+      "checked": "2026-11-24",
+      "note": "This site blocks automated checks. Read with a web reader on the checked date."
+    },
+    {
+      "about": "detail",
+      "url": "https://nfte.com/?p=67845",
+      "quote": "designed in partnership with leading companies and foundations",
+      "manual": true,
+      "checked": "2026-11-24",
+      "note": "This site blocks automated checks. Read with a web reader on the checked date."
+    },
+    {
+      "about": "detail",
+      "url": "https://innovation.nfte.com/impact-challenges/",
+      "quote": "Each submission will be assessed on creativity, connection to advancing the relevant SDG, and potential impact.",
+      "manual": true,
+      "checked": "2026-11-24",
+      "note": "This site blocks automated checks. Read with a web reader on the checked date."
+    },
+    {
+      "about": "detail",
+      "url": "https://innovation.nfte.com/impact-challenges/",
+      "quote": "EY Responsible AI Challenge",
+      "manual": true,
+      "checked": "2026-11-24",
+      "note": "This site blocks automated checks. Read with a web reader on the checked date."
+    },
+    {
+      "about": "detail",
+      "url": "https://innovation.nfte.com/impact-challenges/",
+      "quote": "Intuit Food Truck Challenge",
+      "manual": true,
+      "checked": "2026-11-24",
+      "note": "This site blocks automated checks. Read with a web reader on the checked date."
+    },
+    {
+      "about": "detail",
+      "url": "https://innovation.nfte.com/impact-challenges/",
+      "quote": "MetLife Foundation Good Health and Well-Being Challenge",
+      "manual": true,
+      "checked": "2026-11-24",
+      "note": "This site blocks automated checks. Read with a web reader on the checked date."
+    },
+    {
+      "about": "detail",
+      "url": "https://innovation.nfte.com/impact-challenges/",
+      "quote": "Fifth Third Bank Skills for Success Challenge",
+      "manual": true,
+      "checked": "2026-11-24",
+      "note": "This site blocks automated checks. Read with a web reader on the checked date."
+    },
+    {
+      "about": "detail",
+      "url": "https://innovation.nfte.com/impact-challenges/",
+      "quote": "EverBank Smart Hustle Challenge",
+      "manual": true,
+      "checked": "2026-11-24",
+      "note": "This site blocks automated checks. Read with a web reader on the checked date."
+    },
+    {
+      "about": "detail",
+      "url": "https://innovation.nfte.com/participation-agreement/",
+      "quote": "The top ten (10) finalists in each category will be selected by a panel of judges",
+      "manual": true,
+      "checked": "2026-11-24",
+      "note": "This site blocks automated checks. Read with a web reader on the checked date."
+    },
+    {
+      "about": "detail",
+      "url": "https://innovation.nfte.com/participation-agreement/",
+      "quote": "finalists will be asked to submit a one-minute video.",
+      "manual": true,
+      "checked": "2026-11-24",
+      "note": "This site blocks automated checks. Read with a web reader on the checked date."
+    },
+    {
+      "about": "why",
+      "url": "https://innovation.nfte.com/participation-agreement/",
+      "quote": "Cash prizes are awarded to the 1st place, 2nd place, and 3rd place winners in each challenge category.",
+      "manual": true,
+      "checked": "2026-11-24",
+      "note": "This site blocks automated checks. Read with a web reader on the checked date."
+    },
+    {
+      "about": "why",
+      "url": "https://nfte.com/?p=67845",
+      "quote": "cash prizes ranging from $300 to $1,500",
+      "manual": true,
+      "checked": "2026-11-24",
+      "note": "This site blocks automated checks. Read with a web reader on the checked date."
+    },
+    {
+      "about": "why",
+      "url": "https://innovation.nfte.com/participation-agreement/",
+      "quote": "Judges from the sponsoring organizations will then score entries",
+      "manual": true,
+      "checked": "2026-11-24",
+      "note": "This site blocks automated checks. Read with a web reader on the checked date."
+    }
+  ],
+  "techno": [
+    {
+      "about": "who",
+      "url": "https://www.torontomu.ca/scixchange/technovation/girls/",
+      "quote": "If you identify as female or nonbinary and will be between the ages of 8 and 18 on August 1, 2027, you are eligible to compete in the global competition (beginner, junior and senior divisions) for the 2027 season."
+    },
+    {
+      "about": "who",
+      "url": "https://www.torontomu.ca/scixchange/technovation/girls/",
+      "quote": "Technovation is piloting a separate coed stream, new for 2027. Our chapter is not part of that pilot."
+    },
+    {
+      "about": "who",
+      "url": "https://technovationchallenge.org/submission-guidelines",
+      "quote": "Junior Division: 13-15 years old as of August 1, 2027",
+      "manual": true,
+      "checked": "2026-11-24",
+      "note": "This site blocks automated checks. Read with a web reader on the checked date."
+    },
+    {
+      "about": "who",
+      "url": "https://technovationchallenge.org/submission-guidelines",
+      "quote": "Senior Division: 16-18 as of August 1, 2027",
+      "manual": true,
+      "checked": "2026-11-24",
+      "note": "This site blocks automated checks. Read with a web reader on the checked date."
+    },
+    {
+      "about": "team",
+      "url": "https://www.torontomu.ca/scixchange/technovation/girls/",
+      "quote": "Teams are composed of 1 to 5 students."
+    },
+    {
+      "about": "team",
+      "url": "https://technovationchallenge.org/submission-guidelines",
+      "quote": "A team can have between 1-5 members.",
+      "manual": true,
+      "checked": "2026-11-24",
+      "note": "This site blocks automated checks. Read with a web reader on the checked date."
+    },
+    {
+      "about": "how",
+      "url": "https://www.torontomu.ca/scixchange/technovation/girls/",
+      "quote": "Competition divisions are based on the age of the oldest team member."
+    },
+    {
+      "about": "how",
+      "url": "https://technovationchallenge.org/get-involved/students/",
+      "quote": "You can reach out to an adult you trust and ask them to be your mentor (they'll have to register too), or you can find a mentor using the search tools",
+      "manual": true,
+      "checked": "2026-11-24",
+      "note": "This site blocks automated checks. Read with a web reader on the checked date."
+    },
+    {
+      "about": "when",
+      "url": "https://technovationchallenge.org/competition/",
+      "quote": "Students and Mentors may register between October 12, 2026 and March 11, 2027.",
+      "manual": true,
+      "checked": "2026-11-24",
+      "note": "This site blocks automated checks. Read with a web reader on the checked date."
+    },
+    {
+      "about": "when",
+      "url": "https://technovationchallenge.org/submission-guidelines",
+      "quote": "Registration Opens: October 11, 2026",
+      "manual": true,
+      "checked": "2026-11-24",
+      "note": "This site blocks automated checks. Read with a web reader on the checked date."
+    },
+    {
+      "about": "when",
+      "url": "https://technovationchallenge.org/submission-guidelines",
+      "quote": "Registration Deadline (Students and Mentors): March 11, 2027 at 23:59 UTC.",
+      "manual": true,
+      "checked": "2026-11-24",
+      "note": "This site blocks automated checks. Read with a web reader on the checked date."
+    },
+    {
+      "about": "when",
+      "url": "https://technovationchallenge.org/competition/",
+      "quote": "12 weeks to submission: February 10, 2027",
+      "manual": true,
+      "checked": "2026-11-24",
+      "note": "This site blocks automated checks. Read with a web reader on the checked date."
+    },
+    {
+      "about": "when",
+      "url": "https://technovationchallenge.org/competition/",
+      "quote": "This is the latest we recommend starting the program.",
+      "manual": true,
+      "checked": "2026-11-24",
+      "note": "This site blocks automated checks. Read with a web reader on the checked date."
+    },
+    {
+      "about": "when",
+      "url": "https://technovationchallenge.org/competition/",
+      "quote": "Virtual Celebration and Finalists & Regional Honorees Announcement: July 2027",
+      "manual": true,
+      "checked": "2026-11-24",
+      "note": "This site blocks automated checks. Read with a web reader on the checked date."
+    },
+    {
+      "about": "when",
+      "url": "https://technovationchallenge.org/submission-guidelines",
+      "quote": "Submission Deadline: May 5, 2027 at 5pm PDT",
+      "manual": true,
+      "checked": "2026-11-24",
+      "note": "This site blocks automated checks. Read with a web reader on the checked date."
+    },
+    {
+      "about": "when",
+      "url": "https://technovationchallenge.org/competition/",
+      "quote": "Quarterfinal (Round 1) Judging Window: May 11 to June 7th, 2027",
+      "manual": true,
+      "checked": "2026-11-24",
+      "note": "This site blocks automated checks. Read with a web reader on the checked date."
+    },
+    {
+      "about": "when",
+      "url": "https://technovationchallenge.org/competition/",
+      "quote": "Takes place at Regional Pitch Events and online",
+      "manual": true,
+      "checked": "2026-11-24",
+      "note": "This site blocks automated checks. Read with a web reader on the checked date."
+    },
+    {
+      "about": "cost",
+      "url": "https://technovationchallenge.org/get-involved/students/",
+      "quote": "The Technovation Girls competition is free and open to all girls as well as nonbinary, gender-fluid, and transgender participants who want to be part of a female-identified environment.",
+      "manual": true,
+      "checked": "2026-11-24",
+      "note": "This site blocks automated checks. Read with a web reader on the checked date."
+    },
+    {
+      "about": "cost",
+      "url": "https://technovationchallenge.org/get-involved/students/",
+      "quote": "All of the Technovation Girls curriculum and materials are free and available online",
+      "manual": true,
+      "checked": "2026-11-24",
+      "note": "This site blocks automated checks. Read with a web reader on the checked date."
+    },
+    {
+      "about": "detail",
+      "url": "https://www.torontomu.ca/scixchange/technovation/girls/",
+      "quote": "identify problems in their community."
+    },
+    {
+      "about": "detail",
+      "url": "https://www.torontomu.ca/scixchange/technovation/girls/",
+      "quote": "create digital solutions to address the problem."
+    },
+    {
+      "about": "detail",
+      "url": "https://www.torontomu.ca/scixchange/technovation/girls/",
+      "quote": "compose business canvas."
+    },
+    {
+      "about": "detail",
+      "url": "https://www.torontomu.ca/scixchange/technovation/girls/",
+      "quote": "pitch their ideas."
+    },
+    {
+      "about": "detail",
+      "url": "https://technovationchallenge.org/submission-guidelines",
+      "quote": "Business Canvas - upload your business canvas (doc or PDF)",
+      "manual": true,
+      "checked": "2026-11-24",
+      "note": "This site blocks automated checks. Read with a web reader on the checked date."
+    },
+    {
+      "about": "detail",
+      "url": "https://technovationchallenge.org/submission-guidelines",
+      "quote": "One video, maximum of 4 minutes",
+      "manual": true,
+      "checked": "2026-11-24",
+      "note": "This site blocks automated checks. Read with a web reader on the checked date."
+    },
+    {
+      "about": "detail",
+      "url": "https://technovationchallenge.org/submission-guidelines",
+      "quote": "You're no longer limited to a mobile app",
+      "manual": true,
+      "checked": "2026-11-24",
+      "note": "This site blocks automated checks. Read with a web reader on the checked date."
+    },
+    {
+      "about": "why",
+      "url": "https://technovationchallenge.org/award-structure/",
+      "quote": "Finalist teams will receive a $500/person educational stipend",
+      "manual": true,
+      "checked": "2026-11-24",
+      "note": "This site blocks automated checks. Read with a web reader on the checked date."
+    },
+    {
+      "about": "why",
+      "url": "https://technovationchallenge.org/award-structure/",
+      "quote": "All finalist teams in the Girls Track will receive free travel and accommodations for all team members to the global event.",
+      "manual": true,
+      "checked": "2026-11-24",
+      "note": "This site blocks automated checks. Read with a web reader on the checked date."
+    },
+    {
+      "about": "why",
+      "url": "https://technovationchallenge.org/award-structure/",
+      "quote": "In 2027, we will select 30 teams for Regional Honors.",
+      "manual": true,
+      "checked": "2026-11-24",
+      "note": "This site blocks automated checks. Read with a web reader on the checked date."
+    },
+    {
+      "about": "why",
+      "url": "https://technovationchallenge.org/award-structure/",
+      "quote": "a $250 educational stipend",
+      "manual": true,
+      "checked": "2026-11-24",
+      "note": "This site blocks automated checks. Read with a web reader on the checked date."
+    }
+  ],
+  "sbea": [
+    {
+      "about": "who",
+      "url": "https://schulich.yorku.ca/future-students/business-excellence-academy/",
+      "quote": "The Schulich Business Excellence Academy is a free summer business education and mentorship program supporting Grade 10, 11, and 12 high school students across Ontario."
+    },
+    {
+      "about": "who",
+      "url": "https://schulich.yorku.ca/future-students/business-excellence-academy/",
+      "quote": "The program targets all students from equity-deserving groups including Black, Indigenous, BIPOC, 2SLGBTQIA+ individuals, and people with disabilities."
+    },
+    {
+      "about": "how",
+      "url": "https://schulich.yorku.ca/future-students/business-excellence-academy/",
+      "quote": "Please visit this page again in early 2027 for information regarding the opening of the 2027 SBEA Program application portal."
+    },
+    {
+      "about": "when",
+      "url": "https://schulich.yorku.ca/future-students/business-excellence-academy/",
+      "quote": "The program started on July 6, 2026, and the virtual sessions ran Monday, Tuesday, Wednesday, and Thursday evenings from 6:30-8:30pm for three weeks, concluding with a Case Competition on July 22 and a Graduation Celebration on July 23."
+    },
+    {
+      "about": "when",
+      "url": "https://schulich.yorku.ca/future-students/business-excellence-academy/",
+      "quote": "The final sessions on July 22 and July 23 were in-person days including the case competition, school tours, sessions with the BBA Ambassadors (Schulich undergraduate students), along with a dinner and graduation ceremony."
+    },
+    {
+      "about": "cost",
+      "url": "https://schulich.yorku.ca/future-students/business-excellence-academy/",
+      "quote": "Program is free for all participants"
+    },
+    {
+      "about": "detail",
+      "url": "https://schulich.yorku.ca/future-students/business-excellence-academy/",
+      "quote": "The sessions are held virtually, consisting of a series of lectures and group-based activities that are delivered by prominent guest speakers from the community and Schulich Faculty."
+    },
+    {
+      "about": "detail",
+      "url": "https://schulich.yorku.ca/future-students/business-excellence-academy/",
+      "quote": "Small groups of high school participants and one Schulich undergraduate student mentor will be introduced at the start of the program."
+    },
+    {
+      "about": "detail",
+      "url": "https://schulich.yorku.ca/future-students/business-excellence-academy/",
+      "quote": "At the end of the program, an in-person case competition and graduation dinner will be organized at the Schulich School of Business, York University, Keele Campus for the participants who complete the program."
+    },
+    {
+      "about": "why",
+      "url": "https://schulich.yorku.ca/future-students/business-excellence-academy/",
+      "quote": "Participants who complete all of the required modules will receive a Certificate of Completion at the closing graduation ceremony dinner."
+    },
+    {
+      "about": "why",
+      "url": "https://schulich.yorku.ca/future-students/business-excellence-academy/",
+      "quote": "The goal of the program is to help participants build soft skills, gain business knowledge, and become competitive applicants for post-secondary education opportunities."
+    }
+  ],
+  "vtpitch": [
+    {
+      "about": "who",
+      "url": "https://uvm.edu/admissions/vermont-pitch-challenge/rules-regulations-terms-and-conditions",
+      "quote": "Teams are comprised of 1-3 high school students who are in grades 10-12 at the time of the submission deadline."
+    },
+    {
+      "about": "who",
+      "url": "https://www.uvm.edu/admissions/vermont-pitch-challenge/news/2027-vermont-pitch-challenge-opens-submissions",
+      "quote": "High school students in grades 10 – 12 worldwide are invited to submit their business proposals online at no cost, focusing on ideas that make a positive impact on the world."
+    },
+    {
+      "about": "who",
+      "url": "https://uvm.edu/admissions/vermont-pitch-challenge/rules-regulations-terms-and-conditions",
+      "quote": "Participants must be enrolled in an official high school or secondary education institution or program for the duration of the Vermont Pitch Challenge."
+    },
+    {
+      "about": "team",
+      "url": "https://uvm.edu/admissions/vermont-pitch-challenge/rules-regulations-terms-and-conditions",
+      "quote": "Teams require 1 adult sponsor at the time of the application"
+    },
+    {
+      "about": "team",
+      "url": "https://uvm.edu/admissions/vermont-pitch-challenge/rules-regulations-terms-and-conditions",
+      "quote": "Adult sponsors must be 21 years of age or older and must have a direct academic connection to the team members (i.e. counselor, teacher, etc.)"
+    },
+    {
+      "about": "team",
+      "url": "https://www.uvm.edu/admissions/vermont-pitch-challenge/frequently-asked-questions",
+      "quote": "The adult sponsor can be anyone associated with your team who is 21 years of age or older."
+    },
+    {
+      "about": "team",
+      "url": "https://uvm.edu/admissions/vermont-pitch-challenge/rules-regulations-terms-and-conditions",
+      "quote": "Team members may attend different high schools/secondary education institutions/programs."
+    },
+    {
+      "about": "how",
+      "url": "https://www.uvm.edu/admissions/vermont-pitch-challenge/how-compete",
+      "quote": "Submit your pitch by having each member of your team fill out the Pitch Submission Form by February 15, 2027."
+    },
+    {
+      "about": "how",
+      "url": "https://uvm.edu/admissions/vermont-pitch-challenge/rules-regulations-terms-and-conditions",
+      "quote": "All team members must complete an application. Team captains must submit the proposal as part of their application."
+    },
+    {
+      "about": "when",
+      "url": "https://www.uvm.edu/admissions/vermont-pitch-challenge/news/2027-vermont-pitch-challenge-opens-submissions",
+      "quote": "officially open for submissions from Oct 15, 2026, through Feb 15, 2027"
+    },
+    {
+      "about": "when",
+      "url": "https://www.uvm.edu/admissions/vermont-pitch-challenge/how-compete",
+      "quote": "February 15, 2027: Submissions Close, Judging Begins"
+    },
+    {
+      "about": "when",
+      "url": "https://www.uvm.edu/admissions/vermont-pitch-challenge/how-compete",
+      "quote": "March 2027: Five Finalists Announced"
+    },
+    {
+      "about": "when",
+      "url": "https://www.uvm.edu/admissions/vermont-pitch-challenge/how-compete",
+      "quote": "April 13, 2027: Finalists Pitch In-Person on UVM’s Campus"
+    },
+    {
+      "about": "cost",
+      "url": "https://www.uvm.edu/admissions/vermont-pitch-challenge/frequently-asked-questions",
+      "quote": "There is no cost to participate in the challenge."
+    },
+    {
+      "about": "cost",
+      "url": "https://uvm.edu/admissions/vermont-pitch-challenge/rules-regulations-terms-and-conditions",
+      "quote": "UVM will provide $600 per student for each finalist team to assist with travel costs and accommodations."
+    },
+    {
+      "about": "cost",
+      "url": "https://uvm.edu/admissions/vermont-pitch-challenge/rules-regulations-terms-and-conditions",
+      "quote": "Any remaining cost of travel, accommodations, meals, etc. is strictly the responsibility of the team members."
+    },
+    {
+      "about": "detail",
+      "url": "https://uvm.edu/admissions/vermont-pitch-challenge/rules-regulations-terms-and-conditions",
+      "quote": "Written: 3-5 pages"
+    },
+    {
+      "about": "detail",
+      "url": "https://uvm.edu/admissions/vermont-pitch-challenge/rules-regulations-terms-and-conditions",
+      "quote": "Video: Maximum 4 minutes"
+    },
+    {
+      "about": "detail",
+      "url": "https://uvm.edu/admissions/vermont-pitch-challenge/rules-regulations-terms-and-conditions",
+      "quote": "Audio: Maximum 4 minutes"
+    },
+    {
+      "about": "detail",
+      "url": "https://uvm.edu/admissions/vermont-pitch-challenge/rules-regulations-terms-and-conditions",
+      "quote": "Pitches are limited to 7 minutes."
+    },
+    {
+      "about": "detail",
+      "url": "https://uvm.edu/admissions/vermont-pitch-challenge/rules-regulations-terms-and-conditions",
+      "quote": "The judges will ask questions for up to three minutes after the pitch."
+    },
+    {
+      "about": "detail",
+      "url": "https://uvm.edu/admissions/vermont-pitch-challenge/rules-regulations-terms-and-conditions",
+      "quote": "Teams must be present at the in-person final event to be eligible to win prizes."
+    },
+    {
+      "about": "detail",
+      "url": "https://uvm.edu/admissions/vermont-pitch-challenge/rules-regulations-terms-and-conditions",
+      "quote": "you’ll learn from top experts (through online webinars and networking opportunities) about how to develop a successful business model, create a compelling pitch, and achieve your goals"
+    },
+    {
+      "about": "detail",
+      "url": "https://uvm.edu/admissions/vermont-pitch-challenge/rules-regulations-terms-and-conditions",
+      "quote": "All participating teams must be accompanied by their official adult sponsor"
+    },
+    {
+      "about": "why",
+      "url": "https://uvm.edu/admissions/vermont-pitch-challenge/rules-regulations-terms-and-conditions",
+      "quote": "The Grand Prize will be a full 4-year scholarship [tuition and comprehensive fees] for each team member."
+    },
+    {
+      "about": "why",
+      "url": "https://uvm.edu/admissions/vermont-pitch-challenge/rules-regulations-terms-and-conditions",
+      "quote": "The Scholarship award is contingent upon undergraduate first-time, first-year admission to the University of Vermont"
+    },
+    {
+      "about": "why",
+      "url": "https://uvm.edu/admissions/vermont-pitch-challenge/rules-regulations-terms-and-conditions",
+      "quote": "Prizes for 2nd and 3rd place will be a $5,000 cash prize, to be split evenly between team members."
+    },
+    {
+      "about": "why",
+      "url": "https://uvm.edu/admissions/vermont-pitch-challenge/rules-regulations-terms-and-conditions",
+      "quote": "Prizes for 4th and 5th place will be a $1,000 cash prize, to be split evenly between team members."
+    },
+    {
+      "about": "why",
+      "url": "https://www.uvm.edu/admissions/vermont-pitch-challenge/news/2027-vermont-pitch-challenge-opens-submissions",
+      "quote": "Last year’s competition saw more than 140 teams from 15 countries and 28 U.S. states."
+    }
+  ],
+  "rotsim": [
+    {
+      "about": "who",
+      "url": "https://rotmancommerce.utoronto.ca/future-students/on-campus-events/market-simulation-challenge",
+      "quote": "The High School Market Simulation Challenge provides exceptional high school students with an introduction to the field of finance and an opportunity to learn through simulated business scenarios."
+    },
+    {
+      "about": "how",
+      "url": "https://rotmancommerce.utoronto.ca/future-students/on-campus-events/market-simulation-challenge",
+      "quote": "December 3, 2026 Remote Registration"
+    },
+    {
+      "about": "how",
+      "url": "https://rotmancommerce.utoronto.ca/future-students/on-campus-events/market-simulation-challenge",
+      "quote": "Top performers from the sessions on November 12, December 3 and Feburary 4 will be invited to return to campus on April 30, 2027 for a capstone workshop and trading competition, where they will compete for cash prizes."
+    },
+    {
+      "about": "how",
+      "url": "https://rotmancommerce.utoronto.ca/future-students/on-campus-events/market-simulation-challenge",
+      "quote": "Registration is reserved for top 60 traders from the three qualifying rounds."
+    },
+    {
+      "about": "when",
+      "url": "https://rotmancommerce.utoronto.ca/future-students/on-campus-events/market-simulation-challenge",
+      "quote": "Qualifying Rounds: Thursday November 12, Thursday December 3, 2026 & Thursday, Feburary 4, 2027"
+    },
+    {
+      "about": "when",
+      "url": "https://rotmancommerce.utoronto.ca/future-students/on-campus-events/market-simulation-challenge",
+      "quote": "Capstone Workshop & Competition: Friday April 30, 2027"
+    },
+    {
+      "about": "when",
+      "url": "https://rotmancommerce.utoronto.ca/future-students/on-campus-events/market-simulation-challenge",
+      "quote": "All times are Eastern Standard Time"
+    },
+    {
+      "about": "when",
+      "url": "https://rotmancommerce.utoronto.ca/future-students/on-campus-events/market-simulation-challenge",
+      "quote": "9:30 AM Check-in and Log in"
+    },
+    {
+      "about": "when",
+      "url": "https://rotmancommerce.utoronto.ca/future-students/on-campus-events/market-simulation-challenge",
+      "quote": "2:00 PM End"
+    },
+    {
+      "about": "when",
+      "url": "https://rotmancommerce.utoronto.ca/future-students/on-campus-events/market-simulation-challenge",
+      "quote": "9:00 AM Check-in and Log in"
+    },
+    {
+      "about": "when",
+      "url": "https://rotmancommerce.utoronto.ca/future-students/on-campus-events/market-simulation-challenge",
+      "quote": "12:00 PM End"
+    },
+    {
+      "about": "detail",
+      "url": "https://rotmancommerce.utoronto.ca/future-students/on-campus-events/market-simulation-challenge",
+      "quote": "Students will participate in a workshop designed to introduce them to financial markets and the RIT Market Simulator platform, then demonstrate their newly learned skills through a Market Simulation Challenge using the RIT Market Simulator"
+    },
+    {
+      "about": "detail",
+      "url": "https://rotmancommerce.utoronto.ca/future-students/on-campus-events/market-simulation-challenge",
+      "quote": "The Rotman Finance Lab hosts the annual Rotman International Trading Competition (RITC), a 3-day simulated market challenge featuring 50 competing universities from around the world."
+    },
+    {
+      "about": "detail",
+      "url": "https://rotmancommerce.utoronto.ca/future-students/on-campus-events/market-simulation-challenge",
+      "quote": "RITC is executed though the RIT Market Simulator"
+    },
+    {
+      "about": "detail",
+      "url": "https://rotmancommerce.utoronto.ca/future-students/on-campus-events/market-simulation-challenge",
+      "quote": "1 hour break for virtual participants"
+    },
+    {
+      "about": "detail",
+      "url": "https://rotmancommerce.utoronto.ca/future-students/on-campus-events/market-simulation-challenge",
+      "quote": "Download the RIT trading platform"
+    },
+    {
+      "about": "why",
+      "url": "https://rotmancommerce.utoronto.ca/future-students/on-campus-events/market-simulation-challenge",
+      "quote": "No prior preparation is necessary for this challenge, and all required resources will be provided before and during the competition."
+    },
+    {
+      "about": "why",
+      "url": "https://rotmancommerce.utoronto.ca/future-students/on-campus-events/market-simulation-challenge",
+      "quote": "where they will compete for cash prizes."
+    }
+  ],
+  "skillsent": [
+    {
+      "about": "who",
+      "url": "https://skillsontario.com/resources/https-www-skillsontario-com-skills-ontario-provincial-entrepreneurship-showcase2025na367/",
+      "quote": "the bilingual Provincial Entrepreneurship Showcase provides a catalyst for aspiring student entrepreneurs to display/present their business ideas and/or products"
+    },
+    {
+      "about": "how",
+      "url": "https://skillsontario.com/resources/https-www-skillsontario-com-skills-ontario-provincial-entrepreneurship-showcase2025na367/",
+      "quote": "Some pre-selected students will even “pitch” their idea from the stage to our live audience!"
+    },
+    {
+      "about": "how",
+      "url": "https://skillsontario.com/resources/https-www-skillsontario-com-skills-ontario-provincial-entrepreneurship-showcase2025na367/",
+      "quote": "Those who cannot attend in-person are encouraged to join the Livestream."
+    },
+    {
+      "about": "when",
+      "url": "https://skillsontario.com/resources/https-www-skillsontario-com-skills-ontario-provincial-entrepreneurship-showcase2025na367/",
+      "quote": "We are pleased to announce that both the virtual and in-person showcase events are returning in 2027."
+    },
+    {
+      "about": "when",
+      "url": "https://www.skillsontario.com/skills-ontario-competition",
+      "quote": "2027 Skills Ontario Competition: May 3rd and 4th at the Toronto Congress Centre"
+    },
+    {
+      "about": "detail",
+      "url": "https://skillsontario.com/resources/https-www-skillsontario-com-skills-ontario-provincial-entrepreneurship-showcase2025na367/",
+      "quote": "Held in conjunction with the Skills Ontario Competition"
+    },
+    {
+      "about": "detail",
+      "url": "https://skillsontario.com/resources/https-www-skillsontario-com-skills-ontario-provincial-entrepreneurship-showcase2025na367/",
+      "quote": "students at both the in-person and virtual event alike will receive valuable feedback from successful, knowledgeable industry entrepreneurs and mentors while building their professional network"
+    }
+  ],
+  "bslc": [
+    {
+      "about": "who",
+      "url": "https://rotmancommerce.utoronto.ca/future-students/on-campus-events/black-student-leadership-conference/",
+      "quote": "Prospective Black students are invited to campus to gain an introduction to the fields of finance and business problem-solving through seminars hosted by current Rotman Commerce students and staff."
+    },
+    {
+      "about": "how",
+      "url": "https://rotmancommerce.utoronto.ca/future-students/on-campus-events/black-student-leadership-conference/",
+      "quote": "Join our mailing list to receive an invitation when registration opens in the fall!"
+    },
+    {
+      "about": "when",
+      "url": "https://rotmancommerce.utoronto.ca/future-students/on-campus-events/black-student-leadership-conference/",
+      "quote": "The Black Student Leadership Conference is held in February."
+    },
+    {
+      "about": "detail",
+      "url": "https://rotmancommerce.utoronto.ca/future-students/on-campus-events/black-student-leadership-conference/",
+      "quote": "Rotman Commerce is excited to host an engaging day of hands-on training in the core business competencies of trading and case study."
+    },
+    {
+      "about": "detail",
+      "url": "https://rotmancommerce.utoronto.ca/future-students/on-campus-events/black-student-leadership-conference/",
+      "quote": "Students will begin the conference with an interactive workshop designed to introduce them to financial markets and the RIT Market Simulator platform in the state-of-the-art BMO Financial Group Finance Research and Trading Lab."
+    },
+    {
+      "about": "detail",
+      "url": "https://rotmancommerce.utoronto.ca/future-students/on-campus-events/black-student-leadership-conference/",
+      "quote": "compete for prizes through a 3-heat Market Simulation Challenge"
+    },
+    {
+      "about": "detail",
+      "url": "https://rotmancommerce.utoronto.ca/future-students/on-campus-events/black-student-leadership-conference/",
+      "quote": "No prior preparation is necessary for this challenge"
+    },
+    {
+      "about": "detail",
+      "url": "https://rotmancommerce.utoronto.ca/future-students/on-campus-events/black-student-leadership-conference/",
+      "quote": "guide participants through best practices and approaches in tackling business cases, conducting presentations and responding to tough questions from judges"
+    },
+    {
+      "about": "why",
+      "url": "https://rotmancommerce.utoronto.ca/future-students/on-campus-events/black-student-leadership-conference/",
+      "quote": "Prizes include gift cards for the top 3 performers."
+    },
+    {
+      "about": "why",
+      "url": "https://rotmancommerce.utoronto.ca/future-students/on-campus-events/black-student-leadership-conference/",
+      "quote": "This training is the same offered to all incoming first year students when they join the RCCT"
+    }
+  ],
+  "catalyst": [
+    {
+      "about": "who",
+      "url": "https://uwaterloo.ca/engineering-outreach/programs/catalyst/catalyst-summer-program",
+      "quote": "The Catalyst Summer Programs are only open to current high school students (entering grade 10 or higher in September 2027)"
+    },
+    {
+      "about": "who",
+      "url": "https://uwaterloo.ca/engineering-outreach/programs/catalyst/catalyst-summer-program",
+      "quote": "students will only be accepted to participate in Catalyst one time during their high school journey"
+    },
+    {
+      "about": "how",
+      "url": "https://uwaterloo.ca/engineering-outreach/programs/catalyst/catalyst-summer-program",
+      "quote": "each applicant must submit an application in order to complete registration"
+    },
+    {
+      "about": "how",
+      "url": "https://uwaterloo.ca/engineering-outreach/programs/catalyst/catalyst-summer-program",
+      "quote": "Once the application form is submitted, you will receive an email with a link to complete an online Kira assessment."
+    },
+    {
+      "about": "how",
+      "url": "https://uwaterloo.ca/engineering-outreach/programs/catalyst/catalyst-summer-program",
+      "quote": "It should only take 20 to 30 minutes total to complete and can be done on your own time."
+    },
+    {
+      "about": "how",
+      "url": "https://uwaterloo.ca/engineering-outreach/programs/catalyst/catalyst-summer-program",
+      "quote": "you will be placed into a session based on availability"
+    },
+    {
+      "about": "when",
+      "url": "https://uwaterloo.ca/engineering-outreach/programs/catalyst/catalyst-summer-program",
+      "quote": "December 18th, 2026 at 9:00 AM EST — Applications open"
+    },
+    {
+      "about": "when",
+      "url": "https://uwaterloo.ca/engineering-outreach/programs/catalyst/catalyst-summer-program",
+      "quote": "February 12th, 2027 at 9:00 AM EST — Applications close"
+    },
+    {
+      "about": "when",
+      "url": "https://uwaterloo.ca/engineering-outreach/programs/catalyst/catalyst-summer-program",
+      "quote": "Second Full Week of April 2027 — Accepted applicants are notified"
+    },
+    {
+      "about": "when",
+      "url": "https://uwaterloo.ca/engineering-outreach/programs/catalyst/catalyst-summer-program",
+      "quote": "Session I July 5th – July 16th"
+    },
+    {
+      "about": "when",
+      "url": "https://uwaterloo.ca/engineering-outreach/programs/catalyst/catalyst-summer-program",
+      "quote": "Session II July 19th – July 30th"
+    },
+    {
+      "about": "when",
+      "url": "https://uwaterloo.ca/engineering-outreach/programs/catalyst/catalyst-summer-program",
+      "quote": "Session III August 9th – August 20th"
+    },
+    {
+      "about": "when",
+      "url": "https://uwaterloo.ca/engineering-outreach/programs/catalyst/catalyst-summer-program",
+      "quote": "Important Bursary Dates (exact dates to be announced):"
+    },
+    {
+      "about": "when",
+      "url": "https://uwaterloo.ca/engineering-outreach/programs/catalyst/catalyst-summer-program",
+      "quote": "Applications close: Mid-January"
+    },
+    {
+      "about": "cost",
+      "url": "https://uwaterloo.ca/engineering-outreach/programs/catalyst/catalyst-summer-program",
+      "quote": "The 2027 program cost is $747.00 +HST."
+    },
+    {
+      "about": "cost",
+      "url": "https://uwaterloo.ca/engineering-outreach/programs/catalyst/catalyst-summer-program",
+      "quote": "Note that this does not include the cost of overnight accommodations, which are optional."
+    },
+    {
+      "about": "cost",
+      "url": "https://uwaterloo.ca/engineering-outreach/programs/catalyst/catalyst-summer-program",
+      "quote": "There is no application fee for this program."
+    },
+    {
+      "about": "cost",
+      "url": "https://uwaterloo.ca/engineering-outreach/programs/catalyst/catalyst-summer-program",
+      "quote": "A bursary can cover up to 95% of the program fee"
+    },
+    {
+      "about": "cost",
+      "url": "https://uwaterloo.ca/engineering-outreach/programs/catalyst/catalyst-summer-program",
+      "quote": "Payment will be due upon acceptance into the program."
+    },
+    {
+      "about": "cost",
+      "url": "https://uwaterloo.ca/engineering-outreach/programs/catalyst/catalyst-summer-program",
+      "quote": "Catalyst Double room: $1645 including taxes"
+    },
+    {
+      "about": "cost",
+      "url": "https://uwaterloo.ca/engineering-outreach/programs/catalyst/catalyst-summer-program",
+      "quote": "Catalyst Single room: $1870 including taxes"
+    },
+    {
+      "about": "detail",
+      "url": "https://uwaterloo.ca/engineering-outreach/programs/catalyst/catalyst-summer-program",
+      "quote": "a lecture-style program which focuses on innovation, entrepreneurship, and business"
+    },
+    {
+      "about": "detail",
+      "url": "https://uwaterloo.ca/engineering-outreach/programs/catalyst/catalyst-summer-program",
+      "quote": "The Catalyst Summer Program is a 2-week program"
+    },
+    {
+      "about": "detail",
+      "url": "https://uwaterloo.ca/engineering-outreach/programs/catalyst/catalyst-summer-program",
+      "quote": "The Early Entrepreneurs stream will have a mix of STEM activities and business activities."
+    },
+    {
+      "about": "detail",
+      "url": "https://uwaterloo.ca/engineering-outreach/programs/catalyst/catalyst-summer-program",
+      "quote": "participants will sit in on workshops run by faculty and current students"
+    },
+    {
+      "about": "detail",
+      "url": "https://uwaterloo.ca/engineering-outreach/programs/catalyst/catalyst-summer-program",
+      "quote": "Each session will be restricted to twenty-five students"
+    },
+    {
+      "about": "detail",
+      "url": "https://uwaterloo.ca/engineering-outreach/programs/catalyst/catalyst-summer-program",
+      "quote": "this program runs in-person and is not an overnight program"
+    },
+    {
+      "about": "detail",
+      "url": "https://uwaterloo.ca/engineering-outreach/programs/catalyst/catalyst-summer-program",
+      "quote": "Located in Canada's top-ranked startup ecosystem"
+    },
+    {
+      "about": "detail",
+      "url": "https://uwaterloo.ca/engineering-outreach/programs/catalyst/catalyst-summer-program",
+      "quote": "students will engage directly with Waterloo's renowned entrepreneurial ecosystem"
+    },
+    {
+      "about": "why",
+      "url": "https://uwaterloo.ca/engineering-outreach/programs/catalyst/catalyst-summer-program",
+      "quote": "high school students develop leadership skills within a community and problem-based context"
+    }
+  ],
+  "hieec": [
+    {
+      "about": "who",
+      "url": "https://www.thehuea.org/general-8",
+      "quote": "HIEEC invites high-school students worldwide to take a position on a current economic question and defend it in a focused essay"
+    },
+    {
+      "about": "who",
+      "url": "https://www.thehuea.org/general-8",
+      "quote": "High school students anywhere in the world"
+    },
+    {
+      "about": "who",
+      "url": "https://www.thehuea.org/general-8",
+      "quote": "Grades 9–10: students in their third- or fourth-to-last year of secondary school"
+    },
+    {
+      "about": "who",
+      "url": "https://www.thehuea.org/general-8",
+      "quote": "Grades 11–12: students in their ultimate or penultimate year of secondary school"
+    },
+    {
+      "about": "who",
+      "url": "https://www.thehuea.org/general-8",
+      "quote": "Individual entries (no co-authors), one entry per student"
+    },
+    {
+      "about": "how",
+      "url": "https://www.thehuea.org/general-8",
+      "quote": "Submit through the entry form and pay the entry fee (takes about 5 minutes)"
+    },
+    {
+      "about": "how",
+      "url": "https://www.thehuea.org/general-8",
+      "quote": "Choose one of the prompts below or write on an economics question of your own."
+    },
+    {
+      "about": "how",
+      "url": "https://www.thehuea.org/general-8",
+      "quote": "we ask that you do not put your name or school anywhere in the PDF"
+    },
+    {
+      "about": "when",
+      "url": "https://www.thehuea.org/general-8",
+      "quote": "Tuesday, January 5, 2027, 11:59 pm ET. Late entries are not accepted."
+    },
+    {
+      "about": "when",
+      "url": "https://www.thehuea.org/general-8",
+      "quote": "early- to mid- March 2027"
+    },
+    {
+      "about": "cost",
+      "url": "https://www.thehuea.org/general-8",
+      "quote": "25 USD if your school is inside the United States, 35 USD if your school is outside the United States"
+    },
+    {
+      "about": "cost",
+      "url": "https://www.thehuea.org/general-8",
+      "quote": "would like to request a fee waiver"
+    },
+    {
+      "about": "detail",
+      "url": "https://www.thehuea.org/general-8",
+      "quote": "up to 1,500 words, counting footnotes, not counting references"
+    },
+    {
+      "about": "detail",
+      "url": "https://www.thehuea.org/general-8",
+      "quote": "Judges will not see who wrote an essay."
+    },
+    {
+      "about": "detail",
+      "url": "https://www.thehuea.org/general-8",
+      "quote": "scored against a rubric covering analysis, creativity, research, and structure"
+    },
+    {
+      "about": "detail",
+      "url": "https://www.thehuea.org/general-8",
+      "quote": "Should a country's everyday payment system be free to use?"
+    },
+    {
+      "about": "why",
+      "url": "https://www.thehuea.org/general-8",
+      "quote": "3 Winners (essay published on this website)"
+    },
+    {
+      "about": "why",
+      "url": "https://www.thehuea.org/general-8",
+      "quote": "Every award recipient will receive a digital certificate."
+    },
+    {
+      "about": "why",
+      "url": "https://www.thehuea.org/general-8",
+      "quote": "Past judges include 2016 Nobel laureate Oliver Hart."
+    },
+    {
+      "about": "why",
+      "url": "https://www.thehuea.org/general-8",
+      "quote": "drawing hundreds of essays from dozens of countries each year"
+    }
+  ],
+  "econoly": [
+    {
+      "about": "who",
+      "url": "https://fee.org/economics-olympiad/",
+      "quote": "Eligibility is for students aged 14 to 20 from any secondary school background."
+    },
+    {
+      "about": "who",
+      "url": "https://fee.org/economics-olympiad/",
+      "quote": "The Economics Olympiad is open to all students ages 14–20 from any secondary school, including home-schooled students."
+    },
+    {
+      "about": "how",
+      "url": "https://fee.org/economics-olympiad/",
+      "quote": "Your teacher must register as a School Coordinator for you to participate."
+    },
+    {
+      "about": "how",
+      "url": "https://fee.org/economics-olympiad/",
+      "quote": "Only teachers, school officials, and homeschool parents can register. Students participate through a registered School Coordinator."
+    },
+    {
+      "about": "how",
+      "url": "https://fee.org/economics-olympiad/",
+      "quote": "All you need is someone who is willing to sign up and supervise you for 40 minutes while you take the test."
+    },
+    {
+      "about": "when",
+      "url": "https://fee.org/economics-olympiad/",
+      "quote": "Registration for Canada opens soon."
+    },
+    {
+      "about": "when",
+      "url": "https://fee.org/economics-olympiad/",
+      "quote": "to be held in Ancient Olympia, Greece, on August 2–6, 2027."
+    },
+    {
+      "about": "detail",
+      "url": "https://fee.org/economics-olympiad/",
+      "quote": "Every round tests students across the same three pillars: microeconomics, macroeconomics, and personal finance."
+    },
+    {
+      "about": "detail",
+      "url": "https://fee.org/economics-olympiad/",
+      "quote": "It’s a 25 multiple-choice online test administered at school and proctored by a teacher"
+    },
+    {
+      "about": "detail",
+      "url": "https://fee.org/economics-olympiad/",
+      "quote": "Top performers advance to the National Round."
+    },
+    {
+      "about": "detail",
+      "url": "https://fee.org/economics-olympiad/",
+      "quote": "The National Round combines written and oral exams and is held in person where possible."
+    },
+    {
+      "about": "detail",
+      "url": "https://fee.org/economics-olympiad/",
+      "quote": "Five students from the National Round are selected to represent their country as the national delegation in the International Round."
+    },
+    {
+      "about": "why",
+      "url": "https://fee.org/economics-olympiad/",
+      "quote": "Last year, over 1,400 students from 10 countries in North and South America participated in the Americas Challenge."
+    },
+    {
+      "about": "why",
+      "url": "https://fee.org/economics-olympiad/",
+      "quote": "Whether you have previously engaged in formal economic studies or are newly curious about the subject, the competition is designed to be accessible and enriching for all participants."
+    }
+  ],
+  "yesstart": [
+    {
+      "about": "who",
+      "url": "https://yesnet.yes.on.ca/entrepreneurship/summer-startup",
+      "quote": "Registration is open to students ages 16-29 residing in the Greater Toronto Area."
+    },
+    {
+      "about": "who",
+      "url": "https://yesnet.yes.on.ca/entrepreneurship/summer-startup",
+      "quote": "Participants must be returning to school in September."
+    },
+    {
+      "about": "how",
+      "url": "https://yesnet.yes.on.ca/entrepreneurship/summer-startup",
+      "quote": "Participants will attend a total of 8 business training, and business mentorship sessions."
+    },
+    {
+      "about": "how",
+      "url": "https://yesnet.yes.on.ca/entrepreneurship/summer-startup",
+      "quote": "Participants must commit to working a minimum of 30 hours a week on their business."
+    },
+    {
+      "about": "when",
+      "url": "https://yesnet.yes.on.ca/entrepreneurship/summer-startup",
+      "quote": "Application deadline is May 22, 2026 at 5:00pm"
+    },
+    {
+      "about": "when",
+      "url": "https://yesnet.yes.on.ca/entrepreneurship/summer-startup",
+      "quote": "The approximate program start date is June 15th, 2026"
+    },
+    {
+      "about": "when",
+      "url": "https://yesnet.yes.on.ca/entrepreneurship/summer-startup",
+      "quote": "Applications for the 2026 intake have closed. Please check back next year for future opportunities."
+    },
+    {
+      "about": "cost",
+      "url": "https://yesnet.yes.on.ca/entrepreneurship/summer-startup",
+      "quote": "All services and resources are provided free of charge."
+    },
+    {
+      "about": "cost",
+      "url": "https://yesnet.yes.on.ca/entrepreneurship/summer-startup",
+      "quote": "Participants receive a total of $3000 in funding to start their business."
+    },
+    {
+      "about": "detail",
+      "url": "https://yesnet.yes.on.ca/entrepreneurship/summer-startup",
+      "quote": "Summer Startup is an entrepreneurship program where students who are returning to school can start up a business to make some extra money over the summer."
+    },
+    {
+      "about": "detail",
+      "url": "https://yesnet.yes.on.ca/entrepreneurship/summer-startup",
+      "quote": "Training is provided on business planning, marketing and other business related topics."
+    }
+  ],
+  "monaco": [
+    {
+      "about": "who",
+      "url": "https://investinhamilton.ca/hamilton-business-centre/e-r-monaco-business-plan-competition/",
+      "quote": "open to youth between the ages of 15-20",
+      "manual": true,
+      "checked": "2026-11-24",
+      "note": "This site blocks automated checks. Read with a web reader on the checked date."
+    },
+    {
+      "about": "who",
+      "url": "https://investinhamilton.ca/hamilton-business-centre/e-r-monaco-business-plan-competition/",
+      "quote": "individuals attending a high school within the Hamilton area",
+      "manual": true,
+      "checked": "2026-11-24",
+      "note": "This site blocks automated checks. Read with a web reader on the checked date."
+    },
+    {
+      "about": "team",
+      "url": "https://investinhamilton.ca/hamilton-business-centre/e-r-monaco-business-plan-competition/",
+      "quote": "groups of no more than 3 students (entries may also be submitted by individuals)",
+      "manual": true,
+      "checked": "2026-11-24",
+      "note": "This site blocks automated checks. Read with a web reader on the checked date."
+    },
+    {
+      "about": "how",
+      "url": "https://investinhamilton.ca/hamilton-business-centre/e-r-monaco-business-plan-competition/",
+      "quote": "Email completed Submission Form and Business plan to hbc@hamilton.ca.",
+      "manual": true,
+      "checked": "2026-11-24",
+      "note": "This site blocks automated checks. Read with a web reader on the checked date."
+    },
+    {
+      "about": "how",
+      "url": "https://investinhamilton.ca/hamilton-business-centre/e-r-monaco-business-plan-competition/",
+      "quote": "Students must create a start-up business (not existing or franchise).",
+      "manual": true,
+      "checked": "2026-11-24",
+      "note": "This site blocks automated checks. Read with a web reader on the checked date."
+    },
+    {
+      "about": "how",
+      "url": "https://investinhamilton.ca/hamilton-business-centre/e-r-monaco-business-plan-competition/",
+      "quote": "Download and complete the Business Plan Template",
+      "manual": true,
+      "checked": "2026-11-24",
+      "note": "This site blocks automated checks. Read with a web reader on the checked date."
+    },
+    {
+      "about": "when",
+      "url": "https://investinhamilton.ca/hamilton-business-centre/e-r-monaco-business-plan-competition/",
+      "quote": "Applications are now OPEN and will be accepted until September 16, 2026.",
+      "manual": true,
+      "checked": "2026-11-24",
+      "note": "This site blocks automated checks. Read with a web reader on the checked date."
+    },
+    {
+      "about": "detail",
+      "url": "https://investinhamilton.ca/hamilton-business-centre/e-r-monaco-business-plan-competition/",
+      "quote": "Business plans will be evaluated by local volunteer professionals",
+      "manual": true,
+      "checked": "2026-11-24",
+      "note": "This site blocks automated checks. Read with a web reader on the checked date."
+    },
+    {
+      "about": "detail",
+      "url": "https://investinhamilton.ca/hamilton-business-centre/e-r-monaco-business-plan-competition/",
+      "quote": "the top participants will be invited to the Hamilton E.R. Monaco Young Entrepreneurs Awards finals.",
+      "manual": true,
+      "checked": "2026-11-24",
+      "note": "This site blocks automated checks. Read with a web reader on the checked date."
+    },
+    {
+      "about": "why",
+      "url": "https://investinhamilton.ca/hamilton-business-centre/e-r-monaco-business-plan-competition/",
+      "quote": "The top 5 business plans will receive a cash prize for their efforts.",
+      "manual": true,
+      "checked": "2026-11-24",
+      "note": "This site blocks automated checks. Read with a web reader on the checked date."
+    }
+  ],
+  "cambrian": [
+    {
+      "about": "who",
+      "url": "https://www.educationnewscanada.com/article/organization/24240/1225265/Cambrian-College-brings-back-High-School-Stock-Market-Challenge.htm",
+      "quote": "The challenge is open to high school students across northeastern Ontario currently enrolled in a business course."
+    },
+    {
+      "about": "how",
+      "url": "https://www.educationnewscanada.com/article/organization/24240/1225265/Cambrian-College-brings-back-High-School-Stock-Market-Challenge.htm",
+      "quote": "Teachers interested in registering their classes can contact Craig O'Neill"
+    },
+    {
+      "about": "how",
+      "url": "https://www.educationnewscanada.com/article/organization/24240/1225265/Cambrian-College-brings-back-High-School-Stock-Market-Challenge.htm",
+      "quote": "No student names or personal information are required for registration."
+    },
+    {
+      "about": "when",
+      "url": "https://www.educationnewscanada.com/article/organization/24240/1225265/Cambrian-College-brings-back-High-School-Stock-Market-Challenge.htm",
+      "quote": "round two, which runs from November 2 to December 11"
+    },
+    {
+      "about": "cost",
+      "url": "https://www.educationnewscanada.com/article/organization/24240/1225265/Cambrian-College-brings-back-High-School-Stock-Market-Challenge.htm",
+      "quote": "Registration is free, and teachers are encouraged to register early to secure their students' participation."
+    },
+    {
+      "about": "detail",
+      "url": "https://www.educationnewscanada.com/article/organization/24240/1225265/Cambrian-College-brings-back-High-School-Stock-Market-Challenge.htm",
+      "quote": "The competition uses Personal Finance Lab, an online investment simulation platform that allows students to build and manage portfolios using actual market activity."
+    },
+    {
+      "about": "detail",
+      "url": "https://www.educationnewscanada.com/article/organization/24240/1225265/Cambrian-College-brings-back-High-School-Stock-Market-Challenge.htm",
+      "quote": "Participants will also have access to introductory investing lessons and educational resources."
+    },
+    {
+      "about": "detail",
+      "url": "https://www.educationnewscanada.com/article/organization/24240/1225265/Cambrian-College-brings-back-High-School-Stock-Market-Challenge.htm",
+      "quote": "While the money is imaginary, the markets are real"
+    },
+    {
+      "about": "why",
+      "url": "https://www.educationnewscanada.com/article/organization/24240/1225265/Cambrian-College-brings-back-High-School-Stock-Market-Challenge.htm",
+      "quote": "Cambrian's first competition this past spring attracted more than 350 students from across Greater Sudbury."
+    },
+    {
+      "about": "why",
+      "url": "https://www.educationnewscanada.com/article/organization/24240/1225265/Cambrian-College-brings-back-High-School-Stock-Market-Challenge.htm",
+      "quote": "this challenge introduces young people to important concepts like investing, managing risk, and thinking long-term"
     }
   ]
 }

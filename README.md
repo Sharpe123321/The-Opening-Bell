@@ -48,7 +48,7 @@ Team sizes are stored once per listing as `team:{min, max}`. Write `{team}` in a
 1. **Receipts.** Every fact (who can enter, how you get in, when, cost, team size) needs the organizer's exact sentence and its link in `data/receipts.json`. `scripts/check-data.js` refuses a listing that's missing one. If a fact can't be quoted, it isn't published as a fact; it's shown as "not confirmed".
 2. **Descriptions are quoted too.** Each activity page says what it is, what you'll do and why it's worth it, in plain words. Every line lists the organizer quotes it rests on (`about` in `data/listings.js`), and `check-data.js` refuses a line whose quote isn't in `receipts.json`. It also keeps them short: an intro of 45 words or fewer, 2 to 3 lines of 22 words or fewer per list, and 135 words in all.
 3. **Read the right page.** Check the organizer's rules, FAQ or "how to join" page, not just the landing page. Rules documents win over web pages, and conflicts between them are shown, not hidden.
-4. **Re-check sources.** `scripts/verify-sources.js` re-reads every organizer page and fails if a quoted sentence changed or disappeared.
+4. **Re-check sources.** `scripts/verify-sources.js` re-reads every organizer page and fails if a quoted sentence changed or disappeared. A few organizer sites (and PDFs) can't be read by the script. Their quotes are marked `manual`, with the date they were last checked another way, so re-check those by hand.
 5. **Someone who did it.** Before a listing is marked as checked by a student, a student who actually took part reviews the "how you get in" steps.
 
 Run both checks before every push:
