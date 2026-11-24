@@ -190,7 +190,7 @@
   const REVEAL = [".how > .h2", ".how-steps > li", ".disc-head", ".fchips", "#results > .grp", "#results > .cards > li", "#results > .scope", "#results > .empty",
     ".about > section", ".about > .fine", ".lhead", ".lside", ".lbody > :not(.desc)", ".desc > section",
     ".main:not(.explore) > :not(.lpage):not(.cards)", ".main:not(.explore) > .cards > li"].join(",");
-  const SKY_LAG = 0.35; /* the sky holds back this share of the scroll, so it feels far behind the city */
+  const SKY_LAG = 0.5; /* the sky holds back this share of the scroll, so it feels far behind the city */
   let io = null, hero = null, heroH = 0, sky = [], hd = null, ticking = false;
   function motion(mode) { /* "enter": a new page, so what's on screen rises in; "quiet": a repaint, so it just appears */
     if (io) { io.disconnect(); io = null; }
