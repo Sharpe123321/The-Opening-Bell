@@ -876,6 +876,31 @@
       "about": "detail",
       "url": "https://www.jacentralontario.org/company-program/",
       "quote": "this after-school experience will set you up for life"
+    },
+    {
+      "about": "when",
+      "url": "https://jaswo.org/company-program",
+      "quote": "When: 18 weekly evening sessions, starting in October/November"
+    },
+    {
+      "about": "detail",
+      "url": "https://jaswo.org/company-program",
+      "quote": "Where: In-person in London, Kitchener, Hamilton. and St. Thomas. Virtual option also available!"
+    },
+    {
+      "about": "who",
+      "url": "https://jaswo.org/company-program",
+      "quote": "Any student enrolled in high school in the JA South Western Ontario region will be eligible to participate in the program."
+    },
+    {
+      "about": "who",
+      "url": "https://jaswo.org/company-program",
+      "quote": "JA South Western Ontario covers the following areas: Windsor-Essex, Sarnia-Lambton, Chatham-Kent, London-Middlesex, Elgin, Oxford, Huron, Perth, Grey, Bruce, Waterloo Region, Guelph-Wellington, Brant, Haldimand, Norfolk, Hamilton, and Niagara."
+    },
+    {
+      "about": "when",
+      "url": "https://www.jacentralontario.org/company-program/",
+      "quote": "If you would like to be notified for next year's program (2027-2028), please complete the form below."
     }
   ],
   "summerco": [
@@ -1115,6 +1140,26 @@
       "about": "why",
       "url": "https://uwaterloo.ca/school-of-accounting-and-finance/node/203",
       "quote": "The certificate will recognize four levels of achievement"
+    },
+    {
+      "about": "when",
+      "url": "https://uwaterloo.ca/school-of-accounting-and-finance/teachers-and-guidance-counsellors/financial-literacy-competition-flc",
+      "quote": "two times per school year in May and December"
+    },
+    {
+      "about": "why",
+      "url": "https://uwaterloo.ca/school-of-accounting-and-finance/teachers-and-guidance-counsellors/financial-literacy-competition-flc",
+      "quote": "2025 FLC Facts and Figures"
+    },
+    {
+      "about": "why",
+      "url": "https://uwaterloo.ca/school-of-accounting-and-finance/teachers-and-guidance-counsellors/financial-literacy-competition-flc",
+      "quote": "2500+ high school students participated"
+    },
+    {
+      "about": "why",
+      "url": "https://uwaterloo.ca/school-of-accounting-and-finance/teachers-and-guidance-counsellors/financial-literacy-competition-flc",
+      "quote": "120+ schools from across Canada took part"
     }
   ],
   "wsi": [
@@ -1903,6 +1948,71 @@
       "about": "why",
       "url": "https://rotmancommerce.utoronto.ca/future-students/on-campus-events/market-simulation-challenge",
       "quote": "where they will compete for cash prizes."
+    },
+    {
+      "about": "how",
+      "url": "https://apply.adm.utoronto.ca/register/?id=bb3a6211-8f7f-446c-b7c0-6ec4df7013a0",
+      "quote": "Rotman Commerce Virtual Market Simulation Challenge"
+    },
+    {
+      "about": "when",
+      "url": "https://apply.adm.utoronto.ca/register/?id=bb3a6211-8f7f-446c-b7c0-6ec4df7013a0",
+      "quote": "Thursday, December 3, 2026 at 9:30 AM until Thursday, December 3, 2026 at 2:00 PM Eastern Standard Time"
+    },
+    {
+      "about": "how",
+      "url": "https://apply.adm.utoronto.ca/register/?id=bb3a6211-8f7f-446c-b7c0-6ec4df7013a0",
+      "quote": "Participants located within the Greater Toronto Area are encouraged to register for the concurrent in-person event while space is available."
+    },
+    {
+      "about": "how",
+      "url": "https://apply.adm.utoronto.ca/register/?id=bb3a6211-8f7f-446c-b7c0-6ec4df7013a0",
+      "quote": "We ask for a school staff contact for the purposes of maintaining an updated distribution list with schools to ensure our invitations reach you."
+    },
+    {
+      "about": "how",
+      "url": "https://apply.adm.utoronto.ca/register/?id=bb3a6211-8f7f-446c-b7c0-6ec4df7013a0",
+      "quote": "The school staff member you enter is not required to perform any role in this competition."
+    },
+    {
+      "about": "detail",
+      "url": "https://apply.adm.utoronto.ca/register/?id=bb3a6211-8f7f-446c-b7c0-6ec4df7013a0",
+      "quote": "You are encouraged to download and install the RIT Client application in advance of the event."
+    },
+    {
+      "about": "detail",
+      "url": "https://apply.adm.utoronto.ca/register/?id=bb3a6211-8f7f-446c-b7c0-6ec4df7013a0",
+      "quote": "This must be downloaded on a windows-based machine."
+    },
+    {
+      "about": "detail",
+      "url": "https://apply.adm.utoronto.ca/register/?id=bb3a6211-8f7f-446c-b7c0-6ec4df7013a0",
+      "quote": "MAC users can participate by installing a virtual lab on their computer for free."
+    },
+    {
+      "about": "when",
+      "url": "https://rotmancommerce.utoronto.ca/future-students/on-campus-events/market-simulation-challenge",
+      "quote": "10:00 AM Rotman Interative Trader Training Workshop"
+    },
+    {
+      "about": "when",
+      "url": "https://rotmancommerce.utoronto.ca/future-students/on-campus-events/market-simulation-challenge",
+      "quote": "12:30 PM Trading Competition"
+    },
+    {
+      "about": "detail",
+      "url": "https://rotmancommerce.utoronto.ca/future-students/on-campus-events/market-simulation-challenge",
+      "quote": "Leaderboard – November 12, 2026"
+    },
+    {
+      "about": "detail",
+      "url": "https://rotmancommerce.utoronto.ca/future-students/on-campus-events/market-simulation-challenge",
+      "quote": "RIT Video Tutorial"
+    },
+    {
+      "about": "detail",
+      "url": "https://rotmancommerce.utoronto.ca/future-students/on-campus-events/market-simulation-challenge",
+      "quote": "Dress Code: Smart casual"
     }
   ],
   "skillsent": [
@@ -1940,6 +2050,11 @@
       "about": "detail",
       "url": "https://skillsontario.com/resources/https-www-skillsontario-com-skills-ontario-provincial-entrepreneurship-showcase2025na367/",
       "quote": "students at both the in-person and virtual event alike will receive valuable feedback from successful, knowledgeable industry entrepreneurs and mentors while building their professional network"
+    },
+    {
+      "about": "when",
+      "url": "https://skillsontario.com/resources/https-www-skillsontario-com-skills-ontario-provincial-entrepreneurship-showcase2025na367/",
+      "quote": "2026 Provincial Entrepreneurship Showcase"
     }
   ],
   "bslc": [
@@ -2144,6 +2259,11 @@
       "about": "why",
       "url": "https://uwaterloo.ca/engineering-outreach/programs/catalyst/catalyst-summer-program",
       "quote": "high school students develop leadership skills within a community and problem-based context"
+    },
+    {
+      "about": "when",
+      "url": "https://uwaterloo.ca/engineering-outreach/programs/catalyst/catalyst-summer-program",
+      "quote": "Applications open: Mid-December"
     }
   ],
   "hieec": [

@@ -64,9 +64,11 @@
   const officialUrl = o => (o.steps.filter(s => s.href)[0] || {}).href || o.src.url;
   function dayText(s) {
     const d = C.parse(s.by);
-    if (C.isMonth(s.by)) return (s.est ? "~" : "") + MONTH[d.getMonth()] + " " + d.getFullYear();
-    return (s.est ? "around " : WDL[d.getDay()] + ", ") + MONTH[d.getMonth()] + " " + d.getDate();
+    if (C.isMonth(s.by)) return MONTH[d.getMonth()] + " " + d.getFullYear();
+    return WDL[d.getDay()] + ", " + MONTH[d.getMonth()] + " " + d.getDate();
   }
+  // "By Friday, March 12", "Closing date: Friday, March 12", or, when the organizer hasn't posted it, "Date not posted yet"
+  function whenText(s) { return C.isTba(s.by) ? "Date not posted yet" : (s.official ? "Closing date: " : "By ") + dayText(s); }
   function costTag(o) {
     const c = o.costShort.split(" · ")[0];
     if (c === "Not listed") return "Fee not listed";
@@ -78,7 +80,7 @@
     return t.min === 1 ? "Solo or team of up to " + t.max : "Team of " + t.min + "–" + t.max;
   }
 
-  /* ---------- Theme: dark unless the visitor switched to light ---------- */
+  /* ---------- Theme: light unless the visitor switched to dark ---------- */
   function themeButton() {
     const light = document.documentElement.dataset.theme === "light";
     return '<button type="button" class="iconbtn" data-theme-toggle aria-label="' + (light ? "Switch to dark mode" : "Switch to light mode") + '">' + (light ? I.moon : I.sun) + "</button>";
@@ -94,20 +96,39 @@
   }
 
   /* ---------- Status words ---------- */
-  function deadlineEntry(o) { return o.dates.filter(e => e.k === "deadline" && e.d === o.window.to)[0]; }
+  // The dates entry behind the open window: its deadline, or the round itself when the organizer posts no sign-up deadline
+  function deadlineEntry(o) { return o.dates.filter(e => (e.k === "deadline" || o.window.round) && e.d === o.window.to)[0]; }
+  // Only what the organizer has said: a month or day they posted, "soon" in their words, or that nothing is posted yet
+  const nextKnown = o => !!o.next && !o._s.stale;
+  function nextShort(x) {
+    if (x.tba) return "Dates not posted";
+    if (x.soon) return "Opens soon";
+    const d = C.parse(x.d);
+    if (x.round) return (x.what || "Next round") + (C.isMonth(x.d) ? " in " + MONTH[d.getMonth()] : " " + md(d));
+    return "Opens " + C.MON[d.getMonth()];
+  }
   function status(o) {
-    const s = o._s;
-    if (s.key === "open") return { cls: urgency(s.n) || "g", short: s.n === 0 ? "Closes today" : C.plural(s.n, "day") + " left", line: s.n === 0 ? "Open. Closes today." : "Open. Closes in " + C.plural(s.n, "day") + "." };
-    if (s.key === "soon") return { cls: "n", short: "Opens " + C.fmtShort(o.window.from), line: "Not open yet. Opens " + C.fmtLong(o.window.from) + "." };
+    const s = o._s, w = o.window;
+    if (s.key === "open") {
+      if (s.ongoing) return { cls: "g", short: w.tag || "Open now", line: o.boardWhat + ". No closing date is posted." };
+      return { cls: urgency(s.n) || "g", short: s.n === 0 ? (w.round ? "Round today" : "Closes today") : C.plural(s.n, "day") + " left",
+        line: w.round ? (s.n === 0 ? "Open. The round is today." : "Open. The round is in " + C.plural(s.n, "day") + ".") : (s.n === 0 ? "Open. Closes today." : "Open. Closes in " + C.plural(s.n, "day") + ".") };
+    }
+    if (s.key === "soon") return { cls: "n", short: "Opens " + C.fmtShort(w.from), line: "Not open yet. Opens " + C.fmtLong(w.from) + "." };
     if (s.key === "closed") return { cls: "x", short: "Closed this year", line: "Closed for this school year. " + s.text + "." };
-    return { cls: "n", short: o.next.tba ? "Dates not posted" : "Opens " + (o.next.est ? "~" : "") + C.MON[C.parse(o.next.d).getMonth()], line: "Not open yet. " + s.text + "." };
+    return { cls: "n", short: nextShort(o.next), line: "Not open yet. " + s.text + "." };
   }
   function tile(o) {
-    const s = o._s;
-    if (s.key === "open") { const d = C.parse(o.window.to); return '<span class="tile ' + (urgency(s.n) || "g") + '"><small>' + C.MON[d.getMonth()] + "</small><b>" + d.getDate() + "</b></span>"; }
-    if (s.key !== "soon" && o.next.tba) return '<span class="tile ' + (s.key === "closed" ? "x" : "n") + '"><small>Dates</small><b>TBA</b></span>';
-    const d = C.parse(s.key === "soon" ? o.window.from : o.next.d), est = s.key !== "soon" && o.next.est;
-    return '<span class="tile ' + (s.key === "closed" ? "x" : "n") + '"><small>' + (s.key === "closed" ? "Back" : "Opens") + "</small><b>" + (est ? "~" : "") + C.MON[d.getMonth()] + "</b></span>";
+    const s = o._s, x = o.next;
+    if (s.key === "open") {
+      if (s.ongoing) return '<span class="tile g"><small>Open</small><b>Now</b></span>';
+      const d = C.parse(o.window.to); return '<span class="tile ' + (urgency(s.n) || "g") + '"><small>' + C.MON[d.getMonth()] + "</small><b>" + d.getDate() + "</b></span>";
+    }
+    if (s.key === "soon") return '<span class="tile n"><small>Opens</small><b>' + C.MON[C.parse(o.window.from).getMonth()] + "</b></span>";
+    const cls = s.key === "closed" ? "x" : "n";
+    if (!nextKnown(o) || x.tba) return '<span class="tile ' + cls + '"><small>Dates</small><b>TBA</b></span>';
+    if (x.soon) return '<span class="tile ' + cls + '"><small>Opens</small><b>Soon</b></span>';
+    return '<span class="tile ' + cls + '"><small>' + (x.round ? "Next" : s.key === "closed" ? "Back" : "Opens") + "</small><b>" + C.MON[C.parse(x.d).getMonth()] + "</b></span>";
   }
 
   /* ---------- Routing: real paths, so every activity and every message has a shareable link ---------- */
@@ -298,7 +319,9 @@
     return '<li><a class="card' + (o._s.key === "closed" ? " dim" : "") + (ok ? "" : " inel") + '" href="/l/' + o.id + '" data-nav>' + tile(o) +
       '<span class="c-b"><span class="c-t">' + esc(o.name) + (saved ? '<span class="saved" aria-label="Saved">' + I.listOn + "</span>" : "") + "</span>" +
       '<span class="c-w">' + esc(extra || o.what) + "</span>" +
-      '<span class="tags"><span class="tag s ' + st.cls + '">' + esc(st.short) + '</span><span class="tag">' + esc(costTag(o)) + "</span>" + (team ? '<span class="tag">' + esc(team) + "</span>" : "") +
+      '<span class="tags"><span class="tag s ' + st.cls + '">' + esc(st.short) + "</span>" +
+      (o._s.key === "open" && nextKnown(o) ? '<span class="tag">' + esc(nextShort(o.next)) + "</span>" : "") +
+      '<span class="tag">' + esc(costTag(o)) + "</span>" + (team ? '<span class="tag">' + esc(team) + "</span>" : "") +
       (ok ? "" : '<span class="tag">Not for Grade ' + state.grade + "</span>") + "</span></span></a></li>";
   }
   // Search looks at the name, organizer, type and description, so "scholarship" or "investing" finds the right ones.
@@ -364,7 +387,7 @@
   }
   function aboutHtml() {
     return '<div class="about">' +
-      '<section aria-labelledby="checkH"><h2 class="h2" id="checkH">How we check facts</h2><p>Every fact here is quoted from the organizer’s own page. Each activity’s page ends with the exact sentences and where they came from.</p><p>A script re-reads those pages to catch changes. Dates marked ~ are our estimates from past years, and “by” dates on steps are our advice.</p></section>' +
+      '<section aria-labelledby="checkH"><h2 class="h2" id="checkH">How we check facts</h2><p>Every fact here is quoted from the organizer’s own page. Each activity’s page ends with the exact sentences and where they came from.</p><p>A script re-reads those pages to catch changes. Every date is the organizer’s own. When they haven’t posted one, we say so instead of guessing. “By” dates on steps are our advice.</p></section>' +
       '<section aria-labelledby="privH"><h2 class="h2" id="privH">Your privacy</h2><p>No accounts, no email, no tracking cookies. Your grade, your saves and your ticks are kept only in your own browser.</p><p>Messages and calendar files are made on your device. Nothing about you is sent to us.</p></section>' +
       '<p class="fine">Grades mean your grade in the ' + esc(D.SEASON) + " school year. For next year’s rounds, we list the grades that will still be eligible when they open. Always confirm details with the organizer before you apply. Afterbell is independent and isn’t affiliated with any organizer listed. Last checked " + esc(C.fmt(D.CHECKED)) + ".</p></div>";
   }
@@ -376,23 +399,37 @@
       const box = m ? '<button type="button" class="ck" data-done="' + k + '" aria-pressed="' + done + '" aria-label="' + (done ? "Mark not done: " : "Mark done: ") + esc(st.t) + '">' + (done ? I.check : '<span aria-hidden="true">' + (i + 1) + "</span>") + "</button>"
         : '<span class="ckn" aria-hidden="true">' + (i + 1) + "</span>";
       const who = !m && WHO[st.who] ? WHO[st.who] + ". " : "";
-      const when = st.official ? "Closing date: " + dayText(st) : "By " + dayText(st);
+      const when = whenText(st);
       const go = done ? "" : (st.ask && o.asks[st.ask] ? '<a class="btn sm" href="/l/' + o.id + "/ask/" + st.ask + '" data-nav>' + (o.asks[st.ask].to === "friends" ? "Invite your team" : "Write the message for me") + "</a>" : "") +
         (st.href ? '<a class="btn sm sec" href="' + esc(st.href) + '" target="_blank" rel="noopener">Open ' + esc(domain(st.href)) + "</a>" : "");
       return '<li class="' + (done ? "done" : "") + '">' + box + "<div><b>" + esc(st.t) + '</b><span class="by' + (st.official ? " off" : "") + (late ? " late" : "") + '">' + esc(who + when) + (late ? ". Overdue" : "") + "</span>" +
         (st.note ? '<span class="note">' + esc(st.note) + "</span>" : "") + (go ? '<span class="go">' + go + "</span>" : "") + "</div></li>";
     }).join("") + "</ol>";
   }
+  const longDay = s => { const d = C.parse(s); return WD[d.getDay()] + ", " + C.fmtShort(s) + ", " + d.getFullYear(); };
+  // What comes next, in the organizer's terms
+  function nextFact(o) {
+    const s = o._s, x = o.next;
+    if (!nextKnown(o)) return { k: "Next round", v: "Not posted yet", sub: "" };
+    if (x.tba) return { k: "Next round", v: "Dates not posted yet", sub: x.note || "" };
+    if (x.soon) return { k: "Opens", v: "Soon", sub: x.note || "" };
+    if (x.round) return { k: x.what || "Next round", v: C.isMonth(x.d) ? C.fmtLong(x.d) : longDay(x.d), sub: x.note || "" };
+    return { k: s.key === "closed" ? "Next round" : "Opens", v: C.fmtLong(x.d), sub: x.note || "" };
+  }
   function factsHtml(o) {
     const s = o._s;
-    let when;
-    if (s.key === "open") { const d = C.parse(o.window.to), x = deadlineEntry(o); when = { k: "Deadline", v: WD[d.getDay()] + ", " + C.fmtShort(o.window.to) + ", " + d.getFullYear(), sub: (x ? x.t : o.boardWhat) }; }
+    let when, after = null;
+    if (s.key === "open") {
+      if (s.ongoing) when = { k: "Deadline", v: "Not posted", sub: o.boardWhat };
+      else { const x = deadlineEntry(o); when = { k: o.window.round ? "Round" : "Deadline", v: longDay(o.window.to), sub: (x ? x.t : o.boardWhat) }; }
+      if (nextKnown(o)) after = nextFact(o);
+    }
     else if (s.key === "soon") when = { k: "Opens", v: C.fmt(o.window.from), sub: "Closes " + C.fmt(o.window.to) };
-    else if (o.next.tba) when = { k: "Next round", v: "Dates not posted yet", sub: o.next.note || "" };
-    else when = { k: s.key === "closed" ? "Next round" : "Opens", v: (o.next.est ? "~" : "") + C.fmtLong(o.next.d), sub: o.next.note || (o.next.est ? "Our estimate from past years" : "") };
+    else when = nextFact(o);
     const cost = o.costShort.split(" · ");
     const box = (k, v, sub, wide) => '<div' + (wide ? ' class="wide"' : "") + "><dt>" + k + "</dt><dd><b>" + esc(v) + "</b>" + (sub ? "<small>" + esc(sub) + "</small>" : "") + "</dd></div>";
-    return '<dl class="facts">' + box(when.k, when.v, when.sub) + box("Cost", cost[0], cost.slice(1).join(". ")) + box("Who", o.gradeNote) + box("Where", o.where) + box("How you enter", o.entry, "", true) + "</dl>";
+    return '<dl class="facts">' + box(when.k, when.v, when.sub) + (after ? box(after.k, after.v, after.sub) : "") + box("Cost", cost[0], cost.slice(1).join(". ")) + box("Who", o.gradeNote) +
+      box("Where", o.where, "", !!after) + box("How you enter", o.entry, "", true) + "</dl>";
   }
   // Every description line is a sentence, so each ends with a full stop.
   const sentence = t => t + (/[.!?]$/.test(t) ? "" : ".");
@@ -405,7 +442,9 @@
   function listingHtml(o) {
     const st = status(o), pk = picked(o.id), gr = C.gradeRow(o, state.grade, o._s), url = officialUrl(o);
     const can = (gr ? [gr] : []).concat(o.can);
-    const kd = o.dates.map(x => '<li class="' + (C.endOf(x.d) < NOW ? "past" : "") + '"><time>' + esc(x.show || C.fmtShort(x.d, x.est)) + "</time><span>" + esc(x.t) + (x.est ? '<span class="est">estimate</span>' : "") + "</span></li>").join("");
+    // "last" entries are last year's dates, shown with their year so nobody mistakes them for this year's
+    const kd = o.dates.map(x => '<li class="' + (C.endOf(x.d) < NOW ? "past" : "") + '"><time>' + esc(x.show || (x.k === "last" ? C.fmt(x.d) : C.fmtShort(x.d))) + "</time><span>" + esc(x.t) + "</span></li>").join("");
+    const future = o.dates.some(x => x.k !== "last" && C.endOf(x.d) >= NOW);
     return '<div class="lpage"><div class="lhead"><div class="lbar"><button type="button" data-back aria-label="Back">' + I.back + '<span>Back</span></button><button type="button" data-share="' + o.id + '" aria-label="Share ' + esc(o.name) + '">' + I.share + "</button></div>" +
       '<h1 class="ln">' + esc(o.name) + '</h1><p class="lorg">' + esc(D.TYPE_LABEL[o.type]) + " by " + esc(o.org) + "</p>" +
       '<p class="stat ' + st.cls + '">' + esc(st.line) + "</p>" +
@@ -417,7 +456,8 @@
       '<div class="lbody">' + descHtml(o) + '<h2 class="h2">How to apply</h2>' + stepsHtml(o) +
       '<h2 class="h2">Who can apply</h2><ul class="can">' + can.map(c => '<li><span class="m ' + c.k + '" aria-hidden="true">' + MARK[c.k] + "</span><div><b>" + esc(c.t) + "</b>" + (c.s ? "<small>" + esc(c.s) + "</small>" : "") + "</div></li>").join("") + "</ul>" +
       '<h2 class="h2">What it costs</h2><p class="why">' + esc(o.cost) + "</p>" + (o.aid ? '<p class="why sub">' + esc(o.aid) + "</p>" : "") +
-      '<h2 class="h2">Important dates</h2><ol class="kd">' + kd + '</ol><p class="more"><button type="button" class="linkbtn" data-cal="' + o.id + '">Download these dates for your calendar</button></p>' +
+      '<h2 class="h2">Important dates</h2>' + (kd ? '<ol class="kd">' + kd + "</ol>" : "") + (future ? "" : '<p class="why sub">The organizer hasn’t posted the next dates yet.</p>') +
+      (C.calendarSteps(o).length || future ? '<p class="more"><button type="button" class="linkbtn" data-cal="' + o.id + '">Download these dates for your calendar</button></p>' : "") +
       '<h2 class="h2">Where these facts come from</h2><p class="why sub">Each fact on this page comes from the organizer’s own website.</p>' +
       '<details class="rcd"><summary><span class="sh">Show</span><span class="hi">Hide</span> their exact words<span class="rcn"></span></summary>' +
       '<div id="rc-' + o.id + '" class="rc"><p class="fine">Loading the organizer’s own words…</p></div></details>' +
@@ -447,7 +487,7 @@
   function todoHtml(o, s) {
     const k = key(o, s), done = !!state.done[k], late = !done && C.endOf(s.by) < NOW;
     return '<li class="' + (done ? "done" : "") + '"><button type="button" class="ck" data-done="' + k + '" aria-pressed="' + done + '" aria-label="' + (done ? "Mark not done: " : "Mark done: ") + esc(s.t) + '">' + (done ? I.check : "") + "</button>" +
-      "<div><b>" + esc(s.t) + '</b><span class="by' + (late ? " late" : "") + '"><a href="/l/' + o.id + '" data-nav>' + esc(o.short) + "</a>. " + (s.official ? "Closing date: " : "By ") + esc(dayText(s)) + (late ? ". Overdue" : "") + "</span>" +
+      "<div><b>" + esc(s.t) + '</b><span class="by' + (late ? " late" : "") + '"><a href="/l/' + o.id + '" data-nav>' + esc(o.short) + "</a>. " + esc(whenText(s)) + (late ? ". Overdue" : "") + "</span>" +
       (done ? "" : '<span class="go">' + (s.ask && o.asks[s.ask] ? '<a class="btn sm" href="/l/' + o.id + "/ask/" + s.ask + '" data-nav>' + (o.asks[s.ask].to === "friends" ? "Invite your team" : "Write the message for me") + "</a>" : "") +
         (s.href ? '<a class="btn sm sec" href="' + esc(s.href) + '" target="_blank" rel="noopener">Open ' + esc(domain(s.href)) + "</a>" : "") + "</span>") + "</div></li>";
   }
@@ -459,7 +499,7 @@
         (sugg.length ? '<h2 class="h2">Open now' + (state.grade ? " for Grade " + state.grade : "") + '</h2><ul class="cards">' + sugg.map(o => cardHtml(o)).join("") + "</ul>" : "") +
         '<p class="more"><a href="/" data-nav>Explore every activity</a></p>';
     }
-    const cards = picks.map(o => { const s = nextStep(o); return cardHtml(o, s ? "Next: " + s.t.charAt(0).toLowerCase() + s.t.slice(1) + ", " + (s.official ? "closing date " : "by ") + dayText(s) : "Every step is done."); }).join("");
+    const cards = picks.map(o => { const s = nextStep(o); return cardHtml(o, s ? "Next: " + s.t.charAt(0).toLowerCase() + s.t.slice(1) + ", " + whenText(s).replace(":", "").replace(/^./, c => c.toLowerCase()) : "Every step is done."); }).join("");
     const all = [];
     picks.forEach(o => o.steps.forEach(s => { if (mine(s)) all.push({ o, s, d: C.parse(s.by) }); }));
     all.sort((a, b) => a.d - b.d);
@@ -497,8 +537,8 @@
     const items = [];
     picks.forEach(o => o.steps.forEach(s => { if ((mine(s) || s.official) && C.endOf(s.by) >= NOW) items.push({ o, s, d: C.parse(s.by) }); }));
     items.sort((a, b) => a.d - b.d);
-    const coming = items.slice(0, 7).map(x => '<li><a href="/l/' + x.o.id + '" data-nav><span class="dd">' + (C.isMonth(x.s.by) ? (x.s.est ? "~" : "") + C.MON[x.d.getMonth()] : x.d.getDate()) + "<small>" +
-      (C.isMonth(x.s.by) ? x.d.getFullYear() : WD[x.d.getDay()] + " " + C.MON[x.d.getMonth()]) + '</small></span><span class="tx">' + esc(x.s.t) + "<small>" + esc(x.o.name) + (x.s.official ? ", closing date" : "") + "</small></span></a></li>").join("");
+    const coming = items.slice(0, 7).map(x => '<li><a href="/l/' + x.o.id + '" data-nav><span class="dd">' + (C.isTba(x.s.by) ? "TBA<small>Not posted</small>" : (C.isMonth(x.s.by) ? C.MON[x.d.getMonth()] : x.d.getDate()) + "<small>" +
+      (C.isMonth(x.s.by) ? x.d.getFullYear() : WD[x.d.getDay()] + " " + C.MON[x.d.getMonth()]) + "</small>") + '</span><span class="tx">' + esc(x.s.t) + "<small>" + esc(x.o.name) + (x.s.official ? ", closing date" : "") + "</small></span></a></li>").join("");
     const help = [];
     picks.forEach(o => o.parent.forEach(h => help.push('<li><b>' + esc(h.t) + "</b><small>" + esc(h.s) + ' <a class="u" href="/l/' + o.id + '" data-nav>' + esc(o.short) + ", from " + esc(o.src.name) + "</a></small></li>")));
     const costs = picks.map(o => '<div class="wide"><dt>' + esc(o.name) + "</dt><dd><b>" + esc(o.costShort.split(" · ").join(". ")) + "</b>" + (o.aid ? "<small>" + esc(o.aid) + "</small>" : "") + "</dd></div>").join("");
@@ -516,7 +556,7 @@
     const st = o.steps.filter(s => s.ask === a.id)[0], done = !!state.done[key(o, st)];
     const third = a.to === "friends" ? '<a class="btn sec" data-asksms href="#">Text</a>' : '<a class="btn sec" data-askmail href="#">Email</a>';
     return '<div class="grab" aria-hidden="true"></div><div class="sh-head"><div class="sh-top"><p class="sh-k">' + esc(o.name) + '</p><button type="button" class="xb" data-close aria-label="Close">' + I.close + "</button></div>" +
-      '<h2 id="shTitle" tabindex="-1">' + esc(a.title) + '</h2><p class="sh-sub">To: ' + esc(ASK_TO[a.to] || a.to) + ". " + (st.official ? "Closing date: " : "By ") + esc(dayText(st)) + ".</p></div>" +
+      '<h2 id="shTitle" tabindex="-1">' + esc(a.title) + '</h2><p class="sh-sub">To: ' + esc(ASK_TO[a.to] || a.to) + ". " + esc(whenText(st)) + ".</p></div>" +
       '<div class="sh-body"><label class="lab" for="askMsg">Your message. Fill in the parts in [square brackets], and change anything you like.</label>' +
       '<textarea id="askMsg" class="msg" rows="12" spellcheck="true">' + esc(a.msg) + "</textarea>" +
       '<p class="hint">' + esc(a.hint) + "</p>" +

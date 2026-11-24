@@ -26,7 +26,7 @@ function norm(s) {
   return s.toLowerCase()
     .replace(/[‘’‛′]/g, "'").replace(/[“”″]/g, '"')
     .replace(/[‐-―−]/g, "-").replace(/ /g, " ")
-    .replace(/\s+/g, " ").trim();
+    .replace(/\s+/g, " ").replace(/ ([:;,.!?])/g, "$1").trim();
 }
 
 // Some sites occasionally serve a bot-check or partial page, so a quote that

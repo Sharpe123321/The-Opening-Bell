@@ -1,4 +1,4 @@
-/* Afterbell. Dark (evening) by default, light (daytime) when html[data-theme="light"]. One typeface: Instrument Sans.
+/* Afterbell. Light (daytime) by default via html[data-theme="light"], dark (evening) when the visitor switches. One typeface: Instrument Sans.
    Colours: navy and lake blues with a fresh teal. Each status colour means one thing: teal = open,
    amber = 30 days or less, red = 7 days or less or overdue, grey = not open yet or closed. */
 :root{--bg:#0A1324;--surface:#111C33;--line:#1F2C47;--text:#EAF0F8;--sub:#95A4BA;--fill:#16233D;--fill2:#1F2E4C;
@@ -200,7 +200,6 @@ a.card:hover{box-shadow:inset 0 0 0 1.5px var(--primary)}
 .kd li:last-child{border-bottom:0}
 .kd time{font-weight:600}
 .kd li.past{color:var(--sub)}
-.kd .est{margin-left:8px;color:var(--sub);font-size:13.5px}
 .rcd{margin-top:4px}
 .rcd summary{display:inline-block;padding:8px 0;cursor:pointer;color:var(--ink);font-weight:600;list-style:none}
 .rcd summary::-webkit-details-marker{display:none}

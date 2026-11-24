@@ -16,7 +16,7 @@ Business competitions and programs for Ontario high school students, with every 
 
 ## Design rules
 
-The first screen is a Toronto skyline drawn in code (`lib/skyline.js`): daytime in light mode, evening in dark mode. Below it: how Afterbell works, then Discover (every activity as a card, with search and filters). Saved shows the next thing to do for each saved activity. Each activity has its own page at `/l/<id>`, with a side panel of key facts on a computer. Dark mode is the default and the switch at the top changes it.
+The first screen is a Toronto skyline drawn in code (`lib/skyline.js`): daytime in light mode, evening in dark mode. Below it: how Afterbell works, then Discover (every activity as a card, with search and filters). Saved shows the next thing to do for each saved activity. Each activity has its own page at `/l/<id>`, with a side panel of key facts on a computer. Light mode is the default and the switch at the top changes it.
 
 - One typeface, Instrument Sans, in sentence case. No small all-caps labels.
 - Colours are navy and lake blues with a fresh teal. Each status colour means one thing: teal is open, amber is 30 days or less, red is 7 days or less or overdue, grey is not open yet or closed.
@@ -48,8 +48,9 @@ Team sizes are stored once per listing as `team:{min, max}`. Write `{team}` in a
 1. **Receipts.** Every fact (who can enter, how you get in, when, cost, team size) needs the organizer's exact sentence and its link in `data/receipts.json`. `scripts/check-data.js` refuses a listing that's missing one. If a fact can't be quoted, it isn't published as a fact; it's shown as "not confirmed".
 2. **Descriptions are quoted too.** Each activity page says what it is, what you'll do and why it's worth it, in plain words. Every line lists the organizer quotes it rests on (`about` in `data/listings.js`), and `check-data.js` refuses a line whose quote isn't in `receipts.json`. It also keeps them short: an intro of 45 words or fewer, 2 to 3 lines of 22 words or fewer per list, and 135 words in all.
 3. **Read the right page.** Check the organizer's rules, FAQ or "how to join" page, not just the landing page. Rules documents win over web pages, and conflicts between them are shown, not hidden.
-4. **Re-check sources.** `scripts/verify-sources.js` re-reads every organizer page and fails if a quoted sentence changed or disappeared. A few organizer sites (and PDFs) can't be read by the script. Their quotes are marked `manual`, with the date they were last checked another way, so re-check those by hand.
-5. **Someone who did it.** Before a listing is marked as checked by a student, a student who actually took part reviews the "how you get in" steps.
+4. **No estimates.** Every deadline, opening and event date on the site is one the organizer posted ("by" dates on steps are our advice, and the site says so). If they haven't posted the next one, the page says so ("Opens soon" in their words, "Dates not posted", or a step marked "Date not posted yet"), and last year's dates appear only as last year's, with their year. `check-data.js` refuses estimated dates.
+5. **Re-check sources.** `scripts/verify-sources.js` re-reads every organizer page and fails if a quoted sentence changed or disappeared. A few organizer sites (and PDFs) can't be read by the script. Their quotes are marked `manual`, with the date they were last checked another way, so re-check those by hand.
+6. **Someone who did it.** Before a listing is marked as checked by a student, a student who actually took part reviews the "how you get in" steps.
 
 Run both checks before every push:
 

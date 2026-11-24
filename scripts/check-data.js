@@ -8,7 +8,8 @@ const CORE = require("../lib/core.js");
 const RECEIPTS = JSON.parse(fs.readFileSync(path.join(__dirname, "..", "data", "receipts.json"), "utf8"));
 
 const TYPES = new Set(DATA.TYPES.map(t => t[0]));
-const KINDS = new Set(["deadline", "opens", "event", "result"]);
+// "last" = last year's date, shown with its year when this year's isn't posted. Never projected forward.
+const KINDS = new Set(["deadline", "opens", "event", "result", "last"]);
 const WHO = new Set(["you", "teacher", "advisor", "parent", "friends", "school", "org"]);
 const ASK_TO = new Set(["teacher", "parent", "friends", "counsellor"]);
 const CAN_K = new Set(["ok", "warn", "no"]);
@@ -17,9 +18,10 @@ const ABOUT = new Set(["who", "how", "when", "cost", "team", "why", "detail"]);
 const errors = [];
 const err = (o, msg) => errors.push(`${o.id || "?"}: ${msg}`);
 const isDate = s => /^\d{4}-\d{2}(-\d{2})?$/.test(s) && !isNaN(new Date(s.length === 7 ? s + "-01" : s));
-const day = s => new Date(s.length === 7 ? s + "-15" : s);
+// "tba" = a step whose date the organizer hasn't posted. It sorts last.
+const day = s => (s === "tba" ? new Date(8.64e15) : new Date(s.length === 7 ? s + "-15" : s));
 // Same normalizing as verify-sources.js, so a quote matches whatever quote marks or dashes it uses.
-const norm = s => String(s).toLowerCase().replace(/[‘’‛′]/g, "'").replace(/[“”″]/g, '"').replace(/[‐-―−]/g, "-").replace(/\s+/g, " ").trim();
+const norm = s => String(s).toLowerCase().replace(/[‘’‛′]/g, "'").replace(/[“”″]/g, '"').replace(/[‐-―−]/g, "-").replace(/\s+/g, " ").replace(/ ([:;,.!?])/g, "$1").trim();
 const words = s => String(s || "").split(/\s+/).filter(Boolean).length;
 // Descriptions stay short so students actually read them.
 const ABOUT_LIMIT = { is: 45, line: 22, total: 135 };
@@ -62,6 +64,10 @@ for (const o of DATA.LISTINGS) {
   for (let i = 1; i < (o.dates || []).length; i++) {
     if (day(o.dates[i].d) < day(o.dates[i - 1].d)) err(o, `dates out of order at ${o.dates[i].d}`);
   }
+  for (const d of o.dates || []) if (d.k === "last" && !(day(d.d) < day(DATA.CHECKED))) err(o, `"last" date ${d.d} isn't before the checked date`);
+
+  // No estimates: say what the organizer says (tba, soon, round), and show last year's dates as last year's
+  for (const x of [o.next, ...(o.steps || []), ...(o.dates || [])]) if (x && x.est) err(o, `estimated date (est) at ${x.d || x.by}. Use what the organizer posted, or tba/soon, and put last year's date in a note or a "last" date`);
   const deadlines = new Set((o.dates || []).filter(d => d.k === "deadline").map(d => d.d));
 
   // Steps
@@ -71,15 +77,18 @@ for (const o of DATA.LISTINGS) {
   for (const s of steps) {
     if (!s.id || stepIds.has(s.id)) err(o, `step id missing or duplicate: ${s.id}`);
     stepIds.add(s.id);
-    if (!isDate(s.by)) err(o, `bad step date ${s.by}`);
+    if (!isDate(s.by) && s.by !== "tba") err(o, `bad step date ${s.by}`);
+    if (s.by === "tba" && s.official) err(o, `step ${s.id}: an official step needs the organizer's date, not tba`);
     if (!WHO.has(s.who)) err(o, `step ${s.id}: unknown who "${s.who}"`);
     if (s.ask && !(o.asks || {})[s.ask]) err(o, `step ${s.id}: ask "${s.ask}" doesn't exist`);
     if (s.href && !/^https:\/\//.test(s.href)) err(o, `step ${s.id}: link must be https`);
     if (s.official && !deadlines.has(s.by)) err(o, `step ${s.id} is official but ${s.by} isn't a listed deadline`);
     if (/official deadline/i.test(s.t)) err(o, `step ${s.id}: use official:true instead of writing "official deadline"`);
   }
-  for (let i = 1; i < steps.length; i++) {
-    if (day(steps[i].by) < day(steps[i - 1].by)) err(o, `steps out of order at ${steps[i].by}`);
+  // Dated steps stay in date order. A tba step can sit where it belongs in the sequence.
+  const dated = steps.filter(s => s.by !== "tba");
+  for (let i = 1; i < dated.length; i++) {
+    if (day(dated[i].by) < day(dated[i - 1].by)) err(o, `steps out of order at ${dated[i].by}`);
   }
 
   // Asks
@@ -93,14 +102,23 @@ for (const o of DATA.LISTINGS) {
   }
 
   // Window and status
-  if (o.window) {
+  if (o.window && o.window.ongoing) {
+    // Open now with no closing date posted
+    if (o.window.to) err(o, "window.ongoing can't have a closing date (to)");
+    if (!o.boardWhat) err(o, "open listings need boardWhat (where or what is open)");
+  } else if (o.window) {
     if (!isDate(o.window.to)) err(o, "window.to invalid");
-    if (!deadlines.has(o.window.to)) err(o, "window.to must match a deadline in dates");
+    const events = new Set((o.dates || []).filter(d => d.k === "event").map(d => d.d));
+    if (!deadlines.has(o.window.to) && !(o.window.round && events.has(o.window.to))) err(o, "window.to must match a deadline in dates (or, with round:true, the round's event date)");
     if (o.window.from && day(o.window.from) > day(o.window.to)) err(o, "window.from is after window.to");
     if (!o.boardWhat) err(o, "open listings need boardWhat (what the deadline is)");
   }
   if (!o.window && !o.next) err(o, "needs window or next");
-  if (o.next && !isDate(o.next.d)) err(o, "next.d invalid");
+  if (o.next) {
+    if (o.next.soon ? (o.next.d && !isDate(o.next.d)) : !isDate(o.next.d)) err(o, "next.d invalid");
+    if (o.next.round && (o.next.tba || o.next.soon)) err(o, "next.round needs the organizer's date, so it can't be tba or soon");
+    if (!o.next.label) err(o, "next needs a label");
+  }
 
   // Can I do this?
   if (!Array.isArray(o.can) || o.can.length < 1 || o.can.length > 4) err(o, "can needs 1–4 rows");

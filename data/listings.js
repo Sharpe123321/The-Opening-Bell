@@ -11,8 +11,13 @@
  * - about: the description on the activity's page. is = what it is (one short paragraph),
  *   do = what you'll do, why = why it's worth it (2–3 short lines each). Plain words, no hype.
  *   q lists the organizer's exact words behind each line; every q must be in receipts.json.
- * - next: when the next round opens. est:true marks our estimate. tba:true means the organizer hasn't
- *   posted dates at all (the page says "Dates not posted"; d is only used for sorting). note explains the date.
+ * - No estimates. Every deadline, opening and event date is one the organizer posted. When they haven't posted it,
+ *   say so: next.tba:true ("Dates not posted"; d only sorts it), next.soon:true (the organizer's own "soon"), or a
+ *   step with by:"tba" ("Date not posted yet"). Last year's dates go in a note, or in dates with k:"last" (shown with their year).
+ * - window: {from, to} is open until "to". round:true means "to" is the round itself, because no sign-up deadline is posted.
+ *   ongoing:true means open now with no closing date (tag is the card's short label, like "Open in SW Ontario").
+ * - next: what comes after. round:true means d is the next round itself (what names it, like "Conference").
+ *   closed:false marks a second round in the same school year. note explains the date.
  *
  * Loads in the browser (window.OB_DATA) and in Node (require), so the page, the checks and the
  * calendar feed all read the same data.
@@ -146,14 +151,17 @@
         src: { url: "https://diamondchallenge.org/competition/", name: "diamondchallenge.org", kind: "organizer" }
       },
       {
-        id: "deca", tk: "DECA", short: "DECA", name: "DECA Ontario", org: "Ontario DECA", type: "deca", what: "Business case and test competitions through your school’s DECA chapter",
-        grades: [9, 10, 11], gradeNote: "For next season (2027–28). Current members: your chapter advisor handles this season.",
+        id: "deca", tk: "DECA", short: "DECA", name: "DECA Ontario", org: "Ontario DECA", type: "deca",
+        what: "Business case and test competitions through your school’s DECA chapter",
+        grades: [9, 10, 11],
+        gradeNote: "For next season (2027–28). Current members: your chapter advisor handles this season.",
         free: false,
         cost: "$35 USD membership and regionals fee, paid to your chapter advisor. Provincials qualifiers also pay for a required hotel stay.",
         costShort: "$35 USD membership, plus a hotel stay for Provincials",
         where: "Regionals across Ontario (one is virtual), then Provincials in Toronto",
         entry: "Join your school's DECA chapter. Your chapter advisor approves you and assigns your event.",
-        next: { d: "2027-09", label: "Join your school's chapter in September 2027", closed: true, est: true }, statusLabel: "Closed to new members",
+        next: { d: "2027-09", tba: true, closed: true, label: "2027–28 dates aren't posted yet", note: "This season, membership locked October 15." },
+        statusLabel: "Closed to new members",
         can: [
           { k: "no", t: "Not this season", s: "Membership and events locked on October 15, and regionals run in November." },
           { k: "warn", t: "Only through your school's chapter", s: "Your chapter advisor approves you and decides which of your top 3 events you get." },
@@ -161,17 +169,13 @@
         ],
         steps: [
           { id: "chapter", by: "2027-01-29", t: "Ask a business teacher if your school has a DECA chapter", who: "teacher", ask: "chapter" },
-          { id: "register-chapter", by: "2027-09", t: "A teacher registers the chapter with Ontario DECA (every year)", who: "teacher", est: true },
-          { id: "join", by: "2027-09-24", t: "Register and list your top 3 events", who: "you", est: true },
-          { id: "assigned", by: "2027-10-15", t: "Your advisor approves you and assigns one event", who: "advisor", est: true },
-          { id: "regionals", by: "2027-11", t: "Regionals: an online test and a case presentation", who: "org", est: true }
+          { id: "register-chapter", by: "tba", t: "A teacher registers the chapter with Ontario DECA (every year)", who: "teacher" },
+          { id: "join", by: "tba", t: "Register and list your top 3 events", who: "you", note: "This season, membership locked October 15." },
+          { id: "assigned", by: "tba", t: "Your advisor approves you and assigns one event", who: "advisor" },
+          { id: "regionals", by: "tba", t: "Regionals: an online test and a case presentation", who: "org", note: "This season's regionals ran in November." }
         ],
         asks: {
-          chapter: {
-            to: "teacher", title: "Ask about a DECA chapter", subject: "DECA at our school",
-            hint: "If your school has no chapter, a teacher has to register one with Ontario DECA before students can join.",
-            msg: "Hi [Mr./Ms. ______],\n\nDoes our school have a DECA chapter? I'd like to join next year. If we don't have one, would you consider starting one? A teacher registers the chapter with Ontario DECA each year.\n\nThank you,\n[Your name]\n\nAbout DECA: {link}"
-          }
+          chapter: { to: "teacher", title: "Ask about a DECA chapter", subject: "DECA at our school", hint: "If your school has no chapter, a teacher has to register one with Ontario DECA before students can join.", msg: "Hi [Mr./Ms. ______],\n\nDoes our school have a DECA chapter? I'd like to join next year. If we don't have one, would you consider starting one? A teacher registers the chapter with Ontario DECA each year.\n\nThank you,\n[Your name]\n\nAbout DECA: {link}" }
         },
         dates: [
           { d: "2026-10-15", k: "deadline", t: "2026–27 membership and event assignments locked" },
@@ -180,8 +184,7 @@
           { d: "2026-12-07", k: "event", t: "Provincials registration opens for qualifiers' chapters" },
           { d: "2026-12-18", k: "deadline", t: "Provincials payment due (handled by advisors)" },
           { d: "2027-01-07", k: "deadline", t: "Written papers due (written-event qualifiers only)" },
-          { d: "2027-02-04", k: "event", t: "Provincials in Toronto, Feb 4–6" },
-          { d: "2027-10", k: "deadline", t: "2027–28 membership locks, based on 2026 (October 15)", est: true }
+          { d: "2027-02-04", k: "event", t: "Provincials in Toronto, Feb 4–6" }
         ],
         about: {
           is: { t: "You compete in business events through your school’s DECA chapter, which a teacher advisor leads. Events cover areas like marketing, finance, law and entrepreneurship.", q: ["Find a teacher advisor to lead your chapter", "You’ll create business presentations about marketing, finance, law and entrepreneurship."] },
@@ -253,12 +256,17 @@
         src: { url: "https://blueoceancompetition.org/compete/", name: "blueoceancompetition.org", kind: "organizer" }
       },
       {
-        id: "euclid", tk: "EUCL", short: "Euclid", name: "Euclid Mathematics Contest", org: "CEMC, University of Waterloo", type: "math", what: "A math contest written at your school",
-        grades: [9, 10, 11, 12], gradeNote: "Written for students in their final year, but younger students are welcome",
-        free: false, cost: "$18 per student", costShort: "$18 per student",
+        id: "euclid", tk: "EUCL", short: "Euclid", name: "Euclid Mathematics Contest – Waterloo", org: "CEMC, University of Waterloo", type: "math",
+        what: "A math contest written at your school",
+        grades: [9, 10, 11, 12],
+        gradeNote: "Written for students in their final year, but younger students are welcome",
+        free: false,
+        cost: "$18 per student",
+        costShort: "$18 per student",
         where: "Your school, or another local school that lets you join",
         entry: "Your school orders the contest for you. Students can't register on their own.",
-        window: { to: "2027-03-11" }, boardWhat: "School sign-up",
+        window: { to: "2027-03-11" },
+        boardWhat: "School sign-up",
         can: [
           { k: "warn", t: "Your school has to register you", s: "Students can't sign up on their own. If your school doesn't take part, another local school can host you." },
           { k: "warn", t: "New schools need time", s: "A school's first CEMC account can take up to three weeks to approve." },
@@ -271,11 +279,7 @@
           { id: "write", by: "2027-04-06", t: "Write the contest at school", who: "you" }
         ],
         asks: {
-          register: {
-            to: "teacher", title: "Ask to write the Euclid", subject: "Writing the Euclid Mathematics Contest",
-            hint: "Ask your math teacher or head of math. If your school has never ordered CEMC contests, setting up an account can take up to three weeks.",
-            msg: "Hi [Mr./Ms. ______],\n\nI'd like to write the Euclid Mathematics Contest this year. Could you register me? Schools have to order it by {deadline}.\n\nThank you,\n[Your name]\n\nDetails: {link}"
-          }
+          register: { to: "teacher", title: "Ask to write the Euclid", subject: "Writing the Euclid Mathematics Contest", hint: "Ask your math teacher or head of math. If your school has never ordered CEMC contests, setting up an account can take up to three weeks.", msg: "Hi [Mr./Ms. ______],\n\nI'd like to write the Euclid Mathematics Contest this year. Could you register me? Schools have to order it by {deadline}.\n\nThank you,\n[Your name]\n\nDetails: {link}" }
         },
         dates: [
           { d: "2027-03-11", k: "deadline", t: "Ordering deadline for schools" },
@@ -299,24 +303,27 @@
         src: { url: "https://cemc.uwaterloo.ca/contests/how-contests-work", name: "cemc.uwaterloo.ca", kind: "organizer" }
       },
       {
-        id: "ihscc", tk: "IVEY", short: "Ivey Case", name: "Ivey High School Case Competition", org: "Ivey Business School, Western University", type: "case", what: "A one-day business case competition in London, Ontario, and other cities",
-        grades: [10, 11, 12], gradeNote: "High school students in Grades 10 to 12. No experience required.",
-        free: false, cost: "2027 fee not posted yet", costShort: "2027 fee not posted yet",
+        id: "ihscc", tk: "IVEY", short: "Ivey Case", name: "Ivey High School Case Competition", org: "Ivey Business School, Western University", type: "case",
+        what: "A one-day business case competition in London, Ontario, and other cities",
+        grades: [10, 11, 12],
+        gradeNote: "High school students in Grades 10 to 12. No experience required.",
+        free: false,
+        cost: "2027 fee not posted yet",
+        costShort: "2027 fee not posted yet",
         where: "London, ON (May 1). Also Montreal, Calgary and Vancouver.",
         entry: "Apply on your own. Ivey places you on a team with students from other schools.",
-        next: { d: "2026-12", label: "Applications open soon", est: true },
+        next: { soon: true, label: "Ivey says 2027 applications open soon", note: "Ivey hasn't posted a date yet." },
         can: [
           { k: "ok", t: "No team needed", s: "You apply on your own and work with students from other schools" },
-          { k: "warn", t: "Applications aren't open yet", s: "Ivey's page has a sign-up to hear first" }
+          { k: "warn", t: "Applications aren't open yet", s: "Ivey says they open soon. Its page has a sign-up to hear first." }
         ],
         steps: [
           { id: "alert", by: "2026-11-30", t: "Sign up on Ivey's page to hear when applications open", who: "you", href: "https://www.ivey.uwo.ca/high-school-case-competitions/" },
-          { id: "apply", by: "2026-12", t: "Apply as soon as applications open", who: "you", est: true },
-          { id: "practise", by: "2027-03-31", t: "Practise one full case in three hours", who: "you", est: true, note: "A good answer has one recommendation, three reasons, a plan and the main risks." }
+          { id: "apply", by: "tba", t: "Apply as soon as applications open", who: "you", note: "Ivey says applications open soon. You apply on your own." },
+          { id: "practise", by: "2027-04-23", t: "Practise a full case: read it, decide, and present your answer", who: "you", note: "A good answer has one recommendation, three reasons, a plan and the main risks." }
         ],
         asks: {},
         dates: [
-          { d: "2026-12", k: "opens", t: "Applications expected to open", est: true },
           { d: "2027-04-10", k: "event", t: "Montreal, Selwyn House School" },
           { d: "2027-04-24", k: "event", t: "Calgary and Vancouver" },
           { d: "2027-05-01", k: "event", t: "London, Ontario, at Ivey Business School" }
@@ -339,9 +346,14 @@
         src: { url: "https://www.ivey.uwo.ca/high-school-case-competitions/", name: "ivey.uwo.ca", kind: "organizer" }
       },
       {
-        id: "boardroom", tk: "BRDM", short: "Boardroom", name: "The Boardroom", org: "Rotman Commerce, University of Toronto", type: "case", what: "An online case round in spring, then in-person rounds at U of T",
-        grades: [9, 10, 11], lastGrade: 11, gradeNote: "Current Grade 9–11 students who are Canadian citizens or permanent residents",
-        free: false, cost: "Not listed", costShort: "Not listed",
+        id: "boardroom", tk: "BRDM", short: "Rotman Boardroom", name: "The Boardroom – Rotman", org: "Rotman Commerce, University of Toronto", type: "case",
+        what: "An online case round in spring, then in-person rounds at U of T",
+        grades: [9, 10, 11],
+        lastGrade: 11,
+        gradeNote: "Current Grade 9–11 students who are Canadian citizens or permanent residents",
+        free: false,
+        cost: "Not listed",
+        costShort: "Not listed",
         where: "Online, then University of Toronto (virtual for teams outside the GTA)",
         team: { min: 3, max: 4, extra: "from the same or different schools, or register alone as a free agent" },
         next: { d: "2027-04", label: "Registration opens in April 2027" },
@@ -352,24 +364,18 @@
         ],
         steps: [
           { id: "outreach", by: "2026-12-04", t: "Fill in Rotman's Junior Outreach form to hear when registration opens", who: "you", href: "https://rotmancommerce.utoronto.ca/future-students/?p=2006" },
-          { id: "team", by: "2027-03-31", t: "Form your team, or plan to go as a free agent", who: "friends", ask: "team", est: true },
-          { id: "register", by: "2027-04-27", t: "Every member registers with the same team name", who: "you", est: true },
-          { id: "case", by: "2027-06-01", t: "Write your Round 1 case proposal (about 30 days)", who: "you", est: true }
+          { id: "team", by: "2027-03-31", t: "Form your team, or plan to go as a free agent", who: "friends", ask: "team" },
+          { id: "register", by: "tba", t: "Every member registers with the same team name", who: "you", note: "Registration opens in April 2027. Last year, it closed April 27." },
+          { id: "case", by: "tba", t: "Write your Round 1 case proposal (teams get about 30 days)", who: "you", note: "Last year, the case came out May 1 and proposals were due June 1." }
         ],
         asks: {
-          team: {
-            to: "friends", title: "Invite your team",
-            hint: "Teammates can be from other schools.",
-            msg: "Want to do The Boardroom case competition from Rotman Commerce with me? Teams are {team}, and registration opens in {opens}. Each person on the winning team gets a $2,500 Rotman Commerce scholarship if they go to Rotman.\n\nDetails: {link}"
-          }
+          team: { to: "friends", title: "Invite your team", hint: "Teammates can be from other schools.", msg: "Want to do The Boardroom case competition from Rotman Commerce with me? Teams are {team}, and registration opens in {opens}. Each person on the winning team gets a $2,500 Rotman Commerce scholarship if they go to Rotman.\n\nDetails: {link}" }
         },
         dates: [
-          { d: "2027-04", k: "opens", t: "Registration opens" },
-          { d: "2027-04-27", k: "deadline", t: "Registration closes, based on 2026", est: true },
-          { d: "2027-05-01", k: "event", t: "Case released, based on 2026", est: true },
-          { d: "2027-06-01", k: "deadline", t: "Round 1 proposal due, based on 2026", est: true },
-          { d: "2027-06-19", k: "result", t: "Top 12 teams announced, based on 2026", est: true },
-          { d: "2027-09", show: "Sep 2027", k: "event", t: "Round 2 and finals at U of T, based on 2026 (Sep 19)", est: true }
+          { d: "2026-04-27", k: "last", t: "Last year: Round 1 registration closed" },
+          { d: "2026-06-01", k: "last", t: "Last year: Round 1 proposals were due" },
+          { d: "2026-06-19", k: "last", t: "Last year: Round 2 teams were announced" },
+          { d: "2027-04", k: "opens", t: "Registration opens" }
         ],
         about: {
           is: { t: "Your team solves a business case about the issues of tomorrow, then competes through several rounds. The first round is online.", q: ["The Boardroom is a team-based, multi-round case competition for current high school students organized by Rotman Commerce", "while solving a business case focused on the issues of tomorrow", "The first round of The Boardroom is to be completed online."] },
@@ -389,38 +395,34 @@
         src: { url: "https://rotmancommerce.utoronto.ca/future-students/?p=2006", name: "rotmancommerce.utoronto.ca", kind: "organizer" }
       },
       {
-        id: "wharton", tk: "WHRT", short: "Wharton", name: "Wharton Global High School Investment Competition", org: "Wharton Global Youth Program, University of Pennsylvania", type: "invest", what: "An online investing simulation with a team from your school",
-        grades: [9, 10, 11], gradeNote: "This year's Grade 9–11 students can enter next season (2027–28)",
-        free: true, cost: "Free. Finalists pay their own travel, or join the finale by video.", costShort: "Free",
+        id: "wharton", tk: "WHRT", short: "Wharton", name: "Wharton Global High School Investment Competition", org: "Wharton Global Youth Program, University of Pennsylvania", type: "invest",
+        what: "An online investing simulation with a team from your school",
+        grades: [9, 10, 11],
+        gradeNote: "This year's Grade 9–11 students can enter next season (2027–28)",
+        free: true,
+        cost: "Free. Finalists pay their own travel, or join the finale by video.",
+        costShort: "Free",
         where: "Open worldwide",
         team: { min: 4, max: 6, extra: "all from the same school, registered by a teacher advisor" },
-        next: { d: "2027-08", label: "Next round expected ~Aug 2027", closed: true, est: true },
+        next: { d: "2027-08", tba: true, closed: true, label: "2027–28 dates aren't posted yet. Last year, registration ran August 10 to September 11", note: "Last year, advisors registered teams from August 10 to September 11." },
         can: [
           { k: "warn", t: "A teacher has to be your advisor", s: "The advisor registers the team. Students can't register themselves." },
           { k: "warn", t: "Everyone from the same school", s: "Teams are {team}. Wharton says there are no exceptions." },
           { k: "ok", t: "Free", s: "Finalists pay their own travel, or join the finale by video" }
         ],
         steps: [
-          { id: "advisor", by: "2027-05-28", t: "Ask a teacher to be your advisor before school ends", who: "teacher", ask: "advisor", est: true },
-          { id: "team", by: "2027-06-18", t: "Form your team", who: "friends", ask: "team", est: true },
-          { id: "register", by: "2027-08-10", t: "Your advisor registers the team when registration opens", who: "advisor", est: true }
+          { id: "advisor", by: "2027-05-28", t: "Ask a teacher to be your advisor before school ends", who: "teacher", ask: "advisor" },
+          { id: "team", by: "2027-06-18", t: "Form your team", who: "friends", ask: "team" },
+          { id: "register", by: "tba", t: "Your advisor registers the team when registration opens", who: "advisor", note: "Last year, registration ran August 10 to September 11." }
         ],
         asks: {
-          advisor: {
-            to: "teacher", title: "Ask a teacher to be your advisor", subject: "Advisor for the Wharton investment competition",
-            hint: "Advisors must teach at your school, and they can't be paid.",
-            msg: "Hi [Mr./Ms. ______],\n\nWould you be the teacher advisor for a team from our school in the Wharton Global High School Investment Competition next year? It's free. Teams are {team}, and the advisor registers the team. Based on this year, registration runs from mid-August to mid-September.\n\nThank you,\n[Your name]\n\nDetails: {link}"
-          },
-          team: {
-            to: "friends", title: "Invite your team",
-            hint: "Everyone has to be from your school.",
-            msg: "Want to form a team for the Wharton Global High School Investment Competition next year? It's free. Teams are {team}, all from our school, with a teacher advisor.\n\nDetails: {link}"
-          }
+          advisor: { to: "teacher", title: "Ask a teacher to be your advisor", subject: "Advisor for the Wharton investment competition", hint: "Advisors must teach at your school, and they can't be paid.", msg: "Hi [Mr./Ms. ______],\n\nWould you be the teacher advisor for a team from our school in the Wharton Global High School Investment Competition next year? It's free. Teams are {team}, and the advisor registers the team. Based on this year, registration runs from mid-August to mid-September.\n\nThank you,\n[Your name]\n\nDetails: {link}" },
+          team: { to: "friends", title: "Invite your team", hint: "Everyone has to be from your school.", msg: "Want to form a team for the Wharton Global High School Investment Competition next year? It's free. Teams are {team}, all from our school, with a teacher advisor.\n\nDetails: {link}" }
         },
         dates: [
-          { d: "2026-09-11", k: "deadline", t: "2026–27 registration closed" },
-          { d: "2027-04-29", k: "event", t: "This season's Global Finale, Apr 29–30" },
-          { d: "2027-08", k: "opens", t: "2027–28 registration, based on 2026 (Aug 10 to Sep 11)", est: true }
+          { d: "2026-08-10", k: "last", t: "2026–27 registration opened" },
+          { d: "2026-09-11", k: "last", t: "2026–27 registration closed" },
+          { d: "2027-04-29", k: "event", t: "This season's Global Finale, Apr 29–30" }
         ],
         about: {
           is: { t: "A free competition where your team, guided by a teacher from your school, plans a long-term investment strategy for a client.", q: ["The Wharton Global High School Investment Competition is a free, experiential investment challenge for high school students (9th to 12th grade) and teachers.", "guided by a teacher from their school as their advisor", "teams develop a long-term investment strategy designed to help the client achieve their objectives"] },
@@ -441,12 +443,17 @@
         src: { url: "https://globalyouth.wharton.upenn.edu/competitions/investment-competition/faq/", name: "globalyouth.wharton.upenn.edu", kind: "organizer" }
       },
       {
-        id: "slp", tk: "SLP", short: "Ivey SLP", name: "Ivey Summer Leadership Program", org: "Ivey Business School, Western University", type: "summer", what: "A summer leadership program at Ivey Business School in London, Ontario",
-        grades: [9, 10, 11], lastGrade: 11, gradeNote: "Open to students currently in Grade 9, 10 or 11",
-        free: false, cost: "2027 fee not posted yet", costShort: "2027 fee not posted yet",
+        id: "slp", tk: "SLP", short: "Ivey SLP", name: "Ivey Summer Leadership Program", org: "Ivey Business School, Western University", type: "summer",
+        what: "A summer leadership program at Ivey Business School in London, Ontario",
+        grades: [9, 10, 11],
+        lastGrade: 11,
+        gradeNote: "Open to students currently in Grade 9, 10 or 11",
+        free: false,
+        cost: "2027 fee not posted yet",
+        costShort: "2027 fee not posted yet",
         where: "Ivey Business School, Western University, London, ON",
         entry: "Individual application",
-        next: { d: "2027-03", label: "2027 applications open soon", est: true },
+        next: { soon: true, label: "Ivey says 2027 applications open soon", note: "2027 dates aren't posted yet." },
         can: [
           { k: "warn", t: "Competitive", s: "About 1,100 students applied for 150 spots in 2026" },
           { k: "warn", t: "2027 details aren't posted yet", s: "Ivey says it's working on the next version of the program" },
@@ -454,13 +461,10 @@
         ],
         steps: [
           { id: "alert", by: "2026-12-04", t: "Join Ivey's email list to hear when applications open", who: "you", href: "https://www.ivey.uwo.ca/summerleadership/" },
-          { id: "apply", by: "2027-04", t: "Apply as soon as applications open", who: "you", est: true }
+          { id: "apply", by: "tba", t: "Apply as soon as applications open", who: "you", note: "Ivey says applications open soon." }
         ],
         asks: {},
-        dates: [
-          { d: "2027-03", k: "opens", t: "2027 applications expected to open", est: true },
-          { d: "2027-08", k: "event", t: "Program week, based on 2026 (August)", est: true }
-        ],
+        dates: [],
         about: {
           is: { t: "It’s for students who are curious about leadership and business. In 2026 it ran for five days. Ivey is reworking it for 2027, so details may change.", q: ["High school students currently in Grades 9, 10, and 11 who are curious, motivated, and excited to learn about leadership, business, and innovation.", "is a five-day residential program", "We're working on the next version of SLP"] },
           do: [
@@ -480,25 +484,31 @@
         src: { url: "https://www.ivey.uwo.ca/summerleadership/", name: "ivey.uwo.ca", kind: "organizer" }
       },
       {
-        id: "ja", tk: "JA", short: "JA Company", name: "JA Company Program", org: "Junior Achievement (JA Central Ontario, JA South Western Ontario and other regions)", type: "venture", what: "Run a real company with a team, after school from November to April",
-        grades: [9, 10, 11], gradeNote: "Open to Grades 9–12, so this year's Grade 9–11 students can join next year",
-        free: true, cost: "Free. Each student buys a $5–$30 share in their team's company, and JA helps anyone who can't.", costShort: "Free, plus a $5–$30 share",
-        where: "In person across Ontario, with some virtual groups",
+        id: "ja", tk: "JA", short: "JA Company", name: "JA Company Program", org: "Junior Achievement (JA Central Ontario, JA South Western Ontario and other regions)", type: "venture",
+        what: "Run a real company with a team, after school from November to April",
+        grades: [9, 10, 11, 12],
+        gradeNote: "Grades 9–12. Open now in South Western Ontario. Elsewhere, you can sign up for next year.",
+        free: true,
+        cost: "Free. Each student buys a $5–$30 share in their team's company, and JA helps anyone who can't.",
+        costShort: "Free, plus a $5–$30 share",
+        where: "In person across Ontario, with virtual groups too. In South Western Ontario: London, Kitchener, Hamilton and St. Thomas, or online.",
         team: { min: 10, max: 25, assigned: true },
-        next: { d: "2027-09", label: "2027–28 registration expected ~fall 2027", closed: true, est: true },
+        window: { ongoing: true, tag: "Open in SW Ontario" },
+        boardWhat: "Open now in South Western Ontario",
         can: [
-          { k: "warn", t: "You sign up yourself, online", s: "Not through school. Spots are first come, first served." },
-          { k: "warn", t: "Central Ontario's 2026–27 registration is closed", s: "JA South Western Ontario's page says its registration is open" },
-          { k: "ok", t: "Free", s: "Each student buys a $5–$30 share in their team's company" }
+          { k: "ok", t: "Open now in South Western Ontario", s: "JA South Western Ontario says its 2026–27 registration is open, for high schools from Windsor to Niagara" },
+          { k: "warn", t: "Groups have already started", s: "JA South Western Ontario's 18 weekly sessions started in October and November" },
+          { k: "warn", t: "Central Ontario's registration is closed", s: "JA Central Ontario's form tells you when 2027–28 registration opens" },
+          { k: "warn", t: "You sign up yourself, online", s: "Not through school. Spots are first come, first served." }
         ],
         steps: [
-          { id: "alert", by: "2026-12-04", t: "Fill in JA Central Ontario's form to hear when 2027–28 registration opens", who: "you", href: "https://www.jacentralontario.org/company-program/notifications/" },
-          { id: "register", by: "2027-09-15", t: "Register online as soon as registration opens", who: "you", est: true }
+          { id: "swo", by: "2026-12-04", t: "In South Western Ontario? Register on JA's student portal", who: "you", href: "https://jaswo.org/company-program", note: "Spots are first come, first served, and no closing date is posted." },
+          { id: "alert", by: "2026-12-04", t: "Elsewhere: fill in JA Central Ontario's form to hear when 2027–28 registration opens", who: "you", href: "https://www.jacentralontario.org/company-program/notifications/" },
+          { id: "register", by: "tba", t: "Register online as soon as 2027–28 registration opens", who: "you", note: "JA hasn't posted 2027–28 dates yet." }
         ],
         asks: {},
         dates: [
-          { d: "2026-11", k: "event", t: "2026–27 program started (runs November to April)" },
-          { d: "2027-09", k: "opens", t: "2027–28 registration expected to open", est: true }
+          { d: "2026-11", k: "event", t: "2026–27 program started (runs November to April)" }
         ],
         about: {
           is: { t: "You and other students create and run one real business, guided by volunteer mentors from the business community. It runs after school for 18 weeks, from November to April.", q: ["to create and run one business over 18 weeks", "with mentorship from over 160 volunteer advisors from the business community", "The program runs for 18 weeks from November to April", "this after-school experience will set you up for life"] },
@@ -541,15 +551,13 @@
           { id: "centre", by: "2027-03-12", t: "Contact your local Small Business Advisory Centre and ask when applications open", who: "you", href: "https://www.ontario.ca/page/start-summer-company-students" },
           { id: "cosign", by: "2027-03-12", t: "If you're under 18, ask a parent or guardian to co-sign", who: "parent", ask: "cosign" },
           { id: "plan", by: "2027-04-16", t: "Write your business plan and cash flow, with help from the centre", who: "you" },
-          { id: "apply", by: "2027-04-30", t: "Apply early. Spots fill quickly.", who: "you", est: true }
+          { id: "apply", by: "tba", t: "Apply early. Spots fill quickly.", who: "you", note: "In 2026, applications closed May 15." }
         ],
         asks: {
           cosign: { to: "parent", title: "Ask a parent to co-sign", subject: "Can you co-sign my Summer Company agreement?", hint: "Applicants under 18 need a parent or guardian to sign the agreement.", msg: "Hi [Mom/Dad/______],\n\nI want to start my own summer business through Summer Company. It's an Ontario government program that gives students up to $3,000 and advice from local business leaders. Because I'm under 18, a parent or guardian has to sign the agreement with me. Would you?\n\nDetails: {link}" }
         },
         dates: [
-          { d: "2027-04-01", k: "event", t: "Earliest start for your business, based on 2026 rules", est: true },
-          { d: "2027-05", k: "deadline", t: "Applications close, based on 2026 (May 15)", est: true },
-          { d: "2027-09-06", k: "event", t: "Program ends on Labour Day", est: true }
+          { d: "2026-05-15", k: "last", t: "Last year's application deadline" }
         ],
         about: {
           is: { t: "You start a brand-new business and run it full-time over the summer, with start-up money and advice from local business leaders. You can keep it going once school starts.", q: ["start-up money to kick-off a new summer business", "advice and mentorship from local business leaders to help get the business up and running", "operates in Ontario on a full-time basis", "End date: Labour Day (but you can choose to keep running your summer business while in school)."] },
@@ -570,7 +578,7 @@
         src: { url: "https://www.ontario.ca/page/start-summer-company-students", name: "ontario.ca", kind: "organizer" }
       },
       {
-        id: "flc", tk: "FLC", short: "Financial Literacy", name: "Financial Literacy Competition", org: "School of Accounting and Finance, University of Waterloo", type: "money",
+        id: "flc", tk: "FLC", short: "Waterloo FLC", name: "Financial Literacy Competition – Waterloo", org: "School of Accounting and Finance, University of Waterloo", type: "money",
         what: "A 65-minute online test on money basics, written at your school",
         grades: [9, 10, 11, 12],
         gradeNote: "Grades 9–12 at a Canadian high school outside Quebec. Grades 9–10 write the Junior test, 11–12 the Senior.",
@@ -581,18 +589,19 @@
         entry: "A teacher registers your class and shares a class code. Students can't register on their own.",
         window: { from: "2026-10-14", to: "2026-11-27" },
         boardWhat: "Teacher registration closes",
-        next: { d: "2027-03", label: "The May round's dates come out in March", est: true, closed: false, note: "Waterloo releases each round's dates in October and March." },
+        next: { d: "2027-05", round: true, closed: false, label: "The next round is in May 2027. Waterloo posts the exact days in March", note: "Waterloo runs it every December and May, and posts each round's dates in October and March." },
         can: [
           { k: "warn", t: "A teacher has to register you", s: "Students can't register directly. Your teacher gets a class code to share." },
           { k: "warn", t: "You write it at school", s: "Online, supervised by your teacher, on the day and time they pick" },
-          { k: "ok", t: "It runs twice a year", s: "December and May, so you can also aim for the spring round" }
+          { k: "ok", t: "It runs twice a year", s: "December and May. Miss this round, and the next one is in May." }
         ],
         steps: [
           { id: "ask", by: "2026-11-26", t: "Ask a teacher to register your class or club", who: "teacher", ask: "register" },
           { id: "register", by: "2026-11-27", t: "Your teacher registers by 12:00 pm ET", who: "teacher", official: true },
           { id: "join", by: "2026-12-01", t: "Sign up with the class code by 5:00 pm ET", who: "you", official: true },
           { id: "practise", by: "2026-12-01", t: "Try the sample questions and the practice competition", who: "you" },
-          { id: "write", by: "2026-12-02", t: "Write it at school on your class's day (December 2 or 3)", who: "you" }
+          { id: "write", by: "2026-12-02", t: "Write it at school on your class's day (December 2 or 3)", who: "you" },
+          { id: "may", by: "2027-03", t: "For the May round, ask a teacher to register once Waterloo posts the dates", who: "you" }
         ],
         asks: {
           register: { to: "teacher", title: "Ask a teacher to register you", subject: "Waterloo's Financial Literacy Competition", hint: "Any teacher can register a class or club. Teacher registration closes at noon ET, so ask right away.", msg: "Hi [Mr./Ms. ______],\n\nCould you register our class (or a group of us) for the University of Waterloo's Financial Literacy Competition? It's a 65-minute online test we'd write at school, and teachers register by {deadline}. You'd get a class code to share with us.\n\nThank you,\n[Your name]\n\nDetails: {link}" }
@@ -602,8 +611,8 @@
           { d: "2026-11-27", k: "deadline", t: "Teacher registration closes, 12:00 pm ET" },
           { d: "2026-12-01", k: "deadline", t: "Students sign up with the class code, 5:00 pm ET" },
           { d: "2026-12-02", k: "event", t: "Competition days, December 2 and 3" },
-          { d: "2027-03", k: "opens", t: "May round dates released", est: true },
-          { d: "2027-05", k: "event", t: "May round", est: true }
+          { d: "2027-03", k: "opens", t: "Dates for the May round are posted" },
+          { d: "2027-05", k: "event", t: "May round, over two days" }
         ],
         about: {
           is: { t: "You answer questions on money topics like budgeting, banking, credit, investing and accounting. No prior knowledge is assumed, and questions go from easy to hard.", q: ["covering topics in banking, investing, economics, income management and budgeting, accounting, credit, post-secondary financing, home ownership, and fraud and financial safety", "No prior level of knowledge is assumed", "questions range from easy to more advanced"] },
@@ -614,7 +623,8 @@
           ],
           why: [
             { t: "The top Junior and Senior scorers get $750 toward an RESP. The top 10 in each grade get $75 gift cards.", q: ["receives $750 towards an RESP for post-secondary education", "The top 10 students (based on individual score) at each grade level receive a $75 e-gift card."] },
-            { t: "Every eligible participant gets a certificate at one of four levels", q: ["All eligible participants will receive a levelled Certificate of Achievement", "The certificate will recognize four levels of achievement"] }
+            { t: "Every eligible participant gets a certificate at one of four levels", q: ["All eligible participants will receive a levelled Certificate of Achievement", "The certificate will recognize four levels of achievement"] },
+            { t: "In 2025, more than 2,500 students from over 120 schools across Canada took part", q: ["2025 FLC Facts and Figures", "2500+ high school students participated", "120+ schools from across Canada took part"] }
           ]
         },
         parent: [
@@ -739,9 +749,9 @@
         free: true,
         cost: "Free",
         costShort: "Free",
-        where: "Online on weekday evenings, then two days at York University in Toronto (based on 2026)",
+        where: "In 2026: online on weekday evenings, then two days at York University in Toronto",
         entry: "Apply online when the 2027 application opens",
-        next: { d: "2027-02", label: "2027 applications open in early 2027", est: true, note: "Schulich says to check back in early 2027." },
+        next: { d: "2027-02", tba: true, label: "2027 dates aren't posted yet. Schulich says to check back in early 2027", note: "Schulich says to check its page again in early 2027 for when applications open." },
         can: [
           { k: "ok", t: "Free", s: "The program is free for every participant" },
           { k: "warn", t: "Aimed at equity-deserving groups", s: "Including Black, Indigenous, BIPOC and 2SLGBTQIA+ students, and students with disabilities" },
@@ -749,12 +759,11 @@
         ],
         steps: [
           { id: "check", by: "2027-02-05", t: "Check Schulich's page for the 2027 application", who: "you", href: "https://schulich.yorku.ca/future-students/business-excellence-academy/" },
-          { id: "apply", by: "2027-03", t: "Apply as soon as the application opens", who: "you", est: true }
+          { id: "apply", by: "tba", t: "Apply as soon as the application opens", who: "you", note: "In 2026, the program ran July 6 to 23." }
         ],
         asks: {},
         dates: [
-          { d: "2027-02", k: "opens", t: "2027 application expected (Schulich says early 2027)", est: true },
-          { d: "2027-07", k: "event", t: "Program in July, based on 2026 (July 6 to 23)", est: true }
+          { d: "2026-07-06", k: "last", t: "Last year: the program ran July 6 to 23" }
         ],
         about: {
           is: { t: "Three weeks of online evening sessions with guest speakers and Schulich faculty, then two days at Schulich. You’re placed in a small group with a Schulich student as your mentor.", q: ["The sessions are held virtually, consisting of a series of lectures and group-based activities that are delivered by prominent guest speakers from the community and Schulich Faculty.", "the virtual sessions ran Monday, Tuesday, Wednesday, and Thursday evenings from 6:30-8:30pm for three weeks", "The final sessions on July 22 and July 23 were in-person days", "Small groups of high school participants and one Schulich undergraduate student mentor will be introduced at the start of the program."] },
@@ -824,40 +833,42 @@
         src: { url: "https://uvm.edu/admissions/vermont-pitch-challenge/rules-regulations-terms-and-conditions", name: "uvm.edu", kind: "organizer" }
       },
       {
-        id: "rotsim", tk: "RSIM", short: "Rotman Trading", name: "High School Market Simulation Challenge", org: "Rotman Commerce and the BMO Finance Research and Trading Lab, University of Toronto", type: "invest",
-        what: "Learn to trade on a market simulator, then compete in a timed trading round",
+        id: "rotsim", tk: "RSIM", short: "Rotman Trading", name: "High School Market Simulation Challenge – Rotman", org: "Rotman Commerce and the BMO Finance Research and Trading Lab, University of Toronto", type: "invest",
+        what: "A trading workshop, then a timed competition on Rotman's market simulator",
         grades: [9, 10, 11, 12],
         gradeNote: "High school students. No grade limits are listed.",
         free: false,
-        cost: "Not listed",
+        cost: "Not listed on Rotman's page or its sign-up form",
         costShort: "Not listed",
-        where: "University of Toronto, with an online option for the December round",
-        entry: "Register for a qualifying round on Rotman's page",
-        window: { to: "2027-02-04" },
-        boardWhat: "Last qualifying round",
+        where: "Rotman School of Management, University of Toronto. The December 3 round is also online.",
+        entry: "Register online for the December 3 round. It's the only sign-up on Rotman's page right now.",
+        window: { to: "2026-12-03", round: true },
+        boardWhat: "Online sign-up is open. No closing date is posted.",
+        next: { d: "2027-02-04", round: true, closed: false, label: "The last qualifying round is February 4, 2027. Sign-up for it isn't on Rotman's page yet", note: "Sign-up for this round isn't on Rotman's page yet." },
         can: [
-          { k: "ok", t: "No experience needed", s: "A workshop teaches you the trading platform first" },
-          { k: "warn", t: "It's on a school day", s: "Qualifying rounds run on Thursdays during school hours" },
-          { k: "warn", t: "Only the top 60 go further", s: "They come back on April 30 to compete for cash prizes" }
+          { k: "ok", t: "No experience needed", s: "A workshop teaches you the RIT trading software first" },
+          { k: "warn", t: "Online? You need Windows", s: "The trading software runs on Windows. On a Mac, you can install a free virtual lab." },
+          { k: "warn", t: "It's on a school day", s: "Rounds run on Thursdays during school hours" },
+          { k: "warn", t: "Only the top 60 go further", s: "They're invited back on April 30 to compete for cash prizes" }
         ],
         steps: [
-          { id: "pick", by: "2026-11-27", t: "Pick a qualifying round: December 3 or February 4", who: "you" },
-          { id: "register", by: "2026-12-01", t: "Register on Rotman's page (the December round has an online option)", who: "you", href: "https://rotmancommerce.utoronto.ca/future-students/on-campus-events/market-simulation-challenge" },
-          { id: "platform", by: "2026-12-02", t: "Download the RIT trading platform and watch the video tutorial", who: "you" },
-          { id: "qualify", by: "2027-02-04", t: "Trade in a qualifying round", who: "you", official: true },
-          { id: "capstone", by: "2027-04-30", t: "Top 60 traders: come back for the capstone competition", who: "you" }
+          { id: "register", by: "2026-12-02", t: "Register online for the December 3 round", who: "you", href: "https://rotmancommerce.utoronto.ca/future-students/on-campus-events/market-simulation-challenge", note: "It's the only sign-up on Rotman's page right now, and no closing date is posted. The form asks for a teacher's name and email, but they don't have to do anything." },
+          { id: "software", by: "2026-12-02", t: "Install the RIT trading software on a Windows computer", who: "you", href: "https://www.rotman.utoronto.ca/faculty-and-research/education-labs/bmo-financial-group-finance-research-and-trading-lab/rit-market-simulator/rit-downloads/", note: "On a Mac, install a free virtual lab instead. Rotman's page also has a video tutorial." },
+          { id: "dec3", by: "2026-12-03", t: "Trade in the December 3 round, 9:30 am to 2:00 pm ET", who: "you", note: "The workshop starts at 10:00 am. After a one-hour break, trading starts at 12:30 pm." },
+          { id: "feb4", by: "2027-02-04", t: "Or trade in the February 4 round, 9:00 am to 12:00 pm ET", who: "you", note: "Sign-up for this round isn't on Rotman's page yet." },
+          { id: "capstone", by: "2027-04-30", t: "Rotman invites the top 60 traders back for the capstone on April 30", who: "org", note: "They compete for cash prizes. The dress code is smart casual." }
         ],
         asks: {},
         dates: [
-          { d: "2026-11-12", k: "event", t: "First qualifying round" },
-          { d: "2026-12-03", k: "event", t: "Qualifying round, 9:30 am to 2:00 pm ET, in person or online" },
-          { d: "2027-02-04", k: "deadline", t: "Last qualifying round, 9:00 am to 12:00 pm ET" },
+          { d: "2026-11-12", k: "event", t: "First qualifying round. Its leaderboard is on Rotman's page." },
+          { d: "2026-12-03", k: "event", t: "Qualifying round, 9:30 am to 2:00 pm ET. Online sign-up is open." },
+          { d: "2027-02-04", k: "event", t: "Last qualifying round, 9:00 am to 12:00 pm ET. Sign-up isn't posted yet." },
           { d: "2027-04-30", k: "event", t: "Capstone workshop and competition for the top 60 traders" }
         ],
         about: {
           is: { t: "A workshop introduces financial markets and Rotman’s trading simulator. Then you put what you learned to work in a timed trading competition.", q: ["Students will participate in a workshop designed to introduce them to financial markets and the RIT Market Simulator platform", "then demonstrate their newly learned skills through a Market Simulation Challenge using the RIT Market Simulator"] },
           do: [
-            { t: "Join a qualifying round on December 3, in person or online, or on February 4", q: ["Qualifying Rounds: Thursday November 12, Thursday December 3, 2026 & Thursday, Feburary 4, 2027", "1 hour break for virtual participants"] },
+            { t: "Qualifying rounds run on three Thursdays: November 12, December 3 (also online) and February 4", q: ["Qualifying Rounds: Thursday November 12, Thursday December 3, 2026 & Thursday, Feburary 4, 2027", "December 3, 2026 Remote Registration"] },
             { t: "Trade on the RIT simulator, the software behind a 50-university trading competition", q: ["The Rotman Finance Lab hosts the annual Rotman International Trading Competition (RITC), a 3-day simulated market challenge featuring 50 competing universities from around the world.", "RITC is executed though the RIT Market Simulator"] },
             { t: "The top 60 traders come back on April 30 for a capstone workshop and competition", q: ["Registration is reserved for top 60 traders from the three qualifying rounds.", "Capstone Workshop & Competition: Friday April 30, 2027"] }
           ],
@@ -867,21 +878,22 @@
           ]
         },
         parent: [
-          { t: "A school day at U of T", s: "Qualifying rounds run on Thursdays during school hours. The December round can also be done online." }
+          { t: "A school day", s: "Rounds run on Thursdays during school hours. The December 3 round is online, 9:30 am to 2:00 pm ET." },
+          { t: "Online needs a Windows computer", s: "Rotman's trading software runs on Windows. On a Mac, students can install a free virtual lab." }
         ],
         src: { url: "https://rotmancommerce.utoronto.ca/future-students/on-campus-events/market-simulation-challenge", name: "rotmancommerce.utoronto.ca", kind: "organizer" }
       },
       {
-        id: "skillsent", tk: "SKON", short: "Skills Ontario", name: "Provincial Entrepreneurship Showcase 2027", org: "Skills Ontario", type: "showcase",
+        id: "skillsent", tk: "SKON", short: "Skills Ontario", name: "Provincial Entrepreneurship Showcase 2027 – Skills Ontario", org: "Skills Ontario", type: "showcase",
         what: "Show your business idea or product to entrepreneur mentors, in person or online",
         grades: [9, 10, 11, 12],
         gradeNote: "Student entrepreneurs. 2027 eligibility details aren't posted yet.",
         free: false,
         cost: "Not posted yet",
         costShort: "Fee not posted yet",
-        where: "Toronto Congress Centre during the Skills Ontario Competition, plus a virtual event",
+        where: "In 2026: the Toronto Congress Centre, during the Skills Ontario Competition, plus a virtual event",
         entry: "How to take part in 2027 isn't posted yet",
-        next: { d: "2027-03", label: "2027 details aren't posted yet", est: true, note: "Skills Ontario says both events return in 2027, with details to come." },
+        next: { d: "2027-05-03", tba: true, label: "2027 details aren't posted yet", note: "Skills Ontario says both showcases return in 2027. In 2026, the in-person one ran alongside the Skills Ontario Competition." },
         can: [
           { k: "warn", t: "2027 details aren't posted yet", s: "Skills Ontario has confirmed the in-person and virtual events are back" },
           { k: "ok", t: "In English or French", s: "The showcase is bilingual" },
@@ -890,13 +902,13 @@
         steps: [
           { id: "ready", by: "2027-02-26", t: "Get your business idea or product ready to show", who: "you" },
           { id: "teacher", by: "2027-02-26", t: "Ask a teacher how your school can take part", who: "teacher", ask: "school" },
-          { id: "check", by: "2027-03-31", t: "Check Skills Ontario's page for 2027 details", who: "you", href: "https://skillsontario.com/resources/https-www-skillsontario-com-skills-ontario-provincial-entrepreneurship-showcase2025na367/", est: true }
+          { id: "check", by: "2027-03-31", t: "Check Skills Ontario's page for 2027 details", who: "you", href: "https://skillsontario.com/resources/https-www-skillsontario-com-skills-ontario-provincial-entrepreneurship-showcase2025na367/" }
         ],
         asks: {
           school: { to: "teacher", title: "Ask a teacher about the showcase", subject: "Skills Ontario's Provincial Entrepreneurship Showcase", hint: "A teacher can find out how your school takes part.", msg: "Hi [Mr./Ms. ______],\n\nSkills Ontario's Provincial Entrepreneurship Showcase is coming back. Student entrepreneurs show their business ideas or products and get feedback from entrepreneurs and mentors. I have an idea I'd like to show. Could you help me find out how our school can take part?\n\nThank you,\n[Your name]\n\nDetails: {link}" }
         },
         dates: [
-          { d: "2027-05-03", k: "event", t: "Skills Ontario Competition, May 3 and 4, Toronto Congress Centre. The showcase runs alongside it." }
+          { d: "2027-05-03", k: "event", t: "Skills Ontario Competition, May 3 and 4, at the Toronto Congress Centre. In 2026, the showcase ran alongside it." }
         ],
         about: {
           is: { t: "Student entrepreneurs present their business ideas or products and get feedback from experienced entrepreneurs and mentors. It runs alongside the Skills Ontario Competition.", q: ["the bilingual Provincial Entrepreneurship Showcase provides a catalyst for aspiring student entrepreneurs to display/present their business ideas and/or products", "students at both the in-person and virtual event alike will receive valuable feedback from successful, knowledgeable industry entrepreneurs and mentors", "Held in conjunction with the Skills Ontario Competition"] },
@@ -915,7 +927,7 @@
         src: { url: "https://skillsontario.com/resources/https-www-skillsontario-com-skills-ontario-provincial-entrepreneurship-showcase2025na367/", name: "skillsontario.com", kind: "organizer" }
       },
       {
-        id: "bslc", tk: "BSLC", short: "Black Student Leadership", name: "Black Student Leadership Conference", org: "Rotman Commerce, University of Toronto", type: "conf",
+        id: "bslc", tk: "BSLC", short: "Black Student Leadership", name: "Black Student Leadership Conference – Rotman", org: "Rotman Commerce, University of Toronto", type: "conf",
         what: "A day of trading and case-competition training at U of T, with prizes",
         grades: [9, 10, 11, 12],
         gradeNote: "For prospective Black students. No grade limits are listed.",
@@ -924,7 +936,7 @@
         costShort: "Not listed",
         where: "Rotman Commerce, University of Toronto",
         entry: "Join Rotman's mailing list to get an invitation when registration opens",
-        next: { d: "2026-12", label: "Registration opens this fall, and the conference is in February", est: true, note: "Rotman says registration opens in the fall. The conference is in February." },
+        next: { d: "2027-02", round: true, what: "Conference", label: "The conference is in February. Rotman says registration opens in the fall, and it isn't open yet", note: "Rotman says registration opens in the fall. The exact date isn't posted." },
         can: [
           { k: "warn", t: "For Black students", s: "Rotman invites prospective Black students" },
           { k: "ok", t: "No experience needed", s: "The trading workshop starts from the basics" },
@@ -932,7 +944,7 @@
         ],
         steps: [
           { id: "list", by: "2026-11-30", t: "Join Rotman's mailing list to get your invitation", who: "you", href: "https://rotmancommerce.utoronto.ca/future-students/on-campus-events/black-student-leadership-conference/" },
-          { id: "register", by: "2027-01", t: "Register when your invitation arrives", who: "you", est: true }
+          { id: "register", by: "tba", t: "Register when your invitation arrives", who: "you", note: "Rotman says registration opens in the fall." }
         ],
         asks: {},
         dates: [
@@ -955,7 +967,7 @@
         src: { url: "https://rotmancommerce.utoronto.ca/future-students/on-campus-events/black-student-leadership-conference/", name: "rotmancommerce.utoronto.ca", kind: "organizer" }
       },
       {
-        id: "catalyst", tk: "CTLY", short: "Catalyst", name: "Catalyst – Early Entrepreneurs 2027", org: "University of Waterloo, with the Conrad School of Entrepreneurship and Business", type: "summer",
+        id: "catalyst", tk: "CTLY", short: "Catalyst", name: "Catalyst: Early Entrepreneurs 2027 – Waterloo", org: "University of Waterloo, with the Conrad School of Entrepreneurship and Business", type: "summer",
         what: "A two-week summer day program on entrepreneurship and business at Waterloo",
         grades: [9, 10, 11],
         lastGrade: 11,
@@ -983,8 +995,9 @@
           bursary: { to: "parent", title: "Ask for help with a bursary", subject: "Catalyst bursary application", hint: "Bursaries can cover up to 95% of the fee. The bursary deadline comes before the program deadline.", msg: "Hi [Mom/Dad/______],\n\nI'm applying to Catalyst – Early Entrepreneurs, a two-week summer business program at the University of Waterloo. It costs $747 plus HST, but a bursary can cover up to 95% of the fee. The bursary application closes in mid-January, before the program application does. Could you help me apply?\n\nDetails: {link}" }
         },
         dates: [
+          { d: "2026-12", show: "Mid-Dec", k: "opens", t: "Bursary applications open (exact date to come)" },
           { d: "2026-12-18", k: "opens", t: "Applications open, 9:00 am ET" },
-          { d: "2027-01", k: "deadline", t: "Bursary applications close, mid-January (exact date to come)", est: true },
+          { d: "2027-01", show: "Mid-Jan", k: "deadline", t: "Bursary applications close (exact date to come)" },
           { d: "2027-02-12", k: "deadline", t: "Applications and assessments close, 9:00 am ET" },
           { d: "2027-04", k: "result", t: "Acceptances sent, second full week of April" },
           { d: "2027-07-05", k: "event", t: "Session I, July 5–16" },
@@ -1066,7 +1079,7 @@
         costShort: "Fee not posted for Canada",
         where: "Online at your school, then national and international rounds",
         entry: "A teacher registers as your School Coordinator. Students can't register on their own.",
-        next: { d: "2026-12", label: "Canada's registration opens soon", est: true, note: "FEE's page says registration for Canada opens soon." },
+        next: { soon: true, label: "FEE says registration for Canada opens soon", note: "FEE hasn't posted Canada's dates yet." },
         can: [
           { k: "warn", t: "A teacher registers your school", s: "Students take part through a registered School Coordinator" },
           { k: "warn", t: "Canada's dates aren't posted yet", s: "FEE lists Canada's details as coming soon" },
@@ -1080,7 +1093,6 @@
           coordinator: { to: "teacher", title: "Ask a teacher to register your school", subject: "Economics Olympiad at our school", hint: "Only teachers, school officials and homeschool parents can register. It needs someone to supervise a 40-minute test.", msg: "Hi [Mr./Ms. ______],\n\nI'd like to write the Economics Olympiad this year. Students can't register themselves: a teacher registers as the school coordinator and supervises an online test at school, which takes about 40 minutes. Registration for Canada opens soon. Would you be willing to register our school?\n\nThank you,\n[Your name]\n\nDetails: {link}" }
         },
         dates: [
-          { d: "2026-12", k: "opens", t: "Canada's registration expected (FEE says soon)", est: true },
           { d: "2027-08-02", k: "event", t: "International Round in Olympia, Greece, August 2–6" }
         ],
         about: {
@@ -1118,12 +1130,12 @@
         ],
         steps: [
           { id: "check", by: "2027-03-31", t: "Check YES's page for the 2027 intake", who: "you", href: "https://yesnet.yes.on.ca/entrepreneurship/summer-startup" },
-          { id: "apply", by: "2027-05", t: "Apply before the deadline (May 22 in 2026)", who: "you", est: true }
+          { id: "apply", by: "tba", t: "Apply when the 2027 intake opens", who: "you", note: "In 2026, applications closed May 22 at 5:00 pm." }
         ],
         asks: {},
         dates: [
-          { d: "2027-05", k: "deadline", t: "Applications close, based on 2026 (May 22, 5:00 pm)", est: true },
-          { d: "2027-06", k: "event", t: "Program starts, based on 2026 (around June 15)", est: true }
+          { d: "2026-05-22", k: "last", t: "Last year's application deadline, 5:00 pm" },
+          { d: "2026-06-15", k: "last", t: "Last year's program start (approximate)" }
         ],
         about: {
           is: { t: "Students on summer break start their own business, with training in business planning and marketing, and $3,000 in funding.", q: ["Summer Startup is an entrepreneurship program where students who are returning to school can start up a business to make some extra money over the summer.", "Training is provided on business planning, marketing and other business related topics.", "Participants receive a total of $3000 in funding to start their business."] },
@@ -1162,13 +1174,13 @@
           { id: "idea", by: "2027-03-31", t: "Pick an idea for a new startup", who: "you" },
           { id: "team", by: "2027-04-16", t: "Decide: enter alone or with a team", who: "friends", ask: "team" },
           { id: "template", by: "2027-04-30", t: "Email the Hamilton Business Centre for the business plan template", who: "you", href: "https://investinhamilton.ca/hamilton-business-centre/e-r-monaco-business-plan-competition/" },
-          { id: "submit", by: "2027-09", t: "Email your plan and submission form", who: "you", est: true }
+          { id: "submit", by: "tba", t: "Email your plan and submission form", who: "you", note: "In 2026, plans were due September 16." }
         ],
         asks: {
           team: { to: "friends", title: "Invite friends to your team", hint: "This is optional. You can enter alone.", msg: "Want to enter the E.R. Monaco Young Entrepreneurs Awards with me? We'd write a business plan for a new startup, and the top 5 plans win cash prizes. It's for Hamilton-area high school students, and teams can be {team}.\n\nDetails: {link}" }
         },
         dates: [
-          { d: "2027-09", k: "deadline", t: "Plans due, based on 2026 (September 16)", est: true }
+          { d: "2026-09-16", k: "last", t: "Last year's deadline for business plans" }
         ],
         about: {
           is: { t: "You write a business plan for a new startup. Local business professionals judge the plans, and top entrants are invited to the awards finals.", q: ["Students must create a start-up business (not existing or franchise).", "Business plans will be evaluated by local volunteer professionals", "the top participants will be invited to the Hamilton E.R. Monaco Young Entrepreneurs Awards finals."] },
@@ -1187,7 +1199,7 @@
         src: { url: "https://investinhamilton.ca/hamilton-business-centre/e-r-monaco-business-plan-competition/", name: "investinhamilton.ca", kind: "organizer" }
       },
       {
-        id: "cambrian", tk: "CAMB", short: "Cambrian Stocks", name: "High School Stock Market Challenge", org: "Cambrian College, Sudbury", type: "invest",
+        id: "cambrian", tk: "CAMB", short: "Cambrian Stocks", name: "High School Stock Market Challenge – Cambrian College", org: "Cambrian College, Sudbury", type: "invest",
         what: "A free stock market simulation for business classes in northeastern Ontario",
         grades: [9, 10, 11, 12],
         gradeNote: "Students in a business course at a high school in northeastern Ontario",
