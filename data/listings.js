@@ -1040,7 +1040,7 @@
           { k: "warn", t: "On your own", s: "No co-authors, and one essay per student" }
         ],
         steps: [
-          { id: "prompt", by: "2026-12-04", t: "Pick a prompt, or your own economics question", who: "you", href: "https://www.thehuea.org/general-8" },
+          { id: "prompt", by: "2026-12-04", t: "Pick a prompt, or your own economics question", who: "you", href: "https://www.thehuea.org/competitions/hieec" },
           { id: "draft", by: "2026-12-18", t: "Write a full draft of up to 1,500 words", who: "you" },
           { id: "read", by: "2026-12-18", t: "Ask a teacher to read your draft", who: "teacher", ask: "read" },
           { id: "submit", by: "2027-01-05", t: "Submit and pay by 11:59 pm ET, with no name on the PDF", who: "you", official: true }
@@ -1056,7 +1056,7 @@
           is: { t: "You take a position on a current economic question and defend it in a focused essay. The contest draws hundreds of essays from dozens of countries each year.", q: ["take a position on a current economic question and defend it in a focused essay", "drawing hundreds of essays from dozens of countries each year"] },
           do: [
             { t: "Pick one of the prompts, like whether everyday payment systems should be free, or ask your own", q: ["Choose one of the prompts below or write on an economics question of your own.", "Should a country's everyday payment system be free to use?"] },
-            { t: "Write up to 1,500 words. Judges never see your name or school.", q: ["up to 1,500 words, counting footnotes, not counting references", "Judges will not see who wrote an essay.", "we ask that you do not put your name or school anywhere in the PDF"] },
+            { t: "Write up to 1,500 words. Judges never see your name or school.", q: ["up to 1,500 words, counting footnotes. The title, references, and any tables, figures and their captions don't count.", "Judges will not see who wrote an essay.", "we ask that you do not put your name or school anywhere in the PDF"] },
             { t: "Essays are scored on analysis, creativity, research and structure", q: ["scored against a rubric covering analysis, creativity, research, and structure"] }
           ],
           why: [
@@ -1067,7 +1067,7 @@
         parent: [
           { t: "A small fee", s: "$35 USD for students outside the US. Fee waivers can be requested by email." }
         ],
-        src: { url: "https://www.thehuea.org/general-8", name: "thehuea.org", kind: "organizer" }
+        src: { url: "https://www.thehuea.org/competitions/hieec", name: "thehuea.org", kind: "organizer" }
       },
       {
         id: "econoly", tk: "ECON", short: "Econ Olympiad", name: "Economics Olympiad 2027", org: "Foundation for Economic Education (FEE)", type: "econ",
