@@ -314,15 +314,17 @@
   function frame(main, nav, cls) { return header(nav, true, cls === "explore") + '<main id="main" class="main' + (cls ? " " + cls : "") + '">' + main + "</main>" + tabbar(nav); }
 
   /* ---------- Activity cards ---------- */
-  function cardHtml(o, extra) {
+  // noSave: the parent page shows the teen's picks, so saving from there would only confuse
+  function cardHtml(o, extra, noSave) {
     const st = status(o), team = teamTag(o), ok = eligible(o), saved = picked(o.id);
-    return '<li><a class="card' + (o._s.key === "closed" ? " dim" : "") + (ok ? "" : " inel") + '" href="/l/' + o.id + '" data-nav>' + tile(o) +
-      '<span class="c-b"><span class="c-t">' + esc(o.name) + (saved ? '<span class="saved" aria-label="Saved">' + I.listOn + "</span>" : "") + "</span>" +
+    const save = noSave ? "" : '<button type="button" class="csave" data-pick="' + o.id + '" aria-pressed="' + saved + '" aria-label="' + (saved ? "Saved: " : "Save ") + esc(o.name) + '">' + (saved ? I.listOn : I.list) + "</button>";
+    return '<li' + (ok ? "" : ' class="inel"') + '><a class="card' + (o._s.key === "closed" ? " dim" : "") + (ok ? "" : " inel") + (noSave ? "" : " has-save") + '" href="/l/' + o.id + '" data-nav>' + tile(o) +
+      '<span class="c-b"><span class="c-t">' + esc(o.name) + "</span>" +
       '<span class="c-w">' + esc(extra || o.what) + "</span>" +
       '<span class="tags"><span class="tag s ' + st.cls + '">' + esc(st.short) + "</span>" +
       (o._s.key === "open" && nextKnown(o) ? '<span class="tag">' + esc(nextShort(o.next)) + "</span>" : "") +
       '<span class="tag">' + esc(costTag(o)) + "</span>" + (team ? '<span class="tag">' + esc(team) + "</span>" : "") +
-      (ok ? "" : '<span class="tag">Not for Grade ' + state.grade + "</span>") + "</span></span></a></li>";
+      (ok ? "" : '<span class="tag">Not for Grade ' + state.grade + "</span>") + "</span></span></a>" + save + "</li>";
   }
   // Search looks at the name, organizer, type and description, so "scholarship" or "investing" finds the right ones.
   const searchCache = {};
@@ -547,7 +549,7 @@
       '<h2 class="h2">Where you can help</h2><ul class="can help">' + help.join("") + "</ul>" +
       '<h2 class="h2">Costs at a glance</h2><dl class="facts">' + costs + "</dl>" +
       '<div class="sea-acts"><button type="button" class="btn green" data-subscribe-parent>Add these dates to my calendar</button><p>It updates itself if a date changes. No account needed.</p></div>' +
-      '<h2 class="h2">What each one is</h2><ul class="cards">' + picks.map(o => cardHtml(o)).join("") + "</ul>" +
+      '<h2 class="h2">What each one is</h2><ul class="cards">' + picks.map(o => cardHtml(o, null, true)).join("") + "</ul>" +
       '<p class="fine">No account. Nothing is tracked. Your teen chose what to share. Every fact on Cluedrop is quoted from the organizer, and each activity’s page shows its sources.</p>';
   }
 

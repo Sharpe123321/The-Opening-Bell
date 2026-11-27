@@ -120,7 +120,15 @@ a.chip{padding:7px 12px}
 
 /* Activity cards */
 .cards{list-style:none;margin:0;padding:0;display:grid;gap:10px}
-.cards>li{display:flex}
+.cards>li{display:flex;position:relative}
+/* The save button in each card's top corner. A 36px circle, with a 44px touch area. */
+.csave{position:absolute;top:10px;right:10px;width:36px;height:36px;display:grid;place-items:center;padding:0;border:0;border-radius:999px;background:transparent;color:var(--sub);cursor:pointer;transition:background-color .15s ease,color .15s ease}
+.csave::before{content:"";position:absolute;inset:-4px}
+.csave:hover{background:var(--fill);color:var(--text)}
+.csave[aria-pressed="true"]{color:var(--primary)}
+.csave .ic{width:20px;height:20px}
+.cards>li.inel .csave{opacity:.55}
+.card.has-save .c-t{padding-right:34px}
 .card{display:grid;grid-template-columns:62px minmax(0,1fr);gap:14px;width:100%;padding:16px;border-radius:18px;background:var(--surface);box-shadow:inset 0 0 0 1px var(--line);transition:box-shadow .15s ease}
 a.card:hover{box-shadow:inset 0 0 0 1.5px var(--primary)}
 .card.dim .c-t{color:var(--sub)}
@@ -135,8 +143,6 @@ a.card:hover{box-shadow:inset 0 0 0 1.5px var(--primary)}
 .tile.x{background:transparent;color:var(--sub);box-shadow:inset 0 0 0 1px var(--line)}
 .c-b{min-width:0}
 .c-t{display:flex;align-items:center;gap:8px;font-weight:600;font-size:17px;line-height:1.25}
-.saved{display:inline-flex;color:var(--primary)}
-.saved .ic{width:16px;height:16px}
 .c-w{display:block;margin-top:4px;color:var(--sub);font-size:15px;line-height:1.4}
 .tags{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
 .tag{padding:3px 9px;border-radius:999px;box-shadow:inset 0 0 0 1px var(--line);color:var(--sub);font-size:13px;font-weight:500;white-space:nowrap}
@@ -335,7 +341,7 @@ a.card:hover{box-shadow:inset 0 0 0 1.5px var(--primary)}
 .hero.intro .hero-in>:nth-child(5){animation-delay:.32s}
 @media (prefers-reduced-motion:no-preference){.hero-sky.back{will-change:transform}}
 @media (prefers-reduced-motion:reduce){
-  .panel,.card,.hd,.chip,.iconbtn,.dlinks a,.rv.in{transition:none}
+  .panel,.card,.csave,.hd,.chip,.iconbtn,.dlinks a,.rv.in{transition:none}
   .rv{opacity:1;translate:none}
   .hero.intro *{animation:none}
 }
