@@ -47,7 +47,7 @@ a.chip{padding:7px 12px}
 
 /* Page */
 .main{max-width:1100px;margin:0 auto;padding:6px 16px 112px}
-.main.explore{max-width:none;padding:0 0 112px}
+.main.explore{max-width:none;padding:0}
 .wrap{max-width:1180px;margin:0 auto;padding:0 16px}
 .h2{display:flex;justify-content:space-between;align-items:baseline;gap:12px;margin:30px 0 10px;font-size:22px;font-weight:700;line-height:1.2}
 .h3{margin:20px 0 6px;font-size:17px;font-weight:600}
@@ -89,6 +89,16 @@ a.chip{padding:7px 12px}
 .hero-grade button[aria-pressed="true"]{background:var(--primary);color:var(--on-primary);box-shadow:none}
 .hero-note{margin-top:16px;font-size:15px;color:var(--hero-sub)}
 .hero-note .linkbtn{color:inherit;text-decoration:underline;text-underline-offset:3px}
+
+/* Below the skyline the same sky carries on behind the page. Its clouds (drawn by lib/skyline.js) sink
+   at the hero sky's pace and come out from under the lake gradually, not cut off at its edge. After the
+   opportunities the sky clears, so the reading at the end sits on a plain page down to the bottom. */
+.below{position:relative;isolation:isolate}
+.drift{position:absolute;inset:0;z-index:-1;overflow:hidden;pointer-events:none}
+.drift-sky{position:absolute;left:0;right:0;top:0}
+.drift-sky svg{position:absolute;left:0;display:block}
+.drift::after{content:"";position:absolute;left:0;right:0;top:0;height:160px;background:linear-gradient(var(--bg),transparent)}
+.clear{padding-bottom:112px;background:linear-gradient(transparent,var(--bg) 200px)}
 
 /* How it works */
 .how .h2{margin-top:40px}
@@ -300,7 +310,7 @@ a.card:hover{box-shadow:inset 0 0 0 1.5px var(--primary)}
   .count{display:inline-grid;place-items:center;min-width:20px;height:20px;padding:0 6px;border-radius:10px;background:var(--primary);color:var(--on-primary);font-size:12px;font-weight:700}
   .tabbar{display:none}
   .main{padding:28px 32px 80px}
-  .main.explore{padding:0 0 80px}
+  .clear{padding-bottom:80px}
   .wrap{padding:0 32px}
   .hero{min-height:820px}
   .hero-in{padding:150px 32px 120px}
@@ -339,10 +349,11 @@ a.card:hover{box-shadow:inset 0 0 0 1.5px var(--primary)}
 .hero.intro .hero-in>:nth-child(3){animation-delay:.16s}
 .hero.intro .hero-in>:nth-child(4){animation-delay:.24s}
 .hero.intro .hero-in>:nth-child(5){animation-delay:.32s}
-@media (prefers-reduced-motion:no-preference){.hero-sky.back{will-change:transform}}
+@media (prefers-reduced-motion:no-preference){.hero-sky.back,.drift-sky{will-change:transform}}
 @media (prefers-reduced-motion:reduce){
   .panel,.card,.csave,.hd,.chip,.iconbtn,.dlinks a,.rv.in{transition:none}
   .rv{opacity:1;translate:none}
   .hero.intro *{animation:none}
 }
-@media print{.rv{opacity:1;translate:none}.hd.over{position:absolute}}
+@media print{.rv{opacity:1;translate:none}.hd.over{position:absolute}.drift{display:none}}
+@media (forced-colors:active){.drift{display:none}}
