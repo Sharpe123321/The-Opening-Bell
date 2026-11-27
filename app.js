@@ -299,7 +299,7 @@
   function header(nav, withGrade, over) {
     const n = state.picks.length;
     const link = (k, href, label) => '<a href="' + href + '" data-nav' + (nav === k ? ' aria-current="page"' : "") + ">" + label + "</a>";
-    return '<header class="hd' + (over ? " over" : "") + '"><a class="word" href="/" data-nav><img class="mark" src="/icon.svg" alt="" width="26" height="26">Cluedrop</a>' +
+    return '<header class="hd' + (over ? " over" : "") + '"><a class="word" href="/" data-nav><img class="mark" src="/icon.svg?v=2" alt="" width="26" height="26">Cluedrop</a>' +
       (withGrade === false ? "" : '<nav class="dlinks" aria-label="Main">' + link("explore", "/", "Explore") + link("saved", "/season", "Saved" + (n ? ' <span class="count">' + n + "</span>" : "")) + "</nav>") +
       '<div class="hd-r">' + (withGrade === false ? '<a class="chip" href="/" data-nav>See all activities</a>'
         : '<button type="button" class="chip" data-grade-open aria-haspopup="dialog">' + (state.grade ? "Grade " + state.grade : "Your grade") + I.down + "</button>") +
