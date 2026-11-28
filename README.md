@@ -2,7 +2,7 @@
 
 Get clued in.
 
-Business competitions and programs for Ontario high school students, with every date checked against the organizer and a plan for when to start.
+Find business competitions and programs for Ontario high school students, with every date checked against the organizer and a plan for when to start.
 
 ## What's here
 

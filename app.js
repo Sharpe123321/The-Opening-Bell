@@ -1,4 +1,4 @@
-/* Cluedrop: get clued in. Business competitions and programs for Ontario high school students.
+/* Cluedrop: get clued in. Find business competitions and programs for Ontario high school students.
  * Two tabs: Explore (every activity as a card) and Saved (what to do next for each one you saved).
  * Each activity has its own page at /l/<id>. No framework and no build step. Every listing fact comes
  * from data/listings.js and every date and wording rule from lib/core.js.
@@ -179,7 +179,7 @@
   function titleFor(r) {
     if (r.name === "listing") return BY[r.id].name + " · Cluedrop";
     if (r.name === "ask") return BY[r.id].asks[r.ask].title + " · Cluedrop";
-    return { saved: "Saved · Cluedrop", parent: "Your teen's season · Cluedrop" }[r.name] || "Cluedrop · Business competitions and programs for Ontario students";
+    return { saved: "Saved · Cluedrop", parent: "Your teen's season · Cluedrop" }[r.name] || "Cluedrop · Find business competitions and programs for Ontario students";
   }
   function paint(r) {
     const app = $("#app");
