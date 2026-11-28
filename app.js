@@ -190,12 +190,26 @@
     drawHero();
   }
   /* The skyline behind the first screen: daytime in light mode, evening in dark mode */
+  let heroScale = 1;
   function drawHero() {
     const cv = $("canvas.hero-sky.back"), city = $("canvas.hero-sky.front"); if (!cv || !window.drawSkyline) return;
     const wide = window.matchMedia("(min-width: 900px)").matches, h = cv.clientHeight;
     const opts = { night: document.documentElement.dataset.theme !== "light", band: wide ? Math.min(h * 0.74, 600) : Math.min(300, h * 0.42), focus: wide ? 0.8 : 0.76 };
-    window.drawSkyline(cv, Object.assign({ layer: city ? "back" : "all" }, opts));
+    heroScale = window.drawSkyline(cv, Object.assign({ layer: city ? "back" : "all" }, opts)) || 1;
     if (city) window.drawSkyline(city, Object.assign({ layer: "front", boxH: h }, opts));
+    drawDrift(true);
+  }
+  /* The clouds below the skyline. They cover the sky the page can scroll through, plus room to grow, so a
+   * longer list (after a search is cleared) only adds clouds further down and never moves the ones in view. */
+  let driftTo = 0;
+  function drawDrift(redraw) {
+    const el = $(".drift-sky"), below = el && el.closest(".below"), col = below && $("#results", below); if (!col || !window.drawClouds) return;
+    const vh = window.innerHeight, top = below.offsetTop, need = SKY_LAG * Math.max(0, document.documentElement.scrollHeight - vh) + vh;
+    if (!redraw && need <= driftTo) return;
+    driftTo = need + vh;
+    const box = col.getBoundingClientRect();
+    window.drawClouds(el, { night: document.documentElement.dataset.theme !== "light", s: heroScale, width: below.clientWidth, column: [box.left, box.right], top,
+      from: (1 - SKY_LAG) * top - 160, to: driftTo });
   }
   let heroW = 0, heroTimer;
   window.addEventListener("resize", () => {
@@ -205,7 +219,8 @@
 
   /* ---------- Motion: one easing and one short rise, used everywhere ----------
    * The browser does the scrolling; nothing here takes it over. As you scroll, the sky (with the
-   * moon or sun, the clouds and the far haze) falls behind the city, which moves with the page, the
+   * moon or sun, the clouds and the far haze) falls behind the city, which moves with the page. Below
+   * the city the same sky carries on behind the page, so its clouds keep sinking at the same pace. The
    * header frosts over once anything slides under it, and each section rises into place the first
    * time it comes into view. Everything is skipped when the device asks for less motion. */
   const lessMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
@@ -213,7 +228,7 @@
     ".about > section", ".about > .fine", ".lhead", ".lside", ".lbody > :not(.desc)", ".desc > section",
     ".main:not(.explore) > :not(.lpage):not(.cards)", ".main:not(.explore) > .cards > li"].join(",");
   const SKY_LAG = 0.5; /* the sky holds back this share of the scroll, so it feels far behind the city */
-  let io = null, hero = null, heroH = 0, sky = [], hd = null, ticking = false;
+  let io = null, hero = null, heroH = 0, sky = [], drift = null, hd = null, ticking = false;
   function motion(mode) { /* "enter": a new page, so what's on screen rises in; "quiet": a repaint, so it just appears */
     if (io) { io.disconnect(); io = null; }
     bindScroll();
@@ -241,6 +256,7 @@
   function bindScroll() {
     hero = $(".hero"); hd = $(".hd.over");
     sky = hero ? [[$(".hero-sky.back", hero), SKY_LAG]].filter(x => x[0]) : [];
+    drift = $(".drift-sky");
     heroH = hero ? hero.offsetHeight : 0;
     onFrame();
   }
@@ -248,7 +264,9 @@
     ticking = false;
     const y = Math.max(0, window.scrollY);
     if (hd) hd.classList.toggle("solid", y > 8);
-    if (!hero || lessMotion.matches || y > heroH + 40) return;
+    if (lessMotion.matches) return;
+    if (drift) drift.style.transform = "translate3d(0," + (y * SKY_LAG).toFixed(1) + "px,0)";
+    if (!hero || y > heroH + 40) return;
     sky.forEach(([el, k]) => { el.style.transform = "translate3d(0," + (y * k).toFixed(1) + "px,0)"; });
   }
   window.addEventListener("scroll", () => { if (!ticking) { ticking = true; requestAnimationFrame(onFrame); } }, { passive: true });
@@ -385,7 +403,9 @@
       '<p class="disc-sub">' + (state.grade && !state.allGrades ? forGrade + " verified opportunities for Grade " + state.grade + ", closing soonest first." : n + " verified opportunities, closing soonest first.") + "</p></div>" +
       '<div class="fchips" role="group" aria-label="Show">' + FILTERS.map(f => '<button type="button" class="fchip" data-f="' + f[0] + '" aria-pressed="' + (state.filter === f[0]) + '">' + f[1] + (f[0] === "saved" && state.picks.length ? " (" + state.picks.length + ")" : "") + "</button>").join("") + "</div>" +
       '<div id="results">' + listHtml() + "</div></section>";
-    return hero + how + discover + '<div class="wrap">' + aboutHtml() + "</div>";
+    /* Everything below the skyline sits in front of the same sky, so its clouds can keep sinking behind it.
+     * The sky clears for the reading at the end. */
+    return hero + '<div class="below"><div class="drift" aria-hidden="true"><div class="drift-sky"></div></div>' + how + discover + '<div class="clear"><div class="wrap">' + aboutHtml() + "</div></div></div>";
   }
   function aboutHtml() {
     return '<div class="about">' +
@@ -619,6 +639,7 @@
     if (e.target.id !== "q") return;
     state.query = e.target.value;
     const box = $("#results"); if (box) box.innerHTML = listHtml();
+    drawDrift(false);
   });
   document.addEventListener("submit", e => {
     if (!e.target.matches("[data-search]")) return;
